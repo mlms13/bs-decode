@@ -1,0 +1,37 @@
+{
+  "name": "bs-decode",
+  "version": "0.1.0",
+  "description": "Type-safe JSON decoding for ReasonML and OCaml",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "clean": "bsb -clean-world",
+    "build": "bsb -make-world",
+    "test": "npm run clean && npm run build && jest --testMatch '**/test/*.js'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "github.com/mlms13/bs-decode"
+  },
+  "keywords": [
+    "reasonml",
+    "bucklescript",
+    "json",
+    "decode",
+    "validation",
+    "result",
+    "applicative"
+  ],
+  "author": "Michael Martin-Smucker",
+  "license": "MIT",
+  "dependencies": {
+    "bs-abstract": "^0.16.0"
+  },
+  "devDependencies": {
+    "@glennsl/bs-jest": "^0.4.2",
+    "bs-platform": "^4.0.5",
+    "jest": "^23.5.0"
+  }
+}

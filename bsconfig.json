@@ -1,0 +1,27 @@
+{
+  "name": "bs_decode",
+  "bsc-flags": ["-bs-no-version-header", "-bs-super-errors"],
+  "bs-dependencies": [
+    "bs-abstract"
+  ],
+  "bs-dev-dependencies": [
+    "@glennsl/bs-jest"
+  ],
+  "sources": [{
+    "dir": "./src",
+    "subdirs": true
+  }, {
+    "dir": "./test",
+    "type": "dev",
+    "subdirs": true
+  }],
+  "package-specs": {
+    "module": "commonjs",
+    "in-source": true
+  },
+  "refmt": 3,
+  "suffix": ".bs.js",
+  "warnings": {
+    "error": "+8+11"
+  }
+}

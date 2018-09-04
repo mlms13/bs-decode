@@ -1,0 +1,12 @@
+node_modules
+*/log
+.vscode
+
+# generated
+/lib/bs
+*.bs.js
+/dist
+.merlin
+
+# os files
+.DS_Store
