@@ -15,6 +15,16 @@ let map = (f, v) => switch v {
 | Belt.Result.Ok(v) => Belt.Result.Ok(f(v))
 };
 
+let mapErr = (f, v) => switch v {
+| Belt.Result.Ok(v) => Belt.Result.Ok(v)
+| Belt.Result.Error(x) => Belt.Result.Error(f(x))
+};
+
+let flatMap = (f, v) => switch v {
+| Belt.Result.Error(x) => Belt.Result.Error(x)
+| Belt.Result.Ok(v) => f(v)
+};
+
 let pure = v => Belt_Result.Ok(v);
 
 let optional = (decode, json) =>
@@ -32,5 +42,21 @@ let decodeFloat =
 let decodeInt = json =>
   decodeFloat(json) |. Belt.Result.map(int_of_float);
 
-let decodeArray =
-  decodePrim(Js.Json.decodeArray, DecodeError.ExpectedArray);
+let decodeArray = (decode, json) => {
+  let (>.) = BsAbstract.Function.Infix.(>.);
+
+  let decodeEach = BsAbstract.Array.Foldable.fold_left(((pos, acc), curr) => {
+    open Belt.Result;
+    let result = switch (acc, decode(curr)) {
+    | (Ok(arr), Ok(v)) => Ok(Array.append(arr, [|v|]))
+    | (Ok(_), Error(x)) => Error(NonEmptyList.pure((pos, x)))
+    | (Error(errs), Error(x)) => Error(NonEmptyList.cons((pos, x), errs))
+    | (Error(errs), Ok(_)) => Error(errs)
+    };
+    (pos + 1, result)
+  }, (0, pure([||]))) >. snd >. mapErr(NonEmptyList.reverse);
+
+  decodePrim(Js.Json.decodeArray, DecodeError.ExpectedArray, json)
+    |> map(decodeEach)
+    |> flatMap(mapErr(x => DecodeError.Arr(x)));
+};

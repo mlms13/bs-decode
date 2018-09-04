@@ -27,7 +27,8 @@
   "author": "Michael Martin-Smucker",
   "license": "MIT",
   "dependencies": {
-    "bs-abstract": "^0.16.0"
+    "bs-abstract": "^0.16.0",
+    "bs-nonempty": "mlms13/bs-nonempty"
   },
   "devDependencies": {
     "@glennsl/bs-jest": "^0.4.2",
