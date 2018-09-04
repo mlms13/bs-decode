@@ -60,3 +60,6 @@ let decodeArray = (decode, json) => {
     |> map(decodeEach)
     |> flatMap(mapErr(x => DecodeError.Arr(x)));
 };
+
+let decodeList = (decode, json) =>
+  decodeArray(decode, json) |> map(Array.to_list);

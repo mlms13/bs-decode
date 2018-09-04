@@ -44,4 +44,8 @@ describe("Test array decoders", () => {
   test("Array fails on mixed array", () =>
     expect(decodeArray(decodeString, jsonArrayMixed)) |> toEqual(Error(Arr(NonEmptyList.pure((2, Primitive(ExpectedString, Js.Json.number(3.5)))))))
   );
+
+  test("List succeeds on JSON array of string", () => expect(decodeList(decodeString, jsonArray)) |> toEqual(Ok(["a", "b", "c"])));
+  test("List fails on JSON null", () => expect(decodeList(decodeString, Js.Json.null)) |> toEqual(Error(Primitive(ExpectedArray, Js.Json.null))));
+  test("List inner decode int fails on array of string", () => expect(decodeList(decodeInt, jsonArray)) |> toEqual(Error(Arr(decodeErrs))));
 });
