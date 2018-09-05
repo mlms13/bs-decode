@@ -63,3 +63,9 @@ let decodeArray = (decode, json) => {
 
 let decodeList = (decode, json) =>
   decodeArray(decode, json) |> map(Array.to_list);
+
+let decodeField = (name, decode, json) =>
+  decodePrim(Js.Json.decodeObject, DecodeError.ExpectedObject, json)
+    |> map(Js.Dict.get(_, name))
+    |> flatMap(fromOption(DecodeError.objPure(name, DecodeError.MissingField)))
+    |> flatMap(v => decode(v) |> mapErr(err => DecodeError.objPure(name, DecodeError.ParseField(err))));

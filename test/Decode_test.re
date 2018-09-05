@@ -27,6 +27,7 @@ describe("Test primitive decoders", () => {
 
 describe("Test array decoders", () => {
   let jsonArray = Js.Json.array([| Js.Json.string("a"), Js.Json.string("b"), Js.Json.string("c") |]);
+  let jsonEmptyArray = Js.Json.array([||]);
   let jsonString = Js.Json.string("Foo");
   let jsonArrayMixed = Js.Json.array([| Js.Json.string("a"), Js.Json.string("b"), Js.Json.number(3.5) |]);
 
@@ -39,6 +40,8 @@ describe("Test array decoders", () => {
   )));
 
   test("Array succeeds on array of string", () => expect(decodeArray(decodeString, jsonArray)) |> toEqual(Ok([| "a", "b", "c" |])));
+  test("Array string succeeds on empty array", () => expect(decodeArray(decodeString, jsonEmptyArray)) |> toEqual(Ok([||])));
+  test("Array int succeeds on empty array", () => expect(decodeArray(decodeInt, jsonEmptyArray)) |> toEqual(Ok([||])));
   test("Array fails on string", () => expect(decodeArray(decodeString, jsonString)) |> toEqual(Error(Primitive(ExpectedArray, jsonString))));
   test("Array inner decode int fails on array of string", () => expect(decodeArray(decodeInt, jsonArray)) |> toEqual(Error(Arr(decodeErrs))));
   test("Array fails on mixed array", () =>
@@ -48,4 +51,18 @@ describe("Test array decoders", () => {
   test("List succeeds on JSON array of string", () => expect(decodeList(decodeString, jsonArray)) |> toEqual(Ok(["a", "b", "c"])));
   test("List fails on JSON null", () => expect(decodeList(decodeString, Js.Json.null)) |> toEqual(Error(Primitive(ExpectedArray, Js.Json.null))));
   test("List inner decode int fails on array of string", () => expect(decodeList(decodeInt, jsonArray)) |> toEqual(Error(Arr(decodeErrs))));
+});
+
+describe("Test record field decoders", () => {
+  let (string, number, object_) = Js.Json.(string, number, object_);
+  let obj = Js.Dict.fromList([("name", string("Foo")), ("age", number(30.))]) |> object_;
+
+  test("String field succeeds", () => expect(decodeField("name", decodeString, obj)) |> toEqual(Ok("Foo")));
+  test("Int field succeeds", () => expect(decodeField("age", decodeInt, obj)) |> toEqual(Ok(30)));
+  test("Field fails when missing", () => expect(decodeField("blah", decodeInt, obj)) |> toEqual(Error(objPure("blah", MissingField))));
+  test("Field fails on wrong type", () => expect(decodeField("name", decodeInt, obj)) |> toEqual(Error(objPure("name", ParseField(Primitive(ExpectedNumber, string("Foo")))))));
+});
+
+describe("Test optional field and value decoders", () => {
+  ();
 });
