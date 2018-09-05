@@ -1,8 +1,29 @@
 open Jest;
 open Expect;
-open Decode;
 open DecodeError;
 open Belt.Result;
+let (
+  decodeString,
+  decodeFloat,
+  decodeInt,
+  decodeArray,
+  decodeList,
+  decodeField
+) = Decode.(decodeString, decodeFloat, decodeInt, decodeArray, decodeList, decodeField);
+
+
+/**
+ * Sample module used to decode json into a record type
+ */
+module User = {
+  let ((<$>), (<*>)) = ResultDecodeError.((<$>), (<*>));
+  type t = { name: string, age: int };
+  let make = (name, age) => { name, age };
+
+  let decode = obj => make
+    <$> decodeField("name", decodeString, obj)
+    <*> decodeField("age", decodeInt, obj);
+};
 
 describe("Test primitive decoders", () => {
   let jsonString = Js.Json.string("Foo");
@@ -55,14 +76,35 @@ describe("Test array decoders", () => {
 
 describe("Test record field decoders", () => {
   let (string, number, object_) = Js.Json.(string, number, object_);
+  let (singleton, cons) = NonEmptyList.(pure, cons);
+  let ((<$>), (<*>)) = ResultDecodeError.((<$>), (<*>));
+
   let obj = Js.Dict.fromList([("name", string("Foo")), ("age", number(30.))]) |> object_;
+  let nameAsIntError = ParseField(Primitive(ExpectedNumber, string("Foo")));
+  let decoded = User.decode(obj);
+
+  let decodeFail = User.make
+    <$> decodeField("missing", decodeString, obj)
+    <*> decodeField("name", decodeInt, obj);
+
+  let decodeErrors = Error(Obj(
+    cons(("missing", MissingField), singleton(("name", nameAsIntError)))
+  ));
 
   test("String field succeeds", () => expect(decodeField("name", decodeString, obj)) |> toEqual(Ok("Foo")));
   test("Int field succeeds", () => expect(decodeField("age", decodeInt, obj)) |> toEqual(Ok(30)));
   test("Field fails when missing", () => expect(decodeField("blah", decodeInt, obj)) |> toEqual(Error(objPure("blah", MissingField))));
-  test("Field fails on wrong type", () => expect(decodeField("name", decodeInt, obj)) |> toEqual(Error(objPure("name", ParseField(Primitive(ExpectedNumber, string("Foo")))))));
+  test("Field fails on wrong type", () => expect(decodeField("name", decodeInt, obj)) |> toEqual(Error(objPure("name", nameAsIntError))));
+  test("Decode all fields of user record into User", () => expect(decoded) |> toEqual(Ok(User.make("Foo", 30))));
+  test("Decode as user with incorrect fields fails", () => expect(decodeFail) |> toEqual(decodeErrors));
 });
 
 describe("Test optional field and value decoders", () => {
   ();
 });
+
+/**
+ * TODO: test object field which itself is an object
+ */
+
+

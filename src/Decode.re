@@ -1,31 +1,24 @@
 
 /* RESULT HELPER FUNCTIONS */
+let (map, mapErr, alt) = ResultDecodeError.(map, mapErr, alt);
 let fromOption = (failure, opt) => switch opt {
 | None => Belt.Result.Error(failure)
 | Some(v) => Belt.Result.Ok(v)
 };
 
-let alt = (a, b) => switch a {
-| Belt.Result.Error(_) => b
-| Belt.Result.Ok(v) => Belt.Result.Ok(v)
-};
-
-let map = (f, v) => switch v {
-| Belt.Result.Error(x) => Belt.Result.Error(x)
-| Belt.Result.Ok(v) => Belt.Result.Ok(f(v))
-};
-
-let mapErr = (f, v) => switch v {
-| Belt.Result.Ok(v) => Belt.Result.Ok(v)
-| Belt.Result.Error(x) => Belt.Result.Error(f(x))
-};
+let pure = v => Belt_Result.Ok(v);
 
 let flatMap = (f, v) => switch v {
 | Belt.Result.Error(x) => Belt.Result.Error(x)
 | Belt.Result.Ok(v) => f(v)
 };
 
-let pure = v => Belt_Result.Ok(v);
+/**
+ * TODO: do we want to make `Decoder` its own type? Leaning toward no.
+ */
+/* type t('a) =>
+  | Decode(Js.Json.t => Belt.Result.t('a, DecodeError.t)); */
+
 
 let optional = (decode, json) =>
   decode(json) |> map(v => Some(v)) |> alt(_, pure(None));
