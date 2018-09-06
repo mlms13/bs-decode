@@ -14,6 +14,12 @@ let decodeFloat =
 let decodeInt = json =>
   decodeFloat(json) |. Belt.Result.map(int_of_float);
 
+let optional = (decode, json) =>
+  switch (Js.Json.decodeNull(json)) {
+  | Some(_) => pure(None)
+  | None => decode(json) |> map(v => Some(v))
+  };
+
 let decodeArray = (decode, json) => {
   let (>.) = BsAbstract.Function.Infix.(>.);
 
@@ -44,3 +50,11 @@ let decodeField = (name, decode, json) =>
 
 let decodeFieldWithFallback = (name, decode, fallback, json) =>
   decodeField(name, decode, json) |> ResultDecodeError.recoverWith(fallback);
+
+let decodeOptionalField = (name, decode, json) =>
+  decodePrim(Js.Json.decodeObject, DecodeError.ExpectedObject, json)
+    |> map(Js.Dict.get(_, name))
+    |> flatMap(opt => switch opt {
+      | None => pure(None)
+      | Some(v) => optional(decode, v)
+      });

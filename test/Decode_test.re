@@ -10,8 +10,10 @@ let (
   decodeArray,
   decodeList,
   decodeField,
-  decodeFieldWithFallback
-) = Decode.(decodeString, decodeFloat, decodeInt, decodeArray, decodeList, decodeField, decodeFieldWithFallback);
+  decodeFieldWithFallback,
+  decodeOptionalField,
+  optional
+) = Decode.(decodeString, decodeFloat, decodeInt, decodeArray, decodeList, decodeField, decodeFieldWithFallback, decodeOptionalField, optional);
 
 
 /**
@@ -133,4 +135,44 @@ describe("Test value and field recovery from failed parse", () => {
   test("Bad field recovers with fallback", () => expect(objRecovery) |> toEqual(Ok(User.make("Foo", 30))));
 });
 
-/* describe("") */
+describe("Test optionally empty fields and values", () => {
+  let jsonNull = Js.Json.null;
+  let jsonString = Js.Json.string("Foo");
+  let jsonInt = Js.Json.number(3.);
+
+  let optStr = optional(decodeString);
+
+  let obj = Js.Dict.fromList([
+    ("i", jsonInt),
+    ("s", jsonString),
+    ("n", jsonNull)
+  ]) |> Js.Json.object_;
+
+  let optFieldString = decodeOptionalField("s", decodeString, obj);
+  let reqFieldOptValueString = decodeField("s", optional(decodeString), obj);
+  let optFieldInt = decodeOptionalField("x", decodeInt, obj);
+  let optValueInt = decodeField("x", optional(decodeInt), obj);
+  let nullFieldInt = decodeOptionalField("n", decodeInt, obj);
+  let nullValueInt = decodeField("n", optional(decodeInt), obj);
+
+
+  test("Present value parses as Some string", () => expect(optStr(jsonString)) |> toEqual(Ok(Some("Foo"))));
+  test("Null value parses as None", () => expect(optStr(jsonNull)) |> toEqual(Ok(None)));
+  test("Present value of incorrect type is still an Error", () => expect(optStr(jsonInt)) |> toEqual(Error(Primitive(ExpectedString, jsonInt))));
+
+  test("Present field and value is Some when field is optional", () => expect(optFieldString) |> toEqual(Ok(Some("Foo"))));
+  test("Present field and value is Some when value is optional", () => expect(reqFieldOptValueString) |> toEqual(Ok(Some("Foo"))));
+  test("If int field is missing, it parses as None if field is optional", () => expect(optFieldInt) |> toEqual(Ok(None)));
+  test("If int field is missing, it parses as Error if only value is optional", () => expect(optValueInt) |> toEqual(Error(objPure("x", MissingField))));
+  test("Present field with null value parses as None for optional field", () => expect(nullFieldInt) |> toEqual(Ok(None)));
+  test("Present field with null value parses as None for optional value", () => expect(nullValueInt) |> toEqual(Ok(None)));
+  test("Trying to parse string field as int is Error, not None", () => expect(decodeOptionalField("s", decodeInt, obj)) |> toEqual(Error(Primitive(ExpectedNumber, jsonString))));
+});
+
+/**
+ * TODO: decode date
+ */
+
+/**
+ * TODO: decode variant
+ */
