@@ -27,9 +27,11 @@ module User = {
 
 module Parent = {
   let ((<$>), (<*>)) = ResultDecodeError.((<$>), (<*>));
-  type t = { user: User.t };
-  let make = (user) => { user };
-  let decode = obj => make <$> decodeField("user", User.decode, obj);
+  type t = { user: User.t, other: float };
+  let make = (user, other) => { user, other };
+  let decode = obj => make
+    <$> decodeField("user", User.decode, obj)
+    <*> Ok(3.14) ;
 };
 
 describe("Test primitive decoders", () => {
@@ -110,7 +112,7 @@ describe("Test record field decoders", () => {
   test("Field fails on wrong type", () => expect(decodeField("name", decodeInt, obj)) |> toEqual(Error(objPure("name", nameAsIntError))));
   test("Decode all fields of user record into User", () => expect(decoded) |> toEqual(Ok(User.make("Foo", 30))));
   test("Decode as user with incorrect fields fails", () => expect(decodeFail) |> toEqual(decodeErrors));
-  test("Decode parent record with child record field", () => expect(Parent.decode(parentObj)) |> toEqual(Ok(Parent.make(User.make("Foo", 30)))));
+  test("Decode parent record with child record field", () => expect(Parent.decode(parentObj)) |> toEqual(Ok(Parent.make(User.make("Foo", 30), 3.14))));
 });
 
 describe("Test optional field and value decoders", () => {
