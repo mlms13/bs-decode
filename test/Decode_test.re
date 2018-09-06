@@ -1,25 +1,30 @@
 open Jest;
 open Expect;
 open DecodeError;
+let ((<$>), (<*>), recoverWith) = ResultDecodeError.((<$>), (<*>), recoverWith);
 open Belt.Result;
 let (
-  recover,
   decodeString,
   decodeFloat,
   decodeInt,
   decodeArray,
   decodeList,
-  decodeField
-) = Decode.(recover, decodeString, decodeFloat, decodeInt, decodeArray, decodeList, decodeField);
+  decodeField,
+  decodeFieldWithFallback
+) = Decode.(decodeString, decodeFloat, decodeInt, decodeArray, decodeList, decodeField, decodeFieldWithFallback);
 
 
 /**
  * Sample module used to decode json into a record type
  */
 module User = {
-  let ((<$>), (<*>)) = ResultDecodeError.((<$>), (<*>));
   type t = { name: string, age: int };
   let make = (name, age) => { name, age };
+
+  let jsonSample = Js.Dict.fromList([
+    ("name", Js.Json.string("Foo")),
+    ("age", Js.Json.number(30.))
+  ]) |> Js.Json.object_;
 
   let decode = obj => make
     <$> decodeField("name", decodeString, obj)
@@ -27,7 +32,6 @@ module User = {
 };
 
 module Parent = {
-  let ((<$>), (<*>)) = ResultDecodeError.((<$>), (<*>));
   type t = { user: User.t, other: float };
   let make = (user, other) => { user, other };
   let decode = obj => make
@@ -85,19 +89,13 @@ describe("Test array decoders", () => {
 });
 
 describe("Test record field decoders", () => {
-  let (string, number, object_) = Js.Json.(string, number, object_);
+  let (string, object_) = Js.Json.(string, object_);
   let (singleton, cons) = NonEmptyList.(pure, cons);
-  let ((<$>), (<*>)) = ResultDecodeError.((<$>), (<*>));
+  let obj = User.jsonSample;
 
-  let obj = Js.Dict.fromList([("name", string("Foo")), ("age", number(30.))]) |> object_;
   let parentObj = Js.Dict.fromList([("user", obj)]) |> object_;
   let nameAsIntError = ParseField(Primitive(ExpectedNumber, string("Foo")));
   let decoded = User.decode(obj);
-
-  /* User.make
-    |> required("name", decodeString)
-    |> required("age", decodeInt)
-    |. decode(obj); */
 
   let decodeFail = User.make
     <$> decodeField("missing", decodeString, obj)
@@ -116,10 +114,23 @@ describe("Test record field decoders", () => {
   test("Decode parent record with child record field", () => expect(Parent.decode(parentObj)) |> toEqual(Ok(Parent.make(User.make("Foo", 30), 3.14))));
 });
 
-describe("Test optional field and value decoders", () => {
+describe("Test value and field recovery from failed parse", () => {
   let jsonNumber = Js.Json.number(3.14);
-  /* TODO */
-  test("Recover from recoverable parse error", () => expect(recover(decodeString, jsonNumber)) |> toEqual(Ok(None)));
+  let successParse = decodeFloat(jsonNumber);
+  let failedParse = decodeString(jsonNumber);
+
+  let invalidUserObj = Js.Dict.fromList([
+    ("name", jsonNumber),
+    ("age", Js.Json.number(30.))
+  ]) |> Js.Json.object_;
+
+  let objRecovery = User.make
+    <$> decodeFieldWithFallback("name", decodeString, "Foo", invalidUserObj)
+    <*> decodeField("age", decodeInt, invalidUserObj);
+
+  test("Failed parse can be recovered with literal value", () => expect(failedParse |> recoverWith("foo")) |> toEqual(Ok("foo")));
+  test("Successful parse is unaffected by recovery", () => expect(successParse |> recoverWith(1.0)) |> toEqual(Ok(3.14)));
+  test("Bad field recovers with fallback", () => expect(objRecovery) |> toEqual(Ok(User.make("Foo", 30))));
 });
 
 /* describe("") */

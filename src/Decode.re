@@ -1,10 +1,6 @@
-
 /* RESULT HELPER FUNCTIONS */
 let (map, mapErr, pure, flatMap, alt, fromOption) =
   ResultDecodeError.(map, mapErr, pure, flat_map, alt, note);
-
-let recover = (decode, json) =>
-  decode(json) |> map(v => Some(v)) |> alt(_, pure(None));
 
 let decodePrim = (decode, primFailure, json) =>
   decode(json) |> fromOption(DecodeError.Primitive(primFailure, json));
@@ -45,3 +41,6 @@ let decodeField = (name, decode, json) =>
     |> map(Js.Dict.get(_, name))
     |> flatMap(fromOption(DecodeError.objPure(name, DecodeError.MissingField)))
     |> flatMap(v => decode(v) |> mapErr(err => DecodeError.objPure(name, DecodeError.ParseField(err))));
+
+let decodeFieldWithFallback = (name, decode, fallback, json) =>
+  decodeField(name, decode, json) |> ResultDecodeError.recoverWith(fallback);

@@ -56,7 +56,13 @@ let map2 = (f, a, b) => f <$> a <*> b;
 
 let mapErr = (fn, v) => BsAbstract.Result.Bifunctor.bimap(BsAbstract.Functions.id, fn, v);
 
+/**
+ * TODO: this should really come from bs-abstract... waiting on my PR
+ */
 let note = (failure, opt) => switch opt {
 | None => Belt.Result.Error(failure)
 | Some(v) => Belt.Result.Ok(v)
 };
+
+let recoverWith = (a) =>
+  alt(_, pure(a));
