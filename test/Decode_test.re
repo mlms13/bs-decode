@@ -25,6 +25,13 @@ module User = {
     <*> decodeField("age", decodeInt, obj);
 };
 
+module Parent = {
+  let ((<$>), (<*>)) = ResultDecodeError.((<$>), (<*>));
+  type t = { user: User.t };
+  let make = (user) => { user };
+  let decode = obj => make <$> decodeField("user", User.decode, obj);
+};
+
 describe("Test primitive decoders", () => {
   let jsonString = Js.Json.string("Foo");
   let jsonFloat = Js.Json.number(1.4);
@@ -80,8 +87,14 @@ describe("Test record field decoders", () => {
   let ((<$>), (<*>)) = ResultDecodeError.((<$>), (<*>));
 
   let obj = Js.Dict.fromList([("name", string("Foo")), ("age", number(30.))]) |> object_;
+  let parentObj = Js.Dict.fromList([("user", obj)]) |> object_;
   let nameAsIntError = ParseField(Primitive(ExpectedNumber, string("Foo")));
   let decoded = User.decode(obj);
+
+  /* User.make
+    |> required("name", decodeString)
+    |> required("age", decodeInt)
+    |. decode(obj); */
 
   let decodeFail = User.make
     <$> decodeField("missing", decodeString, obj)
@@ -97,6 +110,7 @@ describe("Test record field decoders", () => {
   test("Field fails on wrong type", () => expect(decodeField("name", decodeInt, obj)) |> toEqual(Error(objPure("name", nameAsIntError))));
   test("Decode all fields of user record into User", () => expect(decoded) |> toEqual(Ok(User.make("Foo", 30))));
   test("Decode as user with incorrect fields fails", () => expect(decodeFail) |> toEqual(decodeErrors));
+  test("Decode parent record with child record field", () => expect(Parent.decode(parentObj)) |> toEqual(Ok(Parent.make(User.make("Foo", 30)))));
 });
 
 describe("Test optional field and value decoders", () => {
