@@ -1,17 +1,7 @@
 
 /* RESULT HELPER FUNCTIONS */
-let (map, mapErr, alt) = ResultDecodeError.(map, mapErr, alt);
-let fromOption = (failure, opt) => switch opt {
-| None => Belt.Result.Error(failure)
-| Some(v) => Belt.Result.Ok(v)
-};
-
-let pure = v => Belt_Result.Ok(v);
-
-let flatMap = (f, v) => switch v {
-| Belt.Result.Error(x) => Belt.Result.Error(x)
-| Belt.Result.Ok(v) => f(v)
-};
+let (map, mapErr, pure, flatMap, alt, fromOption) =
+  ResultDecodeError.(map, mapErr, pure, flat_map, alt, note);
 
 let recover = (decode, json) =>
   decode(json) |> map(v => Some(v)) |> alt(_, pure(None));

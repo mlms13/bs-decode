@@ -12,6 +12,13 @@ let ap = (f, v) => switch (f, v) {
 | (Belt.Result.Error(fnx), Belt.Result.Error(ax)) => Belt.Result.Error(DecodeError.combine(fnx, ax))
 };
 
+let pure = v => Belt_Result.Ok(v);
+
+let flat_map = (f, a) => switch a {
+| Belt.Result.Error(x) => Belt.Result.Error(x)
+| Belt.Result.Ok(v) => f(v)
+};
+
 let alt = (a, b) => switch a {
 | Belt.Result.Error(_) => b
 | Belt.Result.Ok(v) => Belt.Result.Ok(v)
@@ -27,16 +34,29 @@ module Apply: APPLY with type t('a) = t('a) = {
   let apply = ap;
 };
 
-module InfixApply = BsAbstract.Infix.Apply(Apply);
+module Applicative: APPLICATIVE with type t('a) = t('a) = {
+  include Apply;
+  let pure = pure;
+};
 
-let ((<$>), (<*>)) = InfixApply.((<$>), (<*>));
-
-/* let map2 = (f, a, b) => ap(map(f, a), b); */
-let map2 = (f, a, b) => f <$> a <*> b;
+module Monad: MONAD with type t('a) = t('a) = {
+  include Applicative;
+  let flat_map = (a, f) => flat_map(f, a);
+};
 
 module Alt: ALT with type t('a) = t('a) = {
   include Functor;
   let alt = alt;
 };
 
+module InfixApply = BsAbstract.Infix.Apply(Apply);
+
+let ((<$>), (<*>)) = InfixApply.((<$>), (<*>));
+let map2 = (f, a, b) => f <$> a <*> b;
+
 let mapErr = (fn, v) => BsAbstract.Result.Bifunctor.bimap(BsAbstract.Functions.id, fn, v);
+
+let note = (failure, opt) => switch opt {
+| None => Belt.Result.Error(failure)
+| Some(v) => Belt.Result.Ok(v)
+};

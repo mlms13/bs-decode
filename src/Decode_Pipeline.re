@@ -1,6 +1,10 @@
 /* Result helpers */
 let ((<$>), (<*>)) = ResultDecodeError.((<$>), (<*>));
 
+/**
+ * `succeed` returns a `json => Result` decode function that ignores the `json`
+ * argument and always returns `Ok`
+ */
 let succeed = v => BsAbstract.Function.const(Belt.Result.Ok(v));
 
 let map2 = (f, a, b) =>
