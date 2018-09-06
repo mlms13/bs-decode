@@ -1,15 +1,24 @@
-type decoder('a) = Decoder(Js.Json.t => Belt.Result.t('a, DecodeError.t));
-let make = v => Decoder(v);
-let succeed = v => Decoder(_ => Belt.Result.Ok(v));
+/* Result helpers */
+let ((<$>), (<*>)) = ResultDecodeError.((<$>), (<*>));
 
-let map2 = (fn, Decoder(decodeA), Decoder(decodeB)) =>
-  Decoder(json => ResultDecodeError.map2(fn, decodeA(json), decodeB(json)));
+let succeed = v => BsAbstract.Function.const(Belt.Result.Ok(v));
 
-let field = (name, Decoder(decoder)) =>
-  Decoder(Decode.decodeField(name, decoder));
+let map2 = (f, a, b) =>
+  json => f <$> a(json) <*> b(json);
 
-let required = (name, a, fn) =>
-  map2((|>), field(name, a), fn);
+let map3 = (f, a, b, c) =>
+  json => f <$> a(json) <*> b(json) <*> c(json);
 
-let run = (Decoder(decoder), json) =>
-  decoder(json);
+let map4 = (f, a, b, c, d) =>
+  json => f <$> a(json) <*> b(json) <*> c(json) <*> d(json);
+
+let map5 = (f, a, b, c, d, e) =>
+  json => f <$> a(json) <*> b(json) <*> c(json) <*> d(json) <*> e(json);
+
+let pipe = (a, b, json) =>
+  map2((|>), a, b, json);
+
+let required = (name, a) =>
+  pipe(Decode.decodeField(name, a));
+
+let run = BsAbstract.Functions.id;

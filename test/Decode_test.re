@@ -3,13 +3,14 @@ open Expect;
 open DecodeError;
 open Belt.Result;
 let (
+  recover,
   decodeString,
   decodeFloat,
   decodeInt,
   decodeArray,
   decodeList,
   decodeField
-) = Decode.(decodeString, decodeFloat, decodeInt, decodeArray, decodeList, decodeField);
+) = Decode.(recover, decodeString, decodeFloat, decodeInt, decodeArray, decodeList, decodeField);
 
 
 /**
@@ -116,11 +117,9 @@ describe("Test record field decoders", () => {
 });
 
 describe("Test optional field and value decoders", () => {
-  ();
+  let jsonNumber = Js.Json.number(3.14);
+  /* TODO */
+  test("Recover from recoverable parse error", () => expect(recover(decodeString, jsonNumber)) |> toEqual(Ok(None)));
 });
 
-/**
- * TODO: test object field which itself is an object
- */
-
-
+/* describe("") */

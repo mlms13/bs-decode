@@ -13,14 +13,7 @@ let flatMap = (f, v) => switch v {
 | Belt.Result.Ok(v) => f(v)
 };
 
-/**
- * TODO: do we want to make `Decoder` its own type? Leaning toward no.
- */
-/* type t('a) =>
-  | Decode(Js.Json.t => Belt.Result.t('a, DecodeError.t)); */
-
-
-let optional = (decode, json) =>
+let recover = (decode, json) =>
   decode(json) |> map(v => Some(v)) |> alt(_, pure(None));
 
 let decodePrim = (decode, primFailure, json) =>
