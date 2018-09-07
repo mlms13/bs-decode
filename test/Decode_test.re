@@ -57,7 +57,7 @@ describe("Test primitive decoders", () => {
   test("Float fails on null", () => expect(decodeFloat(jsonNull)) |> toEqual(Error(Primitive(ExpectedNumber, jsonNull))));
 
   test("Int succeeds on int", () => expect(decodeInt(jsonInt)) |> toEqual(Ok(4)));
-  /* test("Int fails on float", () => expect(decodeInt(jsonFloat)) |> toEqual(Error(Primitive(Expected?, jsonFloat)))); */
+  test("Int fails on float", () => expect(decodeInt(jsonFloat)) |> toEqual(Error(Primitive(ExpectedInt, jsonFloat))));
   test("Int fails on string", () => expect(decodeInt(jsonString)) |> toEqual(Error(Primitive(ExpectedNumber, jsonString))));
   test("Int fails on null", () => expect(decodeInt(jsonNull)) |> toEqual(Error(Primitive(ExpectedNumber, jsonNull))));
 });

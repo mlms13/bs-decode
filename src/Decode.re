@@ -11,8 +11,13 @@ let decodeString =
 let decodeFloat =
   decodePrim(Js.Json.decodeNumber, DecodeError.ExpectedNumber);
 
-let decodeInt = json =>
-  decodeFloat(json) |. Belt.Result.map(int_of_float);
+let decodeInt = json => {
+  let floatToResultInt = f => switch (mod_float(f, floor(f))) {
+  | 0. => Belt.Result.Ok(int_of_float(f))
+  | _ => Belt.Result.Error(DecodeError.Primitive(DecodeError.ExpectedInt, json))
+  };
+  decodeFloat(json) |> ResultDecodeError.flat_map(floatToResultInt)
+};
 
 let optional = (decode, json) =>
   switch (Js.Json.decodeNull(json)) {

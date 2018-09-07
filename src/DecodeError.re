@@ -1,7 +1,8 @@
 type primError =
   | ExpectedString
   | ExpectedNumber
-  | ExpectedDate
+  | ExpectedInt
+  /* | ExpectedDate */
   | ExpectedArray
   | ExpectedObject
   ;
