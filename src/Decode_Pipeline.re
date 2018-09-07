@@ -22,7 +22,16 @@ let map5 = (f, a, b, c, d, e) =>
 let pipe = (a, b, json) =>
   map2((|>), a, b, json);
 
-let required = (name, a) =>
-  pipe(Decode.decodeField(name, a));
+let required = (name, decode) =>
+  pipe(Decode.decodeField(name, decode));
+
+let optional = (name, decode) =>
+  pipe(Decode.decodeOptionalField(name, decode));
+
+let fallback = (name, decode, fallback) =>
+  pipe(Decode.decodeFieldWithFallback(name, decode, fallback));
+
+let hardcoded = v =>
+  pipe(succeed(v));
 
 let run = BsAbstract.Functions.id;
