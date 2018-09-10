@@ -54,6 +54,9 @@ module InfixApply = BsAbstract.Infix.Apply(Apply);
 let ((<$>), (<*>)) = InfixApply.((<$>), (<*>));
 let map2 = (f, a, b) => f <$> a <*> b;
 
+module InfixAlt = BsAbstract.Infix.Alt(Alt);
+let (<|>) = InfixAlt.(<|>);
+
 let mapErr = (fn, v) => BsAbstract.Result.Bifunctor.bimap(BsAbstract.Functions.id, fn, v);
 
 /**
