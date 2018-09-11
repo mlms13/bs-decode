@@ -10,8 +10,8 @@ module ResultTransform: DecodeBase.TransformError with type t('a) = Belt.Result.
 module DecodeAsResult =
   DecodeBase.DecodeBase(
     ResultTransform,
-    ResultDecodeError.Monad,
-    ResultDecodeError.Alt
+    ResultOfDecodeFailure.Monad,
+    ResultOfDecodeFailure.Alt
   );
 
 include DecodeAsResult;

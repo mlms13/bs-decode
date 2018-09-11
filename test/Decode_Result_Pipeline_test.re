@@ -60,7 +60,7 @@ describe("Test piping to build up decoders, using |>", () => {
 });
 
 describe("Test optional, fallback, hardcoded helpers", () => {
-  let map = ResultDecodeError.map;
+  let map = ResultOfDecodeFailure.map;
   let decoder =
     succeed(User.make)
       |> fallback("name", decodeString, "Bar")

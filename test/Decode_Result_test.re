@@ -1,7 +1,8 @@
 open Jest;
 open Expect;
 open DecodeFailure;
-let ((<$>), (<*>), (<|>), recoverWith, mapErr) = ResultDecodeError.((<$>), (<*>), (<|>), recoverWith, mapErr);
+let ((<$>), (<*>), (<|>), recoverWith, mapErr) =
+  ResultOfDecodeFailure.((<$>), (<*>), (<|>), recoverWith, mapErr);
 open Belt.Result;
 let (
   decodeString,
