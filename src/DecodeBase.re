@@ -91,4 +91,51 @@ module DecodeBase = (
       decodeField(fieldA, decodeA, json),
       decodeField(fieldB, decodeB, json)
     );
+
+  module Pipeline = {
+    /**
+     * `succeed` returns a `json => Result` decode function that ignores the `json`
+     * argument and always returns `Ok`
+     */
+    let succeed = v => _ => ok(v);
+
+    let map2 = (f, a, b) =>
+      json => f <$> a(json) <*> b(json);
+
+    let map3 = (f, a, b, c) =>
+      json => f <$> a(json) <*> b(json) <*> c(json);
+
+    let map4 = (f, a, b, c, d) =>
+      json => f <$> a(json) <*> b(json) <*> c(json) <*> d(json);
+
+    let map5 = (f, a, b, c, d, e) =>
+      json => f <$> a(json) <*> b(json) <*> c(json) <*> d(json) <*> e(json);
+
+    let pipe = (a, b, json) =>
+      map2((|>), a, b, json);
+
+    let required = (name, decode) =>
+      pipe(decodeField(name, decode));
+
+    let optional = (name, decode) =>
+      pipe(decodeOptionalField(name, decode));
+
+    let fallback = (name, decode, fallback) =>
+      pipe(decodeFieldWithFallback(name, decode, fallback));
+
+    let hardcoded = v =>
+      pipe(succeed(v));
+
+    /**
+     * `run` takes a decoder and some json, and it passes that json to the
+     * decoder. The result is that your decoder is run with the provided json
+     *
+     * The actual signature looks something like this:
+     * (json => t), json => t
+     *
+     * ...which, turns out, is `identity`.
+     *
+     */
+    let run = BsAbstract.Functions.id;
+  }
 };

@@ -6,10 +6,12 @@ module ResultTransform: DecodeBase.TransformError with type t('a) = Belt.Result.
   | Belt.Result.Error(x) => Belt.Result.Error(fn(x))
   };
 };
-module DecodeAsResult = DecodeBase.DecodeBase(
-  ResultTransform,
-  ResultDecodeError.Monad,
-  ResultDecodeError.Alt
-);
+
+module DecodeAsResult =
+  DecodeBase.DecodeBase(
+    ResultTransform,
+    ResultDecodeError.Monad,
+    ResultDecodeError.Alt
+  );
 
 include DecodeAsResult;

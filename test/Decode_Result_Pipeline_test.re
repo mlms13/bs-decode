@@ -4,7 +4,7 @@ open Belt.Result;
 
 let (string, number, object_, null) = Js.Json.(string, number, object_, null);
 let (succeed, map2, required, fallback, optional, hardcoded, run) =
-  Decode_Pipeline.(succeed, map2, required, fallback, optional, hardcoded, run);
+  DecodeAsResult.Pipeline.(succeed, map2, required, fallback, optional, hardcoded, run);
 
 let (decodeField, decodeFloat, decodeString, decodeInt) =
   DecodeAsResult.(decodeField, decodeFloat, decodeString, decodeInt);
