@@ -152,12 +152,11 @@ describe("Test optionally empty fields and values", () => {
   ]) |> Js.Json.object_;
 
   let optFieldString = decodeOptionalField("s", decodeString, obj);
-  let reqFieldOptValueString = decodeField("s", optional(decodeString), obj);
+  let reqFieldOptValueString = decodeField("s", optStr, obj);
   let optFieldInt = decodeOptionalField("x", decodeInt, obj);
   let optValueInt = decodeField("x", optional(decodeInt), obj);
   let nullFieldInt = decodeOptionalField("n", decodeInt, obj);
   let nullValueInt = decodeField("n", optional(decodeInt), obj);
-
 
   test("Present value parses as Some string", () => expect(optStr(jsonString)) |> toEqual(Ok(Some("Foo"))));
   test("Null value parses as None", () => expect(optStr(jsonNull)) |> toEqual(Ok(None)));
@@ -171,10 +170,6 @@ describe("Test optionally empty fields and values", () => {
   test("Present field with null value parses as None for optional value", () => expect(nullValueInt) |> toEqual(Ok(None)));
   test("Trying to parse string field as int is Error, not None", () => expect(decodeOptionalField("s", decodeInt, obj)) |> toEqual(Error(Val(ExpectedNumber, jsonString))));
 });
-
-/**
- * TODO: decode date
- */
 
 type customErr('a) =
   | Decode(DecodeFailure.t)
