@@ -6,6 +6,9 @@ let (string, number, object_, null) = Js.Json.(string, number, object_, null);
 let (succeed, map2, required, fallback, optional, hardcoded, run) =
   Decode_Pipeline.(succeed, map2, required, fallback, optional, hardcoded, run);
 
+let (decodeField, decodeFloat, decodeString, decodeInt) =
+  DecodeAsResult.(decodeField, decodeFloat, decodeString, decodeInt);
+
 module Point = {
   type t = { x: float, y: float };
   let make = (x, y) => { x, y };
@@ -39,8 +42,8 @@ describe("Test lazily executing decoders with a single JSON object", () => {
   let decoded =
     map2(
       Point.make,
-      Decode.decodeField("x", Decode.decodeFloat),
-      Decode.decodeField("y", Decode.decodeFloat)
+      decodeField("x", decodeFloat),
+      decodeField("y", decodeFloat)
     ) |. run(Point.sample);
 
   test("Lazy execution successfully parses point", () => expect(decoded) |> toEqual(Ok(Point.make(3.1, 2.0))));
@@ -49,8 +52,8 @@ describe("Test lazily executing decoders with a single JSON object", () => {
 describe("Test piping to build up decoders, using |>", () => {
   let decoded =
     succeed(Point.make)
-      |> required("x", Decode.decodeFloat)
-      |> required("y", Decode.decodeFloat)
+      |> required("x", decodeFloat)
+      |> required("y", decodeFloat)
       |. run(Point.sample);
 
   test("Pipeline of required fields parses point", () => expect(decoded) |> toEqual(Ok(Point.make(3.1, 2.0))));
@@ -60,9 +63,9 @@ describe("Test optional, fallback, hardcoded helpers", () => {
   let map = ResultDecodeError.map;
   let decoder =
     succeed(User.make)
-      |> fallback("name", Decode.decodeString, "Bar")
-      |> optional("age", Decode.decodeInt)
-      |> optional("email", Decode.decodeString)
+      |> fallback("name", decodeString, "Bar")
+      |> optional("age", decodeInt)
+      |> optional("email", decodeString)
       |> hardcoded("No note");
 
   let completeDecoded = decoder |. run(User.sampleComplete);

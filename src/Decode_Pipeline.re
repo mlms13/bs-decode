@@ -23,13 +23,13 @@ let pipe = (a, b, json) =>
   map2((|>), a, b, json);
 
 let required = (name, decode) =>
-  pipe(Decode.decodeField(name, decode));
+  pipe(DecodeAsResult.decodeField(name, decode));
 
 let optional = (name, decode) =>
-  pipe(Decode.decodeOptionalField(name, decode));
+  pipe(DecodeAsResult.decodeOptionalField(name, decode));
 
 let fallback = (name, decode, fallback) =>
-  pipe(Decode.decodeFieldWithFallback(name, decode, fallback));
+  pipe(DecodeAsResult.decodeFieldWithFallback(name, decode, fallback));
 
 let hardcoded = v =>
   pipe(succeed(v));

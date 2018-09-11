@@ -1,6 +1,6 @@
 open Jest;
 open Expect;
-open DecodeError;
+open DecodeFailure;
 let ((<$>), (<*>), (<|>), recoverWith, mapErr) = ResultDecodeError.((<$>), (<*>), (<|>), recoverWith, mapErr);
 open Belt.Result;
 let (
@@ -15,7 +15,7 @@ let (
   decodeOptionalField,
   decodeTuple,
   optional
-) = Decode.(decodeString, decodeFloat, decodeInt, decodeArray, decodeList, decodeAt, decodeField, decodeFieldWithFallback, decodeOptionalField, decodeTuple, optional);
+) = DecodeAsResult.(decodeString, decodeFloat, decodeInt, decodeArray, decodeList, decodeAt, decodeField, decodeFieldWithFallback, decodeOptionalField, decodeTuple, decodeOpt);
 
 
 /**
@@ -30,9 +30,9 @@ module User = {
     ("age", Js.Json.number(30.))
   ]) |> Js.Json.object_;
 
-  let decode = obj => make
-    <$> decodeField("name", decodeString, obj)
-    <*> decodeField("age", decodeInt, obj);
+  let decode = json => make
+    <$> decodeField("name", decodeString, json)
+    <*> decodeField("age", decodeInt, json);
 };
 
 module Parent = {
@@ -50,18 +50,18 @@ describe("Test value decoders", () => {
   let jsonNull = Js.Json.null;
 
   test("String succeeds on string", () => expect(decodeString(jsonString)) |> toEqual(Ok("Foo")));
-  test("String fails on number", () => expect(decodeString(jsonFloat)) |> toEqual(Error(`ExpectedString(jsonFloat))));
-  test("String fails on null", () => expect(decodeString(jsonNull)) |> toEqual(Error(`ExpectedString(jsonNull))));
+  test("String fails on number", () => expect(decodeString(jsonFloat)) |> toEqual(Error(Val(ExpectedString, jsonFloat))));
+  test("String fails on null", () => expect(decodeString(jsonNull)) |> toEqual(Error(Val(ExpectedString, jsonNull))));
 
   test("Float succeeds on float", () => expect(decodeFloat(jsonFloat)) |> toEqual(Ok(1.4)));
   test("Float succeeds on int", () => expect(decodeFloat(jsonInt)) |> toEqual(Ok(4.0)));
-  test("Float fails on string", () => expect(decodeFloat(jsonString)) |> toEqual(Error(`ExpectedNumber(jsonString))));
-  test("Float fails on null", () => expect(decodeFloat(jsonNull)) |> toEqual(Error(`ExpectedNumber(jsonNull))));
+  test("Float fails on string", () => expect(decodeFloat(jsonString)) |> toEqual(Error(Val(ExpectedNumber, jsonString))));
+  test("Float fails on null", () => expect(decodeFloat(jsonNull)) |> toEqual(Error(Val(ExpectedNumber, jsonNull))));
 
   test("Int succeeds on int", () => expect(decodeInt(jsonInt)) |> toEqual(Ok(4)));
-  test("Int fails on float", () => expect(decodeInt(jsonFloat)) |> toEqual(Error(`ExpectedInt(jsonFloat))));
-  test("Int fails on string", () => expect(decodeInt(jsonString)) |> toEqual(Error(`ExpectedNumber(jsonString))));
-  test("Int fails on null", () => expect(decodeInt(jsonNull)) |> toEqual(Error(`ExpectedNumber(jsonNull))));
+  test("Int fails on float", () => expect(decodeInt(jsonFloat)) |> toEqual(Error(Val(ExpectedInt, jsonFloat))));
+  test("Int fails on string", () => expect(decodeInt(jsonString)) |> toEqual(Error(Val(ExpectedNumber, jsonString))));
+  test("Int fails on null", () => expect(decodeInt(jsonNull)) |> toEqual(Error(Val(ExpectedNumber, jsonNull))));
 });
 
 describe("Test array decoders", () => {
@@ -70,7 +70,7 @@ describe("Test array decoders", () => {
   let jsonString = Js.Json.string("Foo");
   let jsonArrayMixed = Js.Json.array([| Js.Json.string("a"), Js.Json.string("b"), Js.Json.number(3.5) |]);
 
-  let numError = str => `ExpectedNumber(Js.Json.string(str));
+  let numError = str => Val(ExpectedNumber, Js.Json.string(str));
 
   let decodeErrs = NonEmptyList.cons(
     (0, numError("a")), NonEmptyList.cons(
@@ -81,15 +81,15 @@ describe("Test array decoders", () => {
   test("Array succeeds on array of string", () => expect(decodeArray(decodeString, jsonArray)) |> toEqual(Ok([| "a", "b", "c" |])));
   test("Array string succeeds on empty array", () => expect(decodeArray(decodeString, jsonEmptyArray)) |> toEqual(Ok([||])));
   test("Array int succeeds on empty array", () => expect(decodeArray(decodeInt, jsonEmptyArray)) |> toEqual(Ok([||])));
-  test("Array fails on string", () => expect(decodeArray(decodeString, jsonString)) |> toEqual(Error(`ExpectedArray(jsonString))));
-  test("Array inner decode int fails on array of string", () => expect(decodeArray(decodeInt, jsonArray)) |> toEqual(Error(`InvalidArray(decodeErrs))));
+  test("Array fails on string", () => expect(decodeArray(decodeString, jsonString)) |> toEqual(Error(Val(ExpectedArray, jsonString))));
+  test("Array inner decode int fails on array of string", () => expect(decodeArray(decodeInt, jsonArray)) |> toEqual(Error(Arr(decodeErrs))));
   test("Array fails on mixed array", () =>
-    expect(decodeArray(decodeString, jsonArrayMixed)) |> toEqual(Error(`InvalidArray(NonEmptyList.pure((2, `ExpectedString(Js.Json.number(3.5)))))))
+    expect(decodeArray(decodeString, jsonArrayMixed)) |> toEqual(Error(Arr(NonEmptyList.pure((2, Val(ExpectedString, Js.Json.number(3.5)))))))
   );
 
   test("List succeeds on JSON array of string", () => expect(decodeList(decodeString, jsonArray)) |> toEqual(Ok(["a", "b", "c"])));
-  test("List fails on JSON null", () => expect(decodeList(decodeString, Js.Json.null)) |> toEqual(Error(`ExpectedArray(Js.Json.null))));
-  test("List inner decode int fails on array of string", () => expect(decodeList(decodeInt, jsonArray)) |> toEqual(Error(`InvalidArray(decodeErrs))));
+  test("List fails on JSON null", () => expect(decodeList(decodeString, Js.Json.null)) |> toEqual(Error(Val(ExpectedArray, Js.Json.null))));
+  test("List inner decode int fails on array of string", () => expect(decodeList(decodeInt, jsonArray)) |> toEqual(Error(Arr(decodeErrs))));
 });
 
 describe("Test record field decoders", () => {
@@ -98,20 +98,20 @@ describe("Test record field decoders", () => {
   let obj = User.jsonSample;
 
   let parentObj = Js.Dict.fromList([("user", obj)]) |> object_;
-  let nameAsIntError = `InvalidField(`ExpectedNumber(string("Foo")));
+  let nameAsIntError = InvalidField(Val(ExpectedNumber, string("Foo")));
   let decoded = User.decode(obj);
 
   let decodeFail = User.make
     <$> decodeField("missing", decodeString, obj)
     <*> decodeField("name", decodeInt, obj);
 
-  let decodeErrors = Error(`InvalidObject(
-    cons(("missing", `MissingField), singleton(("name", nameAsIntError)))
+  let decodeErrors = Error(Obj(
+    cons(("missing", MissingField), singleton(("name", nameAsIntError)))
   ));
 
   test("String field succeeds", () => expect(decodeField("name", decodeString, obj)) |> toEqual(Ok("Foo")));
   test("Int field succeeds", () => expect(decodeField("age", decodeInt, obj)) |> toEqual(Ok(30)));
-  test("Field fails when missing", () => expect(decodeField("blah", decodeInt, obj)) |> toEqual(Error(objPure("blah", `MissingField))));
+  test("Field fails when missing", () => expect(decodeField("blah", decodeInt, obj)) |> toEqual(Error(objPure("blah", MissingField))));
   test("Field fails on wrong type", () => expect(decodeField("name", decodeInt, obj)) |> toEqual(Error(objPure("name", nameAsIntError))));
   test("Decode all fields of user record into User", () => expect(decoded) |> toEqual(Ok(User.make("Foo", 30))));
   test("Decode as user with incorrect fields fails", () => expect(decodeFail) |> toEqual(decodeErrors));
@@ -160,33 +160,42 @@ describe("Test optionally empty fields and values", () => {
 
   test("Present value parses as Some string", () => expect(optStr(jsonString)) |> toEqual(Ok(Some("Foo"))));
   test("Null value parses as None", () => expect(optStr(jsonNull)) |> toEqual(Ok(None)));
-  test("Present value of incorrect type is still an Error", () => expect(optStr(jsonInt)) |> toEqual(Error(`ExpectedString(jsonInt))));
+  test("Present value of incorrect type is still an Error", () => expect(optStr(jsonInt)) |> toEqual(Error(Val(ExpectedString, jsonInt))));
 
   test("Present field and value is Some when field is optional", () => expect(optFieldString) |> toEqual(Ok(Some("Foo"))));
   test("Present field and value is Some when value is optional", () => expect(reqFieldOptValueString) |> toEqual(Ok(Some("Foo"))));
   test("If int field is missing, it parses as None if field is optional", () => expect(optFieldInt) |> toEqual(Ok(None)));
-  test("If int field is missing, it parses as Error if only value is optional", () => expect(optValueInt) |> toEqual(Error(objPure("x", `MissingField))));
+  test("If int field is missing, it parses as Error if only value is optional", () => expect(optValueInt) |> toEqual(Error(objPure("x", MissingField))));
   test("Present field with null value parses as None for optional field", () => expect(nullFieldInt) |> toEqual(Ok(None)));
   test("Present field with null value parses as None for optional value", () => expect(nullValueInt) |> toEqual(Ok(None)));
-  test("Trying to parse string field as int is Error, not None", () => expect(decodeOptionalField("s", decodeInt, obj)) |> toEqual(Error(`ExpectedNumber(jsonString))));
+  test("Trying to parse string field as int is Error, not None", () => expect(decodeOptionalField("s", decodeInt, obj)) |> toEqual(Error(Val(ExpectedNumber, jsonString))));
 });
 
 /**
  * TODO: decode date
  */
 
+type customErr('a) =
+  | Decode(DecodeFailure.t)
+  | Validation('a, Js.Json.t);
+
 /**
  * Decode simple variant (enum)
  */
 module Color = {
-  type t = Red | Blue | Green;
+  type t = Red | Green | Blue;
+
+  type validation =
+    | InvalidColor;
+
+  type err = customErr(validation);
 
   let decode = json => switch (decodeString(json)) {
   | Ok("Red") => Ok(Red)
-  | Ok("Blue") => Ok(Blue)
   | Ok("Green") => Ok(Green)
-  | Error(x) => Error(x)
-  | Ok(_) => Error(`ExpectedValidColor(json))
+  | Ok("Blue") => Ok(Blue)
+  | Error(x) => Error(Decode(x))
+  | Ok(_) => Error(Validation(InvalidColor, json))
   }
 };
 
@@ -197,9 +206,9 @@ describe("Test decoding enum from string", () => {
   let jsonValidStr = Js.Json.string("Blue");
 
   test("Enum success on valid string", () => expect(Color.decode(jsonValidStr)) |> toEqual(Ok(Color.Blue)));
-  test("Enum failure on null", () => expect(Color.decode(jsonNull)) |> toEqual(Error(`ExpectedString(jsonNull))));
-  test("Enum failure on int", () => expect(Color.decode(jsonInt)) |> toEqual(Error(`ExpectedString(jsonInt))));
-  test("Enum failure on invalid string", () => expect(Color.decode(jsonInvalidStr)) |> toEqual(Error(`ExpectedValidColor(jsonInvalidStr))));
+  test("Enum failure on null", () => expect(Color.decode(jsonNull)) |> toEqual(Error(Decode(Val(ExpectedString, jsonNull)))));
+  test("Enum failure on int", () => expect(Color.decode(jsonInt)) |> toEqual(Error(Decode(Val(ExpectedString, jsonInt)))));
+  test("Enum failure on invalid string", () => expect(Color.decode(jsonInvalidStr)) |> toEqual(Error(Validation(Color.InvalidColor, jsonInvalidStr))));
 });
 
 module Shape = {
@@ -261,7 +270,7 @@ describe("Test decoding complex ADT with constructor as JSON value", () => {
     | "circle" => Shape.circle <$> decodeAt(["value", "radius"], decodeFloat, json)
     | "square" => Shape.square <$> decodeAt(["value", "length"], decodeFloat, json)
     | "rectangle" => Shape.rect <$> decodeField("value", Shape.decodeWH, json)
-    | _ => Error(`ExpectedString(json)) /* This is a sad lie to make the compiler happy */
+    | _ => Error(Val(ExpectedString, json)) /* This is a sad lie to make the compiler happy */
     }) |> mapErr(_ => `InvalidShape(json));
 
   let valid = Js.Dict.fromList([

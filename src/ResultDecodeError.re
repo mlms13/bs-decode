@@ -1,6 +1,6 @@
 open BsAbstract.Interface;
 
-type t('a) = Belt.Result.t('a, DecodeError.t);
+type t('a) = Belt.Result.t('a, DecodeFailure.t);
 
 let map = (f, v) =>
   Belt.Result.map(v, f);
@@ -9,7 +9,7 @@ let ap = (f, v) => switch (f, v) {
 | (Belt.Result.Ok(fn), Belt.Result.Ok(a)) => Belt.Result.Ok(fn(a))
 | (Belt.Result.Ok(_), Belt.Result.Error(x)) => Belt.Result.Error(x)
 | (Belt.Result.Error(x), Belt.Result.Ok(_)) => Belt.Result.Error(x)
-| (Belt.Result.Error(fnx), Belt.Result.Error(ax)) => Belt.Result.Error(DecodeError.combine(fnx, ax))
+| (Belt.Result.Error(fnx), Belt.Result.Error(ax)) => Belt.Result.Error(DecodeFailure.combine(fnx, ax))
 };
 
 let pure = v => Belt_Result.Ok(v);
@@ -25,7 +25,7 @@ let alt = (a, b) => switch a {
 };
 
 module Functor: FUNCTOR with type t('a) = t('a) = {
-  type t('a) = Belt.Result.t('a, DecodeError.t);
+  type t('a) = Belt.Result.t('a, DecodeFailure.t);
   let map = map;
 };
 
