@@ -60,19 +60,3 @@ let rec toDebugString = (~level=0, ~pre="", innerToString, v) => {
 
   spaces(level) ++ pre ++ msg;
 };
-
-/* let rec toNelString = v => switch v {
-| Val(x, json) =>
-  NonEmptyList.pure(valErrorToString(x, json))
-
-| Arr(nel) =>
-  NonEmptyList.flat_map(nel, ((pos, err)) =>
-    toNelString(err) |> NonEmptyList.map(x => "While decoding array at position " ++ string_of_int(pos) ++ ": " ++ x)
-  )
-
-| Obj(nel) =>
-  NonEmptyList.flat_map(nel, ((field, err)) => switch err {
-  | MissingField => NonEmptyList.pure("Object field \"" ++ field ++ "\" was missing")
-  | InvalidField(x) => toNelString(x) |> NonEmptyList.map(x => "While decoding field \"" ++ field ++ "\": " ++ x)
-  })
-}; */
