@@ -30,13 +30,13 @@ let combine = (a, b) => switch (a, b) {
 | _ => a
 };
 
-let valErrorToString = v => switch v {
+let valErrorToString = (v, json) => switch v {
 | ExpectedString => "Expected string"
 | ExpectedNumber => "Expected number"
 | ExpectedInt => "Expected int"
 | ExpectedArray => "Expected array"
 | ExpectedObject => "Expected object"
-};
+} ++ " but found " ++ Js.Json.stringify(json);
 
 /**
  * Traverse the tree of errors and produce properly-indented error strings:
@@ -54,7 +54,7 @@ let rec toDebugString = (~level=0, ~pre="", v) => {
   let spaces = indent => String.make(indent * 4, ' ');
 
   let msg = switch v {
-  | Val(x, json) => valErrorToString(x) ++ " but found " ++ Js.Json.stringify(json);
+  | Val(x, json) => valErrorToString(x, json)
   | Arr(nel) =>
     let childMessages = nel |> NonEmptyList.map(((i, err)) =>
       toDebugString(~level = level + 1, ~pre = "At position " ++ string_of_int(i) ++ ": ", err)
@@ -75,4 +75,20 @@ let rec toDebugString = (~level=0, ~pre="", v) => {
   };
 
   spaces(level) ++ pre ++ msg;
+};
+
+let rec toNelString = v => switch v {
+| Val(x, json) =>
+  NonEmptyList.pure(valErrorToString(x, json))
+
+| Arr(nel) =>
+  NonEmptyList.flat_map(nel, ((pos, err)) =>
+    toNelString(err) |> NonEmptyList.map(x => "While decoding array at position " ++ string_of_int(pos) ++ ": " ++ x)
+  )
+
+| Obj(nel) =>
+  NonEmptyList.flat_map(nel, ((field, err)) => switch err {
+  | MissingField => NonEmptyList.pure("Object field \"" ++ field ++ "\" was missing")
+  | InvalidField(x) => toNelString(x) |> NonEmptyList.map(x => "While decoding field \"" ++ field ++ "\": " ++ x)
+  })
 };

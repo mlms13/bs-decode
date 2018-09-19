@@ -5,6 +5,8 @@ module OptionTransform: DecodeBase.TransformError with type t('a) = option('a) =
   | Some(a) => Some(a)
   | None => None
   };
+  let arrErr = mapErr;
+  let objErr = mapErr;
 };
 
 module DecodeAsOption =

@@ -1,7 +1,8 @@
 module type TransformError = {
   type t('a);
   let transform: DecodeFailure.t => t('a);
-  let mapErr: ((DecodeFailure.t => DecodeFailure.t), t('a)) => t('a);
+  let arrErr: (int, t('a)) => t('a);
+  let objErr: (string, t('a)) => t('a);
 };
 
 module DecodeBase = (
@@ -21,7 +22,8 @@ module DecodeBase = (
   let ok = v => M.pure(v);
   let err = x => T.transform(x);
   let map2 = (f, a, b) => f <$> a <*> b;
-  let mapErr = T.mapErr;
+  let arrErr = T.arrErr;
+  let objErr = T.objErr;
   let fromOpt = (fn, default, opt) =>
     BsAbstract.Option.maybe(~f=fn, ~default, opt);
 
@@ -50,7 +52,7 @@ module DecodeBase = (
 
   let decodeArray = (decode, json) => {
     let decodeEach = arr => BsAbstract.Array.Foldable.fold_left(((pos, acc), curr) => {
-      let decoded = decode(curr) |> mapErr(v => Arr(NonEmptyList.pure((pos, v))));
+      let decoded = arrErr(pos, decode(curr));
       let result = map2((arr, v) => Array.append(arr, [|v|]), acc, decoded);
       (pos + 1, result);
     }, (0, ok([||])), arr) |> snd;
@@ -68,7 +70,7 @@ module DecodeBase = (
     decodeVal(Js.Json.decodeObject, ExpectedObject, json)
       |> M.map(Js.Dict.get(_, x))
       |. M.flat_map(fromOpt(ok, err(objPure(x, MissingField))))
-      |. M.flat_map(v => decodeAt(xs, decode, v) |> mapErr(err => objPure(x, InvalidField(err))));
+      |. M.flat_map(v => objErr(x, decodeAt(xs, decode, v)));
   };
 
   let decodeField = (name, decode, json) =>
