@@ -1,6 +1,7 @@
 open Jest;
 open Expect;
 open DecodeFailure;
+open DecodeBase;
 let ((<$>), (<*>), (<|>), recoverWith, mapErr) =
   ResultOfDecodeFailure.((<$>), (<*>), (<|>), recoverWith, mapErr);
 open Belt.Result;
@@ -172,7 +173,7 @@ describe("Test optionally empty fields and values", () => {
 });
 
 type customErr('a) =
-  | Decode(DecodeFailure.t)
+  | Decode(DecodeFailure.t(failure))
   | Validation('a, Js.Json.t);
 
 /**

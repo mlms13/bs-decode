@@ -1,7 +1,24 @@
+type failure =
+  | ExpectedString
+  | ExpectedNumber
+  | ExpectedInt
+  | ExpectedArray
+  | ExpectedObject
+  ;
+
+let failureToString = (v, json) => switch v {
+| ExpectedString => "Expected string"
+| ExpectedNumber => "Expected number"
+| ExpectedInt => "Expected int"
+| ExpectedArray => "Expected array"
+| ExpectedObject => "Expected object"
+} ++ " but found " ++ Js.Json.stringify(json);
+
 module type TransformError = {
   type t('a);
-  let transform: DecodeFailure.t => t('a);
+  let valErr: (failure, Js.Json.t) => t('a);
   let arrErr: (int, t('a)) => t('a);
+  let missingFieldErr: string => t('a);
   let objErr: (string, t('a)) => t('a);
 };
 
@@ -17,18 +34,13 @@ module DecodeBase = (
   let ((<|>)) = InfixAlt.((<|>));
   let (>.) = BsAbstract.Function.Infix.(>.);
 
-  open DecodeFailure;
-
   let ok = v => M.pure(v);
-  let err = x => T.transform(x);
   let map2 = (f, a, b) => f <$> a <*> b;
-  let arrErr = T.arrErr;
-  let objErr = T.objErr;
   let fromOpt = (fn, default, opt) =>
     BsAbstract.Option.maybe(~f=fn, ~default, opt);
 
   let decodeVal = (decode, failure, json) =>
-    decode(json) |> fromOpt(ok, err(Val(failure, json)));
+    decode(json) |> fromOpt(ok, T.valErr(failure, json));
 
   let decodeString =
     decodeVal(Js.Json.decodeString, ExpectedString);
@@ -40,7 +52,7 @@ module DecodeBase = (
     let isInt = v => mod_float(v, floor(v)) == 0.;
     decodeFloat(json) |. M.flat_map(v =>
       if (isInt(v)) ok(int_of_float(v))
-      else err(Val(ExpectedInt, json))
+      else T.valErr(ExpectedInt, json)
     );
   };
 
@@ -52,7 +64,7 @@ module DecodeBase = (
 
   let decodeArray = (decode, json) => {
     let decodeEach = arr => BsAbstract.Array.Foldable.fold_left(((pos, acc), curr) => {
-      let decoded = arrErr(pos, decode(curr));
+      let decoded = T.arrErr(pos, decode(curr));
       let result = map2((arr, v) => Array.append(arr, [|v|]), acc, decoded);
       (pos + 1, result);
     }, (0, ok([||])), arr) |> snd;
@@ -69,8 +81,8 @@ module DecodeBase = (
   | [x, ...xs] =>
     decodeVal(Js.Json.decodeObject, ExpectedObject, json)
       |> M.map(Js.Dict.get(_, x))
-      |. M.flat_map(fromOpt(ok, err(objPure(x, MissingField))))
-      |. M.flat_map(v => objErr(x, decodeAt(xs, decode, v)));
+      |. M.flat_map(fromOpt(ok, T.missingFieldErr(x)))
+      |. M.flat_map(v => T.objErr(x, decodeAt(xs, decode, v)));
   };
 
   let decodeField = (name, decode, json) =>

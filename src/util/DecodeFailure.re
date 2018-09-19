@@ -1,19 +1,11 @@
-type valueErr =
-  | ExpectedString
-  | ExpectedNumber
-  | ExpectedInt
-  | ExpectedArray
-  | ExpectedObject
-  ;
+type t('a) =
+  | Val('a, Js.Json.t)
+  | Arr(NonEmptyList.t((int, t('a))))
+  | Obj(NonEmptyList.t((string, objError('a))))
 
-type t =
-  | Val(valueErr, Js.Json.t)
-  | Arr(NonEmptyList.t((int, t)))
-  | Obj(NonEmptyList.t((string, objError)))
-
-and objError =
+and objError('a) =
   | MissingField
-  | InvalidField(t);
+  | InvalidField(t('a));
 
 
 let objPure = (field, err) =>
@@ -30,14 +22,6 @@ let combine = (a, b) => switch (a, b) {
 | _ => a
 };
 
-let valErrorToString = (v, json) => switch v {
-| ExpectedString => "Expected string"
-| ExpectedNumber => "Expected number"
-| ExpectedInt => "Expected int"
-| ExpectedArray => "Expected array"
-| ExpectedObject => "Expected object"
-} ++ " but found " ++ Js.Json.stringify(json);
-
 /**
  * Traverse the tree of errors and produce properly-indented error strings:
  *
@@ -50,14 +34,14 @@ let valErrorToString = (v, json) => switch v {
  *         Field "bar" had an invalid value: Failed to decode array:
  *             At position 0: Expected int but found []
  */
-let rec toDebugString = (~level=0, ~pre="", v) => {
+let rec toDebugString = (~level=0, ~pre="", innerToString, v) => {
   let spaces = indent => String.make(indent * 4, ' ');
 
   let msg = switch v {
-  | Val(x, json) => valErrorToString(x, json)
+  | Val(x, json) => innerToString(x, json)
   | Arr(nel) =>
     let childMessages = nel |> NonEmptyList.map(((i, err)) =>
-      toDebugString(~level = level + 1, ~pre = "At position " ++ string_of_int(i) ++ ": ", err)
+      toDebugString(~level = level + 1, ~pre = "At position " ++ string_of_int(i) ++ ": ", innerToString, err)
     ) |> NonEmptyList.toT |> Array.of_list |> Js.Array.joinWith("\n");
 
     "Failed to decode array:\n" ++ childMessages;
@@ -67,7 +51,7 @@ let rec toDebugString = (~level=0, ~pre="", v) => {
       let fieldStr = "\"" ++ field ++ "\"";
       switch err {
       | MissingField => spaces(level + 1) ++ "Field " ++ fieldStr ++ " is required, but was not present"
-      | InvalidField(err) => toDebugString(~level = level + 1, ~pre = "Field " ++ fieldStr ++ " had an invalid value: ", err)
+      | InvalidField(err) => toDebugString(~level = level + 1, ~pre = "Field " ++ fieldStr ++ " had an invalid value: ", innerToString, err)
       };
     }) |> NonEmptyList.toT |> Array.of_list |> Js.Array.joinWith("\n");
 
@@ -77,7 +61,7 @@ let rec toDebugString = (~level=0, ~pre="", v) => {
   spaces(level) ++ pre ++ msg;
 };
 
-let rec toNelString = v => switch v {
+/* let rec toNelString = v => switch v {
 | Val(x, json) =>
   NonEmptyList.pure(valErrorToString(x, json))
 
@@ -91,4 +75,4 @@ let rec toNelString = v => switch v {
   | MissingField => NonEmptyList.pure("Object field \"" ++ field ++ "\" was missing")
   | InvalidField(x) => toNelString(x) |> NonEmptyList.map(x => "While decoding field \"" ++ field ++ "\": " ++ x)
   })
-};
+}; */

@@ -1,6 +1,6 @@
 open BsAbstract.Interface;
 
-type t('a) = Belt.Result.t('a, DecodeFailure.t);
+type t('a) = Belt.Result.t('a, DecodeFailure.t(DecodeBase.failure));
 
 let map = (f, v) =>
   Belt.Result.map(v, f);
@@ -25,7 +25,7 @@ let alt = (a, b) => switch a {
 };
 
 module Functor: FUNCTOR with type t('a) = t('a) = {
-  type t('a) = Belt.Result.t('a, DecodeFailure.t);
+  type t('a) = Belt.Result.t('a, DecodeFailure.t(DecodeBase.failure));
   let map = map;
 };
 
