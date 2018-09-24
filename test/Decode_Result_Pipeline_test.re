@@ -6,6 +6,8 @@ let (string, number, object_, null) = Js.Json.(string, number, object_, null);
 let (succeed, map2, required, fallback, optional, hardcoded, run) =
   DecodeAsResult.Pipeline.(succeed, map2, required, fallback, optional, hardcoded, run);
 
+let map = DecodeAsResult.R.Functor.map;
+
 let (decodeField, decodeFloat, decodeString, decodeInt) =
   DecodeAsResult.(decodeField, decodeFloat, decodeString, decodeInt);
 
@@ -60,7 +62,6 @@ describe("Test piping to build up decoders, using |>", () => {
 });
 
 describe("Test optional, fallback, hardcoded helpers", () => {
-  let map = ResultOfDecodeFailure.map;
   let decoder =
     succeed(User.make)
       |> fallback("name", decodeString, "Bar")

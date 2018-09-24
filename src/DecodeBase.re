@@ -1,17 +1,17 @@
-type failure =
-  | ExpectedString
-  | ExpectedNumber
-  | ExpectedInt
-  | ExpectedArray
-  | ExpectedObject
-  ;
+type failure = [
+  | `ExpectedString
+  | `ExpectedNumber
+  | `ExpectedInt
+  | `ExpectedArray
+  | `ExpectedObject
+];
 
 let failureToString = (v, json) => switch v {
-| ExpectedString => "Expected string"
-| ExpectedNumber => "Expected number"
-| ExpectedInt => "Expected int"
-| ExpectedArray => "Expected array"
-| ExpectedObject => "Expected object"
+| `ExpectedString => "Expected string"
+| `ExpectedNumber => "Expected number"
+| `ExpectedInt => "Expected int"
+| `ExpectedArray => "Expected array"
+| `ExpectedObject => "Expected object"
 } ++ " but found " ++ Js.Json.stringify(json);
 
 module type TransformError = {
@@ -43,16 +43,16 @@ module DecodeBase = (
     decode(json) |> fromOpt(ok, T.valErr(failure, json));
 
   let decodeString =
-    decodeVal(Js.Json.decodeString, ExpectedString);
+    decodeVal(Js.Json.decodeString, `ExpectedString);
 
   let decodeFloat = json =>
-    decodeVal(Js.Json.decodeNumber, ExpectedNumber, json);
+    decodeVal(Js.Json.decodeNumber, `ExpectedNumber, json);
 
   let decodeInt = json => {
     let isInt = v => mod_float(v, floor(v)) == 0.;
     decodeFloat(json) |. M.flat_map(v =>
       if (isInt(v)) ok(int_of_float(v))
-      else T.valErr(ExpectedInt, json)
+      else T.valErr(`ExpectedInt, json)
     );
   };
 
@@ -69,7 +69,7 @@ module DecodeBase = (
       (pos + 1, result);
     }, (0, ok([||])), arr) |> snd;
 
-    decodeVal(Js.Json.decodeArray, ExpectedArray, json)
+    decodeVal(Js.Json.decodeArray, `ExpectedArray, json)
       |. M.flat_map(decodeEach);
   };
 
@@ -79,7 +79,7 @@ module DecodeBase = (
   let rec decodeAt = (fields, decode, json) => switch fields {
   | [] => decode(json)
   | [x, ...xs] =>
-    decodeVal(Js.Json.decodeObject, ExpectedObject, json)
+    decodeVal(Js.Json.decodeObject, `ExpectedObject, json)
       |> M.map(Js.Dict.get(_, x))
       |. M.flat_map(fromOpt(ok, T.missingFieldErr(x)))
       |. M.flat_map(v => T.objErr(x, decodeAt(xs, decode, v)));
@@ -92,7 +92,7 @@ module DecodeBase = (
     decodeField(name, decode, json) <|> M.pure(fallback);
 
   let decodeOptionalField = (name, decode, json) =>
-    decodeVal(Js.Json.decodeObject, ExpectedObject, json)
+    decodeVal(Js.Json.decodeObject, `ExpectedObject, json)
       |> M.map(Js.Dict.get(_, name))
       |. M.flat_map(opt => switch opt {
         | None => ok(None)

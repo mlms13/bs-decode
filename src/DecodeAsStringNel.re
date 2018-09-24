@@ -9,7 +9,7 @@ module ResultOfStringNel = {
   module Transform: DecodeBase.TransformError with type t('a) = x('a) = {
     type t('a) = Belt.Result.t('a, NelStr.t);
     let pureErr = x => Belt.Result.Error(NonEmptyList.pure(x));
-    let mapErr = (fn) => BsAbstract.Result.Bifunctor.bimap(BsAbstract.Functions.id, x => NonEmptyList.map(fn, x));
+    let mapErr = fn => BsAbstract.Result.Bifunctor.bimap(BsAbstract.Functions.id, x => NonEmptyList.map(fn, x));
 
     let valErr = (v, json) => pureErr(DecodeBase.failureToString(v, json));
 

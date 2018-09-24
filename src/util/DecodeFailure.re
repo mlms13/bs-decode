@@ -7,6 +7,8 @@ and objError('a) =
   | MissingField
   | InvalidField(t('a));
 
+let arrPure = (pos, err) =>
+  Arr(NonEmptyList.pure((pos, err)));
 
 let objPure = (field, err) =>
   Obj(NonEmptyList.pure((field, err)));
@@ -19,6 +21,7 @@ let objPure = (field, err) =>
 let combine = (a, b) => switch (a, b) {
 | (Arr(nela), Arr(nelb)) => Arr(NonEmptyList.append(nela, nelb))
 | (Obj(nela), Obj(nelb)) => Obj(NonEmptyList.append(nela, nelb))
+/* | (Val(a, jsona), Val(b, jsonb)) => f((a, jsona), (b, jsonb)) */
 | _ => a
 };
 
@@ -59,4 +62,71 @@ let rec toDebugString = (~level=0, ~pre="", innerToString, v) => {
   };
 
   spaces(level) ++ pre ++ msg;
+};
+
+module type ValError = {
+  type t;
+  let handle: DecodeBase.failure => t
+};
+
+module AsResult = (T: ValError) => {
+  module Result = Belt.Result;
+  open BsAbstract.Interface;
+
+  type r('a) = Result.t('a, t(T.t));
+  let result = BsAbstract.Result.result;
+  let mapErr = (v, fn) => BsAbstract.Result.Bifunctor.bimap(BsAbstract.Functions.id, v, fn);
+
+  module Functor: FUNCTOR with type t('a) = r('a) = {
+    type t('a) = r('a);
+    let map = (f, v) => Result.map(v, f);
+  };
+
+  module Apply: APPLY with type t('a) = Functor.t('a) = {
+    include Functor;
+    let apply = (f, v) => switch (f, v) {
+    | (Result.Ok(fn), Result.Ok(a)) => Result.Ok(fn(a))
+    | (Result.Ok(_), Result.Error(x)) => Result.Error(x)
+    | (Result.Error(x), Result.Ok(_)) => Result.Error(x)
+    | (Result.Error(fnx), Result.Error(ax)) =>
+      Result.Error(combine(fnx, ax))
+    };
+  };
+
+  module Applicative: APPLICATIVE with type t('a) = Functor.t('a) = {
+    include Apply;
+    let pure = v => Result.Ok(v);
+  };
+
+  module Monad: MONAD with type t('a) = Functor.t('a) = {
+    include Applicative;
+    let flat_map = Result.flatMap;
+  };
+
+  module Alt: ALT with type t('a) = Functor.t('a) = {
+    include Functor;
+    let alt = (a, b) => result(_ => a, _ => b, a);
+  };
+
+  module Infix = {
+    include BsAbstract.Infix.Monad(Monad);
+    include BsAbstract.Infix.Alt(Alt);
+  };
+
+  module TransformError: DecodeBase.TransformError with type t('a) = r('a) = {
+    type t('a) = r('a);
+    let err = x => Result.Error(x);
+
+    let valErr = (v, json) => err(Val(T.handle(v), json));
+    let arrErr = pos => mapErr(x => arrPure(pos, x));
+    let missingFieldErr = field => err(objPure(field, MissingField));
+    let objErr = field => mapErr(x => objPure(field, InvalidField(x)));
+  };
+
+  let note = (failure) => BsAbstract.Option.maybe(
+    ~f = a => Result.Ok(a),
+    ~default = Result.Error(failure)
+  );
+
+  let recoverWith = a => Alt.alt(_, Applicative.pure(a));
 };

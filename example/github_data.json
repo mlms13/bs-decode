@@ -1,0 +1,379 @@
+{
+    "url": "https://api.github.com/repos/mlms13/bs-decode/compare/963c17a...master",
+    "html_url": "https://github.com/mlms13/bs-decode/compare/963c17a...master",
+    "permalink_url": "https://github.com/mlms13/bs-decode/compare/mlms13:963c17a...mlms13:ce5cada",
+    "diff_url": "https://github.com/mlms13/bs-decode/compare/963c17a...master.diff",
+    "patch_url": "https://github.com/mlms13/bs-decode/compare/963c17a...master.patch",
+    "base_commit": {
+        "sha": "963c17afe37a0bad569ddcb6b06cffee830209ea",
+        "node_id": "MDY6Q29tbWl0MTQ3NDI5Nzc4Ojk2M2MxN2FmZTM3YTBiYWQ1NjlkZGNiNmIwNmNmZmVlODMwMjA5ZWE=",
+        "commit": {
+            "author": {
+                "name": "Michael Martin-Smucker",
+                "email": "mlmartin13@gmail.com",
+                "date": "2018-09-11T19:13:51Z"
+            },
+            "committer": {
+                "name": "Michael Martin-Smucker",
+                "email": "mlmartin13@gmail.com",
+                "date": "2018-09-11T19:13:51Z"
+            },
+            "message": "Move utilities out of top-level src",
+            "tree": {
+                "sha": "25f9c36ff0ef0962694fd6d7c024022b6fa989b4",
+                "url": "https://api.github.com/repos/mlms13/bs-decode/git/trees/25f9c36ff0ef0962694fd6d7c024022b6fa989b4"
+            },
+            "url": "https://api.github.com/repos/mlms13/bs-decode/git/commits/963c17afe37a0bad569ddcb6b06cffee830209ea",
+            "comment_count": 0,
+            "verification": {
+                "verified": false,
+                "reason": "unsigned",
+                "signature": null,
+                "payload": null
+            }
+        },
+        "url": "https://api.github.com/repos/mlms13/bs-decode/commits/963c17afe37a0bad569ddcb6b06cffee830209ea",
+        "html_url": "https://github.com/mlms13/bs-decode/commit/963c17afe37a0bad569ddcb6b06cffee830209ea",
+        "comments_url": "https://api.github.com/repos/mlms13/bs-decode/commits/963c17afe37a0bad569ddcb6b06cffee830209ea/comments",
+        "author": {
+            "login": "mlms13",
+            "id": 1105543,
+            "node_id": "MDQ6VXNlcjExMDU1NDM=",
+            "avatar_url": "https://avatars0.githubusercontent.com/u/1105543?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/mlms13",
+            "html_url": "https://github.com/mlms13",
+            "followers_url": "https://api.github.com/users/mlms13/followers",
+            "following_url": "https://api.github.com/users/mlms13/following{/other_user}",
+            "gists_url": "https://api.github.com/users/mlms13/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/mlms13/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/mlms13/subscriptions",
+            "organizations_url": "https://api.github.com/users/mlms13/orgs",
+            "repos_url": "https://api.github.com/users/mlms13/repos",
+            "events_url": "https://api.github.com/users/mlms13/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/mlms13/received_events",
+            "type": "User",
+            "site_admin": false
+        },
+        "committer": {
+            "login": "mlms13",
+            "id": 1105543,
+            "node_id": "MDQ6VXNlcjExMDU1NDM=",
+            "avatar_url": "https://avatars0.githubusercontent.com/u/1105543?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/mlms13",
+            "html_url": "https://github.com/mlms13",
+            "followers_url": "https://api.github.com/users/mlms13/followers",
+            "following_url": "https://api.github.com/users/mlms13/following{/other_user}",
+            "gists_url": "https://api.github.com/users/mlms13/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/mlms13/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/mlms13/subscriptions",
+            "organizations_url": "https://api.github.com/users/mlms13/orgs",
+            "repos_url": "https://api.github.com/users/mlms13/repos",
+            "events_url": "https://api.github.com/users/mlms13/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/mlms13/received_events",
+            "type": "User",
+            "site_admin": false
+        },
+        "parents": [
+            {
+                "sha": "2b66751cacb9840c213187ec73c6a9d16ad8b19c",
+                "url": "https://api.github.com/repos/mlms13/bs-decode/commits/2b66751cacb9840c213187ec73c6a9d16ad8b19c",
+                "html_url": "https://github.com/mlms13/bs-decode/commit/2b66751cacb9840c213187ec73c6a9d16ad8b19c"
+            }
+        ]
+    },
+    "merge_base_commit": {
+        "sha": "963c17afe37a0bad569ddcb6b06cffee830209ea",
+        "node_id": "MDY6Q29tbWl0MTQ3NDI5Nzc4Ojk2M2MxN2FmZTM3YTBiYWQ1NjlkZGNiNmIwNmNmZmVlODMwMjA5ZWE=",
+        "commit": {
+            "author": {
+                "name": "Michael Martin-Smucker",
+                "email": "mlmartin13@gmail.com",
+                "date": "2018-09-11T19:13:51Z"
+            },
+            "committer": {
+                "name": "Michael Martin-Smucker",
+                "email": "mlmartin13@gmail.com",
+                "date": "2018-09-11T19:13:51Z"
+            },
+            "message": "Move utilities out of top-level src",
+            "tree": {
+                "sha": "25f9c36ff0ef0962694fd6d7c024022b6fa989b4",
+                "url": "https://api.github.com/repos/mlms13/bs-decode/git/trees/25f9c36ff0ef0962694fd6d7c024022b6fa989b4"
+            },
+            "url": "https://api.github.com/repos/mlms13/bs-decode/git/commits/963c17afe37a0bad569ddcb6b06cffee830209ea",
+            "comment_count": 0,
+            "verification": {
+                "verified": false,
+                "reason": "unsigned",
+                "signature": null,
+                "payload": null
+            }
+        },
+        "url": "https://api.github.com/repos/mlms13/bs-decode/commits/963c17afe37a0bad569ddcb6b06cffee830209ea",
+        "html_url": "https://github.com/mlms13/bs-decode/commit/963c17afe37a0bad569ddcb6b06cffee830209ea",
+        "comments_url": "https://api.github.com/repos/mlms13/bs-decode/commits/963c17afe37a0bad569ddcb6b06cffee830209ea/comments",
+        "author": {
+            "login": "mlms13",
+            "id": 1105543,
+            "node_id": "MDQ6VXNlcjExMDU1NDM=",
+            "avatar_url": "https://avatars0.githubusercontent.com/u/1105543?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/mlms13",
+            "html_url": "https://github.com/mlms13",
+            "followers_url": "https://api.github.com/users/mlms13/followers",
+            "following_url": "https://api.github.com/users/mlms13/following{/other_user}",
+            "gists_url": "https://api.github.com/users/mlms13/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/mlms13/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/mlms13/subscriptions",
+            "organizations_url": "https://api.github.com/users/mlms13/orgs",
+            "repos_url": "https://api.github.com/users/mlms13/repos",
+            "events_url": "https://api.github.com/users/mlms13/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/mlms13/received_events",
+            "type": "User",
+            "site_admin": false
+        },
+        "committer": {
+            "login": "mlms13",
+            "id": 1105543,
+            "node_id": "MDQ6VXNlcjExMDU1NDM=",
+            "avatar_url": "https://avatars0.githubusercontent.com/u/1105543?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/mlms13",
+            "html_url": "https://github.com/mlms13",
+            "followers_url": "https://api.github.com/users/mlms13/followers",
+            "following_url": "https://api.github.com/users/mlms13/following{/other_user}",
+            "gists_url": "https://api.github.com/users/mlms13/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/mlms13/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/mlms13/subscriptions",
+            "organizations_url": "https://api.github.com/users/mlms13/orgs",
+            "repos_url": "https://api.github.com/users/mlms13/repos",
+            "events_url": "https://api.github.com/users/mlms13/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/mlms13/received_events",
+            "type": "User",
+            "site_admin": false
+        },
+        "parents": [
+            {
+                "sha": "2b66751cacb9840c213187ec73c6a9d16ad8b19c",
+                "url": "https://api.github.com/repos/mlms13/bs-decode/commits/2b66751cacb9840c213187ec73c6a9d16ad8b19c",
+                "html_url": "https://github.com/mlms13/bs-decode/commit/2b66751cacb9840c213187ec73c6a9d16ad8b19c"
+            }
+        ]
+    },
+    "status": "ahead",
+    "ahead_by": 2,
+    "behind_by": 0,
+    "total_commits": 2,
+    "commits": [
+        {
+            "sha": "1cbb65088cea3b92d2c94d0216cfb21bc24e7036",
+            "node_id": "MDY6Q29tbWl0MTQ3NDI5Nzc4OjFjYmI2NTA4OGNlYTNiOTJkMmM5NGQwMjE2Y2ZiMjFiYzI0ZTcwMzY=",
+            "commit": {
+                "author": {
+                    "name": "Michael Martin-Smucker",
+                    "email": "mlmartin13@gmail.com",
+                    "date": "2018-09-11T20:01:33Z"
+                },
+                "committer": {
+                    "name": "Michael Martin-Smucker",
+                    "email": "mlmartin13@gmail.com",
+                    "date": "2018-09-11T20:01:33Z"
+                },
+                "message": "Allow discarding error by decoding as option",
+                "tree": {
+                    "sha": "32238135889b3a855b91597b2ca9ebbe60e491c3",
+                    "url": "https://api.github.com/repos/mlms13/bs-decode/git/trees/32238135889b3a855b91597b2ca9ebbe60e491c3"
+                },
+                "url": "https://api.github.com/repos/mlms13/bs-decode/git/commits/1cbb65088cea3b92d2c94d0216cfb21bc24e7036",
+                "comment_count": 0,
+                "verification": {
+                    "verified": false,
+                    "reason": "unsigned",
+                    "signature": null,
+                    "payload": null
+                }
+            },
+            "url": "https://api.github.com/repos/mlms13/bs-decode/commits/1cbb65088cea3b92d2c94d0216cfb21bc24e7036",
+            "html_url": "https://github.com/mlms13/bs-decode/commit/1cbb65088cea3b92d2c94d0216cfb21bc24e7036",
+            "comments_url": "https://api.github.com/repos/mlms13/bs-decode/commits/1cbb65088cea3b92d2c94d0216cfb21bc24e7036/comments",
+            "author": {
+                "login": "mlms13",
+                "id": 1105543,
+                "node_id": "MDQ6VXNlcjExMDU1NDM=",
+                "avatar_url": "https://avatars0.githubusercontent.com/u/1105543?v=4",
+                "gravatar_id": "",
+                "url": "https://api.github.com/users/mlms13",
+                "html_url": "https://github.com/mlms13",
+                "followers_url": "https://api.github.com/users/mlms13/followers",
+                "following_url": "https://api.github.com/users/mlms13/following{/other_user}",
+                "gists_url": "https://api.github.com/users/mlms13/gists{/gist_id}",
+                "starred_url": "https://api.github.com/users/mlms13/starred{/owner}{/repo}",
+                "subscriptions_url": "https://api.github.com/users/mlms13/subscriptions",
+                "organizations_url": "https://api.github.com/users/mlms13/orgs",
+                "repos_url": "https://api.github.com/users/mlms13/repos",
+                "events_url": "https://api.github.com/users/mlms13/events{/privacy}",
+                "received_events_url": "https://api.github.com/users/mlms13/received_events",
+                "type": "User",
+                "site_admin": false
+            },
+            "committer": {
+                "login": "mlms13",
+                "id": 1105543,
+                "node_id": "MDQ6VXNlcjExMDU1NDM=",
+                "avatar_url": "https://avatars0.githubusercontent.com/u/1105543?v=4",
+                "gravatar_id": "",
+                "url": "https://api.github.com/users/mlms13",
+                "html_url": "https://github.com/mlms13",
+                "followers_url": "https://api.github.com/users/mlms13/followers",
+                "following_url": "https://api.github.com/users/mlms13/following{/other_user}",
+                "gists_url": "https://api.github.com/users/mlms13/gists{/gist_id}",
+                "starred_url": "https://api.github.com/users/mlms13/starred{/owner}{/repo}",
+                "subscriptions_url": "https://api.github.com/users/mlms13/subscriptions",
+                "organizations_url": "https://api.github.com/users/mlms13/orgs",
+                "repos_url": "https://api.github.com/users/mlms13/repos",
+                "events_url": "https://api.github.com/users/mlms13/events{/privacy}",
+                "received_events_url": "https://api.github.com/users/mlms13/received_events",
+                "type": "User",
+                "site_admin": false
+            },
+            "parents": [
+                {
+                    "sha": "963c17afe37a0bad569ddcb6b06cffee830209ea",
+                    "url": "https://api.github.com/repos/mlms13/bs-decode/commits/963c17afe37a0bad569ddcb6b06cffee830209ea",
+                    "html_url": "https://github.com/mlms13/bs-decode/commit/963c17afe37a0bad569ddcb6b06cffee830209ea"
+                }
+            ]
+        },
+        {
+            "sha": "ce5cada7d5d45bee435cfd957ce453c63bd083ba",
+            "node_id": "MDY6Q29tbWl0MTQ3NDI5Nzc4OmNlNWNhZGE3ZDVkNDViZWU0MzVjZmQ5NTdjZTQ1M2M2M2JkMDgzYmE=",
+            "commit": {
+                "author": {
+                    "name": "Michael Martin-Smucker",
+                    "email": "mlmartin13@gmail.com",
+                    "date": "2018-09-11T21:11:36Z"
+                },
+                "committer": {
+                    "name": "Michael Martin-Smucker",
+                    "email": "mlmartin13@gmail.com",
+                    "date": "2018-09-11T21:11:36Z"
+                },
+                "message": "Add ability to stringify nested decode failures",
+                "tree": {
+                    "sha": "ec8cb0384fd5e13432b301d0276db779a4ea9c9b",
+                    "url": "https://api.github.com/repos/mlms13/bs-decode/git/trees/ec8cb0384fd5e13432b301d0276db779a4ea9c9b"
+                },
+                "url": "https://api.github.com/repos/mlms13/bs-decode/git/commits/ce5cada7d5d45bee435cfd957ce453c63bd083ba",
+                "comment_count": 0,
+                "verification": {
+                    "verified": false,
+                    "reason": "unsigned",
+                    "signature": null,
+                    "payload": null
+                }
+            },
+            "url": "https://api.github.com/repos/mlms13/bs-decode/commits/ce5cada7d5d45bee435cfd957ce453c63bd083ba",
+            "html_url": "https://github.com/mlms13/bs-decode/commit/ce5cada7d5d45bee435cfd957ce453c63bd083ba",
+            "comments_url": "https://api.github.com/repos/mlms13/bs-decode/commits/ce5cada7d5d45bee435cfd957ce453c63bd083ba/comments",
+            "author": {
+                "login": "mlms13",
+                "id": 1105543,
+                "node_id": "MDQ6VXNlcjExMDU1NDM=",
+                "avatar_url": "https://avatars0.githubusercontent.com/u/1105543?v=4",
+                "gravatar_id": "",
+                "url": "https://api.github.com/users/mlms13",
+                "html_url": "https://github.com/mlms13",
+                "followers_url": "https://api.github.com/users/mlms13/followers",
+                "following_url": "https://api.github.com/users/mlms13/following{/other_user}",
+                "gists_url": "https://api.github.com/users/mlms13/gists{/gist_id}",
+                "starred_url": "https://api.github.com/users/mlms13/starred{/owner}{/repo}",
+                "subscriptions_url": "https://api.github.com/users/mlms13/subscriptions",
+                "organizations_url": "https://api.github.com/users/mlms13/orgs",
+                "repos_url": "https://api.github.com/users/mlms13/repos",
+                "events_url": "https://api.github.com/users/mlms13/events{/privacy}",
+                "received_events_url": "https://api.github.com/users/mlms13/received_events",
+                "type": "User",
+                "site_admin": false
+            },
+            "committer": {
+                "login": "mlms13",
+                "id": 1105543,
+                "node_id": "MDQ6VXNlcjExMDU1NDM=",
+                "avatar_url": "https://avatars0.githubusercontent.com/u/1105543?v=4",
+                "gravatar_id": "",
+                "url": "https://api.github.com/users/mlms13",
+                "html_url": "https://github.com/mlms13",
+                "followers_url": "https://api.github.com/users/mlms13/followers",
+                "following_url": "https://api.github.com/users/mlms13/following{/other_user}",
+                "gists_url": "https://api.github.com/users/mlms13/gists{/gist_id}",
+                "starred_url": "https://api.github.com/users/mlms13/starred{/owner}{/repo}",
+                "subscriptions_url": "https://api.github.com/users/mlms13/subscriptions",
+                "organizations_url": "https://api.github.com/users/mlms13/orgs",
+                "repos_url": "https://api.github.com/users/mlms13/repos",
+                "events_url": "https://api.github.com/users/mlms13/events{/privacy}",
+                "received_events_url": "https://api.github.com/users/mlms13/received_events",
+                "type": "User",
+                "site_admin": false
+            },
+            "parents": [
+                {
+                    "sha": "1cbb65088cea3b92d2c94d0216cfb21bc24e7036",
+                    "url": "https://api.github.com/repos/mlms13/bs-decode/commits/1cbb65088cea3b92d2c94d0216cfb21bc24e7036",
+                    "html_url": "https://github.com/mlms13/bs-decode/commit/1cbb65088cea3b92d2c94d0216cfb21bc24e7036"
+                }
+            ]
+        }
+    ],
+    "files": [
+        {
+            "sha": "73f4bc81dc0fb5b50b09c4317014d48f3b6e4293",
+            "filename": "src/DecodeAsOption.re",
+            "status": "added",
+            "additions": 17,
+            "deletions": 0,
+            "changes": 17,
+            "blob_url": "https://github.com/mlms13/bs-decode/blob/ce5cada7d5d45bee435cfd957ce453c63bd083ba/src/DecodeAsOption.re",
+            "raw_url": "https://github.com/mlms13/bs-decode/raw/ce5cada7d5d45bee435cfd957ce453c63bd083ba/src/DecodeAsOption.re",
+            "contents_url": "https://api.github.com/repos/mlms13/bs-decode/contents/src/DecodeAsOption.re?ref=ce5cada7d5d45bee435cfd957ce453c63bd083ba",
+            "patch": "@@ -0,0 +1,17 @@\n+module OptionTransform: DecodeBase.TransformError with type t('a) = option('a) = {\n+  type t('a) = option('a);\n+  let transform = _ => None;\n+  let mapErr = (_fn, v) => switch v {\n+  | Some(a) => Some(a)\n+  | None => None\n+  };\n+};\n+\n+module DecodeAsOption =\n+  DecodeBase.DecodeBase(\n+    OptionTransform,\n+    BsAbstract.Option.Monad,\n+    BsAbstract.Option.Alt\n+  );\n+\n+include DecodeAsOption;"
+        },
+        {
+            "sha": "3ce0055c902c75665ba5d2064370c74af56071ac",
+            "filename": "src/util/DecodeFailure.re",
+            "status": "modified",
+            "additions": 47,
+            "deletions": 0,
+            "changes": 47,
+            "blob_url": "https://github.com/mlms13/bs-decode/blob/ce5cada7d5d45bee435cfd957ce453c63bd083ba/src/util/DecodeFailure.re",
+            "raw_url": "https://github.com/mlms13/bs-decode/raw/ce5cada7d5d45bee435cfd957ce453c63bd083ba/src/util/DecodeFailure.re",
+            "contents_url": "https://api.github.com/repos/mlms13/bs-decode/contents/src/util/DecodeFailure.re?ref=ce5cada7d5d45bee435cfd957ce453c63bd083ba",
+            "patch": "@@ -29,3 +29,50 @@ let combine = (a, b) => switch (a, b) {\n | (Obj(nela), Obj(nelb)) => Obj(NonEmptyList.append(nela, nelb))\n | _ => a\n };\n+\n+let valErrorToString = v => switch v {\n+| ExpectedString => \"Expected string\"\n+| ExpectedNumber => \"Expected number\"\n+| ExpectedInt => \"Expected int\"\n+| ExpectedArray => \"Expected array\"\n+| ExpectedObject => \"Expected object\"\n+};\n+\n+/**\n+ * Traverse the tree of errors and produce properly-indented error strings:\n+ *\n+ * Failed to decode array:\n+ *     At position 0: Expected string but found 3.5\n+ *\n+ * Failed to decode array:\n+ *     At position 3: Failed to decode object:\n+ *         Field \"foo\" is required but was not present\n+ *         Field \"bar\" had an invalid value: Failed to decode array:\n+ *             At position 0: Expected int but found []\n+ */\n+let rec toDebugString = (~level=0, ~pre=\"\", v) => {\n+  let spaces = indent => String.make(indent * 4, ' ');\n+\n+  let msg = switch v {\n+  | Val(x, json) => valErrorToString(x) ++ \" but found \" ++ Js.Json.stringify(json);\n+  | Arr(nel) =>\n+    let childMessages = nel |> NonEmptyList.map(((i, err)) =>\n+      toDebugString(~level = level + 1, ~pre = \"At position \" ++ string_of_int(i) ++ \": \", err)\n+    ) |> NonEmptyList.toT |> Array.of_list |> Js.Array.joinWith(\"\\n\");\n+\n+    \"Failed to decode array:\\n\" ++ childMessages;\n+\n+  | Obj(nel) =>\n+    let childMessages = nel |> NonEmptyList.map(((field, err)) => {\n+      let fieldStr = \"\\\"\" ++ field ++ \"\\\"\";\n+      switch err {\n+      | MissingField => spaces(level + 1) ++ \"Field \" ++ fieldStr ++ \" is required, but was not present\"\n+      | InvalidField(err) => toDebugString(~level = level + 1, ~pre = \"Field \" ++ fieldStr ++ \" had an invalid value: \", err)\n+      };\n+    }) |> NonEmptyList.toT |> Array.of_list |> Js.Array.joinWith(\"\\n\");\n+\n+    \"Failed to decode object:\\n\" ++ childMessages;\n+  };\n+\n+  spaces(level) ++ pre ++ msg;\n+};"
+        },
+        {
+            "sha": "d32af32809088d46747048232d8e3d45a8c55cc5",
+            "filename": "test/Decode_Option_test.re",
+            "status": "added",
+            "additions": 88,
+            "deletions": 0,
+            "changes": 88,
+            "blob_url": "https://github.com/mlms13/bs-decode/blob/ce5cada7d5d45bee435cfd957ce453c63bd083ba/test/Decode_Option_test.re",
+            "raw_url": "https://github.com/mlms13/bs-decode/raw/ce5cada7d5d45bee435cfd957ce453c63bd083ba/test/Decode_Option_test.re",
+            "contents_url": "https://api.github.com/repos/mlms13/bs-decode/contents/test/Decode_Option_test.re?ref=ce5cada7d5d45bee435cfd957ce453c63bd083ba",
+            "patch": "@@ -0,0 +1,88 @@\n+open Jest;\n+open Expect;\n+\n+let ((<$>), (<*>)) = BsAbstract.Option.Infix.((<$>), (<*>));\n+let (\n+  decodeString,\n+  decodeFloat,\n+  decodeInt,\n+  decodeArray,\n+  decodeField,\n+  decodeOptionalField,\n+  decodeOpt\n+) = DecodeAsOption.(decodeString, decodeFloat, decodeInt, decodeArray, decodeField, decodeOptionalField, decodeOpt);\n+\n+\n+module User = {\n+  type t= { name: string, age: int };\n+  let make = (name, age) => { name, age };\n+\n+  let jsonSample = Js.Dict.fromList([\n+    (\"name\", Js.Json.string(\"Foo\")),\n+    (\"age\", Js.Json.number(30.))\n+  ]) |> Js.Json.object_;\n+\n+  let decode = json => make\n+    <$> decodeField(\"name\", decodeString, json)\n+    <*> decodeField(\"age\", decodeInt, json);\n+};\n+\n+describe(\"Test decoding primitive values as option\", () => {\n+  let jsonString = Js.Json.string(\"Foo\");\n+  let jsonFloat = Js.Json.number(1.4);\n+  let jsonInt = Js.Json.number(4.);\n+  let jsonNull = Js.Json.null;\n+\n+  test(\"String succeeds on string\", () => expect(decodeString(jsonString)) |> toEqual(Some(\"Foo\")));\n+  test(\"String fails on number\", () => expect(decodeString(jsonFloat)) |> toEqual(None));\n+  test(\"String fails on null\", () => expect(decodeString(jsonNull)) |> toEqual(None));\n+\n+  test(\"Float succeeds on float\", () => expect(decodeFloat(jsonFloat)) |> toEqual(Some(1.4)));\n+  test(\"Float succeeds on int\", () => expect(decodeFloat(jsonInt)) |> toEqual(Some(4.0)));\n+  test(\"Float fails on string\", () => expect(decodeFloat(jsonString)) |> toEqual(None));\n+  test(\"Float fails on null\", () => expect(decodeFloat(jsonNull)) |> toEqual(None));\n+\n+  test(\"Int succeeds on int\", () => expect(decodeInt(jsonInt)) |> toEqual(Some(4)));\n+  test(\"Int fails on float\", () => expect(decodeInt(jsonFloat)) |> toEqual(None));\n+  test(\"Int fails on string\", () => expect(decodeInt(jsonString)) |> toEqual(None));\n+  test(\"Int fails on null\", () => expect(decodeInt(jsonNull)) |> toEqual(None));\n+});\n+\n+describe(\"Test decoding array as option\", () => {\n+  let jsonArray = Js.Json.array([| Js.Json.string(\"a\"), Js.Json.string(\"b\"), Js.Json.string(\"c\") |]);\n+  let jsonEmptyArray = Js.Json.array([||]);\n+  let jsonString = Js.Json.string(\"Foo\");\n+\n+  test(\"Array succeeds on array of string\", () => expect(decodeArray(decodeString, jsonArray)) |> toEqual(Some([| \"a\", \"b\", \"c\" |])));\n+  test(\"Array succeeds on empty array\", () => expect(decodeArray(decodeString, jsonEmptyArray)) |> toEqual(Some([||])));\n+  test(\"Array fails on string\", () => expect(decodeArray(decodeString, jsonString)) |> toEqual(None));\n+});\n+\n+describe(\"Test decoding record as option\", () => {\n+  let obj = User.jsonSample;\n+\n+  test(\"String field succeeds\", () => expect(decodeField(\"name\", decodeString, obj)) |> toEqual(Some(\"Foo\")));\n+  test(\"Field fails when missing\", () => expect(decodeField(\"blah\", decodeString, obj)) |> toEqual(None));\n+  test(\"Field fails when wrong type\", () => expect(decodeField(\"name\", decodeFloat, obj)) |> toEqual(None));\n+  test(\"Decode all fields into record type\", () => expect(User.decode(obj)) |> toEqual(Some(User.make(\"Foo\", 30))));\n+  test(\"Decode record fails on bad data\", () => expect(User.decode(Js.Json.null)) |> toEqual(None));\n+});\n+\n+describe(\"Test decoding optional fields and values\", () => {\n+  let jsonNull = Js.Json.null;\n+  let jsonFloat = Js.Json.number(3.14);\n+  let jsonObj = Js.Dict.fromList([\n+    (\"float\", jsonFloat),\n+    (\"empty\", jsonNull)\n+  ]) |> Js.Json.object_;\n+\n+  let optMissingField = decodeOptionalField(\"x\", decodeInt, jsonObj);\n+  let optMissingValue = decodeOptionalField(\"empty\", decodeInt, jsonObj);\n+  let optFloatAsString = decodeOptionalField(\"float\", decodeString, jsonObj);\n+\n+  test(\"Present value parses as Some\", () => expect(decodeOpt(decodeFloat, jsonFloat)) |> toEqual(Some(Some(3.14))));\n+  test(\"Missing optional value parses as Some(None)\", () => expect(decodeOpt(decodeFloat, jsonNull)) |> toEqual(Some(None)));\n+  test(\"Present field with null value parses as None for optional field\", () => expect(optMissingField) |> toEqual(Some(None)));\n+  test(\"Present field with null value parses as None for optional value\", () => expect(optMissingValue) |> toEqual(Some(None)));\n+  test(\"Incorrect field type is still rejected\", () => expect(optFloatAsString) |> toEqual(None));\n+});"
+        },
+        {
+            "sha": "f86a18adfcea6ee1db883c6cf373762e493feb14",
+            "filename": "test/Decode_Result_test.re",
+            "status": "modified",
+            "additions": 1,
+            "deletions": 6,
+            "changes": 7,
+            "blob_url": "https://github.com/mlms13/bs-decode/blob/ce5cada7d5d45bee435cfd957ce453c63bd083ba/test/Decode_Result_test.re",
+            "raw_url": "https://github.com/mlms13/bs-decode/raw/ce5cada7d5d45bee435cfd957ce453c63bd083ba/test/Decode_Result_test.re",
+            "contents_url": "https://api.github.com/repos/mlms13/bs-decode/contents/test/Decode_Result_test.re?ref=ce5cada7d5d45bee435cfd957ce453c63bd083ba",
+            "patch": "@@ -152,13 +152,12 @@ describe(\"Test optionally empty fields and values\", () => {\n   ]) |> Js.Json.object_;\n \n   let optFieldString = decodeOptionalField(\"s\", decodeString, obj);\n-  let reqFieldOptValueString = decodeField(\"s\", optional(decodeString), obj);\n+  let reqFieldOptValueString = decodeField(\"s\", optStr, obj);\n   let optFieldInt = decodeOptionalField(\"x\", decodeInt, obj);\n   let optValueInt = decodeField(\"x\", optional(decodeInt), obj);\n   let nullFieldInt = decodeOptionalField(\"n\", decodeInt, obj);\n   let nullValueInt = decodeField(\"n\", optional(decodeInt), obj);\n \n-\n   test(\"Present value parses as Some string\", () => expect(optStr(jsonString)) |> toEqual(Ok(Some(\"Foo\"))));\n   test(\"Null value parses as None\", () => expect(optStr(jsonNull)) |> toEqual(Ok(None)));\n   test(\"Present value of incorrect type is still an Error\", () => expect(optStr(jsonInt)) |> toEqual(Error(Val(ExpectedString, jsonInt))));\n@@ -172,10 +171,6 @@ describe(\"Test optionally empty fields and values\", () => {\n   test(\"Trying to parse string field as int is Error, not None\", () => expect(decodeOptionalField(\"s\", decodeInt, obj)) |> toEqual(Error(Val(ExpectedNumber, jsonString))));\n });\n \n-/**\n- * TODO: decode date\n- */\n-\n type customErr('a) =\n   | Decode(DecodeFailure.t)\n   | Validation('a, Js.Json.t);"
+        }
+    ]
+}
