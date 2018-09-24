@@ -1,9 +1,12 @@
 open Jest;
 open Expect;
-open DecodeFailure;
+open Decode.ParseError;
 open Belt.Result;
+module D = Decode.AsResult.OfParseError;
+
 let ((<$>), (<*>), (<|>), recoverWith, mapErr) =
-  DecodeAsResult.R.(Infix.(<$>), Infix.(<*>), Infix.(<|>), recoverWith, mapErr);
+  D.R.(Infix.(<$>), Infix.(<*>), Infix.(<|>), recoverWith, mapErr);
+
 let (
   decodeString,
   decodeFloat,
@@ -16,8 +19,7 @@ let (
   decodeOptionalField,
   decodeTuple,
   optional
-) = DecodeAsResult.(decodeString, decodeFloat, decodeInt, decodeArray, decodeList, decodeAt, decodeField, decodeFieldWithFallback, decodeOptionalField, decodeTuple, decodeOpt);
-
+) = D.(decodeString, decodeFloat, decodeInt, decodeArray, decodeList, decodeAt, decodeField, decodeFieldWithFallback, decodeOptionalField, decodeTuple, decodeOpt);
 
 /**
  * Sample module used to decode json into a record type

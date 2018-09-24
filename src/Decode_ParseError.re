@@ -69,7 +69,7 @@ module type ValError = {
   let handle: DecodeBase.failure => t
 };
 
-module AsResult = (T: ValError) => {
+module ResultOf = (T: ValError) => {
   module Result = Belt.Result;
   open BsAbstract.Interface;
 

@@ -1,7 +1,7 @@
 open Jest;
 open Expect;
 open Belt.Result;
-open DecodeFailure;
+open Decode.ParseError;
 /**
  * Because the underlying failure in DecodeBase is polymorphic, you can extend
  * those errors (without mapping the error into your own type). This test file
@@ -12,7 +12,7 @@ open DecodeFailure;
  */
 
 
-module R = DecodeFailure.AsResult({
+module R = Decode.ParseError.ResultOf({
   type t = [ DecodeBase.failure | `InvalidColor | `InvalidShape ];
   let handle = x => (x :> t);
 });

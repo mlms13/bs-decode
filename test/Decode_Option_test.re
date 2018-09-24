@@ -10,7 +10,7 @@ let (
   decodeField,
   decodeOptionalField,
   decodeOpt
-) = DecodeAsOption.(decodeString, decodeFloat, decodeInt, decodeArray, decodeField, decodeOptionalField, decodeOpt);
+) = Decode.AsOption.(decodeString, decodeFloat, decodeInt, decodeArray, decodeField, decodeOptionalField, decodeOpt);
 
 
 module User = {

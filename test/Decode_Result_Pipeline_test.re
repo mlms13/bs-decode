@@ -2,14 +2,16 @@ open Jest;
 open Expect;
 open Belt.Result;
 
+module D = Decode.AsResult.OfParseError;
+
 let (string, number, object_, null) = Js.Json.(string, number, object_, null);
 let (succeed, map2, required, fallback, optional, hardcoded, run) =
-  DecodeAsResult.Pipeline.(succeed, map2, required, fallback, optional, hardcoded, run);
+  D.Pipeline.(succeed, map2, required, fallback, optional, hardcoded, run);
 
-let map = DecodeAsResult.R.Functor.map;
+let map = D.R.Functor.map;
 
 let (decodeField, decodeFloat, decodeString, decodeInt) =
-  DecodeAsResult.(decodeField, decodeFloat, decodeString, decodeInt);
+  D.(decodeField, decodeFloat, decodeString, decodeInt);
 
 module Point = {
   type t = { x: float, y: float };
