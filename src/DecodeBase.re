@@ -143,13 +143,7 @@ module DecodeBase = (
     /**
      * `run` takes a decoder and some json, and it passes that json to the
      * decoder. The result is that your decoder is run with the provided json
-     *
-     * The actual signature looks something like this:
-     * (json => t), json => t
-     *
-     * ...which, turns out, is `identity`.
-     *
      */
-    let run = BsAbstract.Functions.id;
+    let run = (json, decode) => decode(json);
   }
 };
