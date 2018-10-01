@@ -53,7 +53,7 @@ describe("Test lazily executing decoders with a single JSON object", () => {
       decodeField("x", decodeFloat),
       decodeField("y", decodeFloat),
     )
-    ->(run(Point.sample));
+    |> run(Point.sample);
 
   test("Lazy execution successfully parses point", () =>
     expect(decoded) |> toEqual(Ok(Point.make(3.1, 2.0)))
@@ -62,12 +62,10 @@ describe("Test lazily executing decoders with a single JSON object", () => {
 
 describe("Test piping to build up decoders, using |>", () => {
   let decoded =
-    (
-      succeed(Point.make)
-      |> required("x", decodeFloat)
-      |> required("y", decodeFloat)
-    )
-    ->(run(Point.sample));
+    succeed(Point.make)
+    |> required("x", decodeFloat)
+    |> required("y", decodeFloat)
+    |> run(Point.sample);
 
   test("Pipeline of required fields parses point", () =>
     expect(decoded) |> toEqual(Ok(Point.make(3.1, 2.0)))
@@ -82,12 +80,12 @@ describe("Test optional, fallback, hardcoded helpers", () => {
     |> optional("email", decodeString)
     |> hardcoded("No note");
 
-  let completeDecoded = decoder->(run(User.sampleComplete));
+  let completeDecoded = decoder |> run(User.sampleComplete);
   let completeName = completeDecoded |> map((v: User.t) => v.name);
   let completeAge = completeDecoded |> map((v: User.t) => v.age);
   let completeNote = completeDecoded |> map((v: User.t) => v.note);
 
-  let sparseDecoded = decoder->(run(User.sampleSparse));
+  let sparseDecoded = decoder |> run(User.sampleSparse);
   let sparseName = sparseDecoded |> map((v: User.t) => v.name);
   let sparseAge = sparseDecoded |> map((v: User.t) => v.age);
   let sparseEmail = sparseDecoded |> map((v: User.t) => v.email);

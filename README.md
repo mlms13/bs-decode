@@ -101,7 +101,7 @@ let decodeUser = json =>
   D.Pipeline.succeed(User.make)
     |> D.Pipeline.required("name", D.decodeString)
     |> D.Pipeline.required("age", D.decodeInt)
-    -> D.Pipeline.run(json);
+    |> D.Pipeline.run(json);
 ```
 
 Note that unlike previous decoders we've looked at, the pipeline style is not eager. Instead, it builds up a function that needs to be `run` with the JSON.
