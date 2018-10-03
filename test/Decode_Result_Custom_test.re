@@ -2,6 +2,7 @@ open Jest;
 open Expect;
 open Belt.Result;
 open Decode.ParseError;
+
 /**
  * Because the underlying failure in DecodeBase is polymorphic, you can extend
  * those errors (without mapping the error into your own type). This test file
@@ -11,7 +12,6 @@ open Decode.ParseError;
  * Until bs-decode hits 1.0, assume that this will go through some changes.
  */
 
-
 module R = Decode.ParseError.ResultOf({
   type t = [ DecodeBase.failure | `InvalidColor | `InvalidShape ];
   let handle = x => (x :> t);
@@ -20,8 +20,6 @@ module R = Decode.ParseError.ResultOf({
 module D = DecodeBase.DecodeBase(R.TransformError, R.Monad, R.Alt);
 
 let ((<$>), (>>=), (<|>)) = R.Infix.((<$>), (>>=), (<|>));
-let (string, tuple, float, field, at) =
-  D.(decodeString, decodeTuple, decodeFloat, decodeField, decodeAt);
 
 module Color = {
   type t = Red | Green | Blue;
@@ -33,7 +31,7 @@ module Color = {
   | _ => Error(Val(`InvalidColor, Js.Json.string(str)))
   };
 
-  let decode = json => string(json) >>= fromString;
+  let decode = json => D.string(json) >>= fromString;
 };
 
 describe("Test decoding enum from string", () => {
@@ -58,13 +56,13 @@ module Shape = {
   let square = length => Square(length);
   let rect = ((width, height)) => Rect(width, height);
 
-  let decodeWH = json => tuple(("width", float), ("height", float), json);
+  let decodeWH = json => D.tuple(("width", D.float), ("height", D.float), json);
 
   /* e.g. { "circle": { "radius": 1.4 }} */
   let decode = json =>
-    circle <$> at(["circle", "radius"], float, json)
-    <|> (square <$> at(["square", "length"], float, json))
-    <|> (rect <$> field("rectangle", decodeWH, json))
+    circle <$> D.at(["circle", "radius"], D.float, json)
+    <|> (square <$> D.at(["square", "length"], D.float, json))
+    <|> (rect <$> D.field("rectangle", decodeWH, json))
     |>  R.mapErr(_ => `InvalidShape(json));
 };
 
@@ -103,10 +101,10 @@ describe("Test decoding complex ADT with constructor as JSON value", () => {
    *
    */
   let decodeShape = json =>
-    field("key", string, json) |. flatMap(key => switch key {
-    | "circle" => Shape.circle <$> at(["value", "radius"], float, json)
-    | "square" => Shape.square <$> at(["value", "length"], float, json)
-    | "rectangle" => Shape.rect <$> field("value", Shape.decodeWH, json)
+    D.field("key", D.string, json) |. flatMap(key => switch key {
+    | "circle" => Shape.circle <$> D.at(["value", "radius"], D.float, json)
+    | "square" => Shape.square <$> D.at(["value", "length"], D.float, json)
+    | "rectangle" => Shape.rect <$> D.field("value", Shape.decodeWH, json)
     | _ => Error(Val(`InvalidShape, json)) /* This is a sad lie to make the compiler happy */
     });
 

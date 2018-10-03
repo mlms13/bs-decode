@@ -6,13 +6,11 @@ module D = Decode.AsResult.OfParseError;
 
 let (string, number, object_, null) =
   Js.Json.(string, number, object_, null);
-let (succeed, map2, required, fallback, optional, hardcoded, run) =
-  D.Pipeline.(succeed, map2, required, fallback, optional, hardcoded, run);
+
+let (succeed, map2, field, fallback, optionalField, hardcoded, run) =
+  D.Pipeline.(succeed, map2, field, fallback, optionalField, hardcoded, run);
 
 let map = D.R.Functor.map;
-
-let (decodeField, decodeFloat, decodeString, decodeInt) =
-  D.(decodeField, decodeFloat, decodeString, decodeInt);
 
 module Point = {
   type t = {
@@ -50,8 +48,8 @@ describe("Test lazily executing decoders with a single JSON object", () => {
   let decoded =
     map2(
       Point.make,
-      decodeField("x", decodeFloat),
-      decodeField("y", decodeFloat),
+      D.field("x", D.float),
+      D.field("y", D.float),
     )
     |> run(Point.sample);
 
@@ -63,8 +61,8 @@ describe("Test lazily executing decoders with a single JSON object", () => {
 describe("Test piping to build up decoders, using |>", () => {
   let decoded =
     succeed(Point.make)
-    |> required("x", decodeFloat)
-    |> required("y", decodeFloat)
+    |> field("x", D.float)
+    |> field("y", D.float)
     |> run(Point.sample);
 
   test("Pipeline of required fields parses point", () =>
@@ -75,9 +73,9 @@ describe("Test piping to build up decoders, using |>", () => {
 describe("Test optional, fallback, hardcoded helpers", () => {
   let decoder =
     succeed(User.make)
-    |> fallback("name", decodeString, "Bar")
-    |> optional("age", decodeInt)
-    |> optional("email", decodeString)
+    |> fallback("name", D.string, "Bar")
+    |> optionalField("age", D.int)
+    |> optionalField("email", D.string)
     |> hardcoded("No note");
 
   let completeDecoded = decoder |> run(User.sampleComplete);
