@@ -10,7 +10,7 @@ let (string, number, object_, null) =
 let (succeed, map2, field, fallback, optionalField, hardcoded, run) =
   D.Pipeline.(succeed, map2, field, fallback, optionalField, hardcoded, run);
 
-let map = D.R.Functor.map;
+let map = D.ResultUtil.Functor.map;
 
 module Point = {
   type t = {

@@ -5,7 +5,7 @@ open Belt.Result;
 module D = Decode.AsResult.OfParseError;
 
 let ((<$>), (<*>), (<|>), recoverWith, mapErr) =
-  D.R.(Infix.(<$>), Infix.(<*>), Infix.(<|>), recoverWith, mapErr);
+  D.ResultUtil.(Infix.(<$>), Infix.(<*>), Infix.(<|>), recoverWith, mapErr);
 
 /**
  * Sample module used to decode json into a record type

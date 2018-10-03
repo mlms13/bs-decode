@@ -1,12 +1,12 @@
-module R = Decode_ParseError.ResultOf({
+module ResultUtil = Decode_ParseError.ResultOf({
   type t = DecodeBase.failure;
   let handle = t => t;
 });
 
 module D = DecodeBase.DecodeBase(
-  R.TransformError,
-  R.Monad,
-  R.Alt
+  ResultUtil.TransformError,
+  ResultUtil.Monad,
+  ResultUtil.Alt
 );
 
 include D;

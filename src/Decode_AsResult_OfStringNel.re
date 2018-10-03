@@ -1,4 +1,4 @@
-module ResultOfStringNel = {
+module ResultUtil = {
   module NelStr: BsAbstract.Interface.TYPE with type t = NonEmptyList.t(string) = { type t = NonEmptyList.t(string) };
 
   type x('a) = Belt.Result.t('a, NelStr.t);
@@ -23,8 +23,10 @@ module ResultOfStringNel = {
   };
 };
 
-module DecodeAsStringNel = DecodeBase.DecodeBase(
-  ResultOfStringNel.Transform,
-  ResultOfStringNel.Monad,
-  ResultOfStringNel.Alt
+module D = DecodeBase.DecodeBase(
+  ResultUtil.Transform,
+  ResultUtil.Monad,
+  ResultUtil.Alt
 );
+
+include D;
