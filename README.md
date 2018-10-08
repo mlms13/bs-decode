@@ -24,21 +24,17 @@ ReasonML already has a de-facto standard library for JSON parsing in `bs-json`, 
 
 ## Usage
 
-The `Decode` module gives you access to submodules that can decode into options or different kinds of results. They're all built on top of the same underlying tools, so the API doesn't differ much (only the return type). For the rest of this section, we'll decode into a `Belt.Result.t('a, Decode.ParseError)`. To make the code a little less cluttered, we'll assume you've opened `Decode.ParseError` and aliased the decode module as:
-
-```reason
-module D = Decode.AsResult.OfParseError;
-```
+The `Decode` module gives you access to submodules that can decode into options or different kinds of results. They're all built on top of the same underlying tools, so the API doesn't differ much (only the return type). For the rest of this section, we'll decode into a `Belt.Result.t('a, Decode.ParseError)`. To make the code a little less cluttered, we'll assume you've added `open Decode.ParseError` at the top of the file and aliased the decode module as `module D = Decode.AsResult.OfParseError`.
 
 **Decoding Simple Values**
 
-You can parse simple (non-object, non-array) JSON values using `decodeString`, `decodeFloat`, and `decodeInt` (which will fail for numbers with floating point values... if you don't want this behavor, use `decodeFloat` and map through `int_of_float` instead):
+You can parse simple (non-object, non-array) JSON values using `D.string`, `D.float`, and `D.int` (which will fail for numbers with floating point values... if you don't want this behavor, use `D.float` and map through `int_of_float` instead):
 
 ```reason
-D.decodeString(Js.Json.string("foo"));
+D.string(Js.Json.string("foo"));
 /* Belt.Result.Ok("foo") */
 
-D.decodeString(Js.Json.number(3.14));
+D.string(Js.Json.number(3.14));
 /* Error(Val(`ExpectedString, number(3.14))) */
 ```
 
@@ -52,13 +48,13 @@ JSON arrays can be decoded into either arrays or lists. A decoder for the inner 
 open Js;
 let jsonArr = Json.array([| Json.string("a") |]);
 
-D.decodeArray(D.decodeString, jsonArr);
+D.decodeArray(D.string, jsonArr);
 /* Ok([| "a" |]) */
 
-D.decodeList(D.decodeString, jsonArr);
+D.decodeList(D.string, jsonArr);
 /* Ok([ "a" ]) */
 
-D.decodeList(D.decodeInt, jsonArr);
+D.decodeList(D.int, jsonArr);
 /* Error(Arr(NonEmptyList.pure((0, Val(`ExpectedInt, Json.string("a")))))) */
 ```
 
@@ -69,13 +65,13 @@ Decoding values from a JSON object requires specifying the string key of the fie
 ```reason
 /* imagine `json` is `{ "foo": "bar", "baz": 4 }` */
 
-D.decodeField("foo", D.decodeString, json);
+D.field("foo", D.string, json);
 /* Ok("bar") */
 
-D.decodeField("bar", D.decodeInt, json);
+D.field("bar", D.int, json);
 /* Ok(4) */
 
-D.decodeField("missing", D.decodeInt, json);
+D.field("missing", D.int, json);
 /* Error(Obj(NonEmptyList.pure(("missing", MissingField)))) */
 ```
 
@@ -93,14 +89,14 @@ module User = {
 let ((<$>), (<*>)) = D.ResultUtil.Ifnix.((<$>), (<*>));
 let decodeUser = json =>
   User.make
-    <$> D.decodeField("name", D.decodeString, json)
-    <*> D.decodeField("age", D.decodeInt, json);
+    <$> D.field("name", D.string, json)
+    <*> D.field("age", D.int, json);
 
 /* Pipeline style */
 let decodeUser = json =>
   D.Pipeline.succeed(User.make)
-    |> D.Pipeline.required("name", D.decodeString)
-    |> D.Pipeline.required("age", D.decodeInt)
+    |> D.Pipeline.field("name", D.string)
+    |> D.Pipeline.field("age", D.int)
     |> D.Pipeline.run(json);
 ```
 
@@ -108,18 +104,25 @@ Note that unlike previous decoders we've looked at, the pipeline style is not ea
 
 **Decoding Optional Values**
 
-Wrapping a decode function in `D.decodeOpt` will convert the resulting type into an `option`, and will tolerate JSON null values.
+Wrapping a decode function in `D.optional` will convert the resulting type into an `option`, and will tolerate JSON null values.
 
 ```reason
-decodeOpt(decodeString, Js.Json.null); /* Ok(None) */
+optional(string, Js.Json.null); /* Ok(None) */
 ```
 
-Similarly, for fields, you can use `D.decodeOptionalField` instead of `D.decodeField` to tolerate both empty values as well as missing fields.
+Similarly, for fields, you can use `D.optionalField` instead of `D.field` to tolerate both empty values as well as missing fields.
 
+**It's important to note** that unlike Elm's decoding and `bs-json`, using `optional` or `optionalField` won't convert invalid data into `None`. For example, `D.optional(D.string, Js.Json.number(3.1))` will result in `Error(...)` instead of `Ok(None)`.
 
 ## Result? Option? NonEmptyList of String?
 
-Out of the box, you can wrap the results of decoding into an `option`, a `Belt.Result.t` where the error is a `Decode.ParseError`, or a result where the error is a `NonEmptyList(string)`. Here are some of the pros and cons of these options.
+Out of the box, we provide decoders that will return the output of decoding as either an `option` or a `Belt.Result.t`.
+
+  - `Decode.AsOption`: all functions return `Some(value)` for success or `None` for failures
+  - `Decode.AsResult.OfParseError`: all functions return `Ok(value)` for success, or `Error(Decode.ParseError.t)` for failures
+  - `Decode.AsResult.OfStringNel`: all functions return `Ok(value)` for success, or `Error(NonEmptyList.t(string))` for failures
+
+Each of these has some pros and cons to consider:
 
 **Option**
 
