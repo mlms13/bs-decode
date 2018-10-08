@@ -46,11 +46,7 @@ module User = {
 
 describe("Test lazily executing decoders with a single JSON object", () => {
   let decoded =
-    map2(
-      Point.make,
-      D.field("x", D.float),
-      D.field("y", D.float),
-    )
+    map2(Point.make, D.field("x", D.float), D.field("y", D.float))
     |> run(Point.sample);
 
   test("Lazy execution successfully parses point", () =>
