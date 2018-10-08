@@ -1,4 +1,5 @@
 type failure = [
+  | `ExpectedBoolean
   | `ExpectedString
   | `ExpectedNumber
   | `ExpectedInt
@@ -9,6 +10,7 @@ type failure = [
 let failureToString = (v, json) =>
   (
     switch (v) {
+    | `ExpectedBoolean => "Expected boolean"
     | `ExpectedString => "Expected string"
     | `ExpectedNumber => "Expected number"
     | `ExpectedInt => "Expected int"
@@ -47,6 +49,8 @@ module DecodeBase =
 
   let value = (decode, failure, json) =>
     decode(json) |> fromOpt(ok, T.valErr(failure, json));
+
+  let boolean = value(Js.Json.decodeBoolean, `ExpectedBoolean);
 
   let string = value(Js.Json.decodeString, `ExpectedString);
 

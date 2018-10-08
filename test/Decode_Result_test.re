@@ -39,13 +39,34 @@ module Parent = {
 };
 
 describe("Test value decoders", () => {
+  let jsonBoolean = Js.Json.boolean(true);
   let jsonString = Js.Json.string("Foo");
   let jsonFloat = Js.Json.number(1.4);
   let jsonInt: Js.Json.t = [%bs.raw {| 4 |}];
   let jsonNull = Js.Json.null;
 
+  test("Boolean succeeds on a boolean", () =>
+    expect(D.boolean(jsonBoolean)) |> toEqual(Ok(true))
+  );
+  test("Boolean fails on string", () =>
+    expect(D.boolean(jsonString))
+    |> toEqual(Error(Val(`ExpectedBoolean, jsonString)))
+  );
+  test("Boolean fails on number", () =>
+    expect(D.boolean(jsonFloat))
+    |> toEqual(Error(Val(`ExpectedBoolean, jsonFloat)))
+  );
+  test("Boolean fails on null", () =>
+    expect(D.boolean(jsonNull))
+    |> toEqual(Error(Val(`ExpectedBoolean, jsonNull)))
+  );
+
   test("String succeeds on string", () =>
     expect(D.string(jsonString)) |> toEqual(Ok("Foo"))
+  );
+  test("String fails on boolean", () =>
+    expect(D.string(jsonBoolean))
+    |> toEqual(Error(Val(`ExpectedString, jsonBoolean)))
   );
   test("String fails on number", () =>
     expect(D.string(jsonFloat))
@@ -62,6 +83,10 @@ describe("Test value decoders", () => {
   test("Float succeeds on int", () =>
     expect(D.float(jsonInt)) |> toEqual(Ok(4.0))
   );
+  test("Float fails on boolean", () =>
+    expect(D.float(jsonBoolean))
+    |> toEqual(Error(Val(`ExpectedNumber, jsonBoolean)))
+  );
   test("Float fails on string", () =>
     expect(D.float(jsonString))
     |> toEqual(Error(Val(`ExpectedNumber, jsonString)))
@@ -77,6 +102,10 @@ describe("Test value decoders", () => {
   test("Int fails on float", () =>
     expect(D.int(jsonFloat))
     |> toEqual(Error(Val(`ExpectedInt, jsonFloat)))
+  );
+  test("Int fails on boolean", () =>
+    expect(D.int(jsonBoolean))
+    |> toEqual(Error(Val(`ExpectedNumber, jsonBoolean)))
   );
   test("Int fails on string", () =>
     expect(D.int(jsonString))
