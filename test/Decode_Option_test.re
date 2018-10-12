@@ -135,3 +135,19 @@ describe("Test decoding optional fields and values", () => {
     expect(optFloatAsString) |> toEqual(None)
   );
 });
+
+module Url = {
+  type t =
+    | Url(string);
+  let make = str => Url(str);
+};
+
+describe("Test mapping options with existing Option utilities", () => {
+  let url = "http://www.example.com";
+  let jsonUrl = Js.Json.string(url);
+  let decoded = D.string(jsonUrl) -> Belt.Option.map(Url.make);
+
+  test("Output of decoding can be mapped using existing Option tools", () =>
+    expect(decoded) |> toEqual(Some(Url.make(url)))
+  );
+});

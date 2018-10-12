@@ -6,6 +6,8 @@ and objError('a) =
   | MissingField
   | InvalidField(t('a));
 
+type failure = t(DecodeBase.failure);
+
 let arrPure = (pos, err) => Arr(NonEmptyList.pure((pos, err)));
 
 let objPure = (field, err) => Obj(NonEmptyList.pure((field, err)));
@@ -88,10 +90,7 @@ let rec toDebugString = (~level=0, ~pre="", innerToString, v) => {
   spaces(level) ++ pre ++ msg;
 };
 
-module type ValError = {
-  type t;
-  let handle: DecodeBase.failure => t;
-};
+module type ValError = {type t; let handle: DecodeBase.failure => t;};
 
 module ResultOf = (T: ValError) => {
   module Result = Belt.Result;

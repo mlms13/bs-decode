@@ -1,21 +1,41 @@
 module ResultUtil = {
-  module NelStr:
-    BsAbstract.Interface.TYPE with type t = NonEmptyList.t(string) = {
+  open BsAbstract;
+  open BsAbstract.Interface;
+
+  module NelStr: TYPE with type t = NonEmptyList.t(string) = {
     type t = NonEmptyList.t(string);
   };
 
-  type x('a) = Belt.Result.t('a, NelStr.t);
+  type r('a) = Belt.Result.t('a, NelStr.t);
 
-  module Monad: BsAbstract.Interface.MONAD with type t('a) = x('a) =
-    BsAbstract.Result.Monad(NelStr);
-  module Alt: BsAbstract.Interface.ALT with type t('a) = x('a) =
-    BsAbstract.Result.Alt(NelStr);
+  let result = Result.result;
+  let mapErr = (v, fn) =>
+    Result.Bifunctor.bimap(BsAbstract.Functions.id, v, fn);
 
-  module Transform: DecodeBase.TransformError with type t('a) = x('a) = {
-    type t('a) = Belt.Result.t('a, NelStr.t);
+  module Functor: FUNCTOR with type t('a) = r('a) =
+    Result.Functor(NelStr);
+
+  module Apply: APPLY with type t('a) = r('a) =
+    Result.Apply(NelStr);
+
+  module Applicative: APPLICATIVE with type t('a) = r('a) =
+    Result.Applicative(NelStr);
+
+  module Monad: MONAD with type t('a) = r('a) =
+    Result.Monad(NelStr);
+
+  module Alt: ALT with type t('a) = r('a) = Result.Alt(NelStr);
+
+  module Infix = {
+    include BsAbstract.Infix.Monad(Monad);
+    include BsAbstract.Infix.Alt(Alt);
+  };
+
+  module Transform: DecodeBase.TransformError with type t('a) = r('a) = {
+    type nonrec t('a) = r('a);
     let pureErr = x => Belt.Result.Error(NonEmptyList.pure(x));
     let mapErr = fn =>
-      BsAbstract.Result.Bifunctor.bimap(BsAbstract.Functions.id, x =>
+      Result.Bifunctor.bimap(BsAbstract.Functions.id, x =>
         NonEmptyList.map(fn, x)
       );
 
@@ -39,6 +59,14 @@ module ResultUtil = {
         "While decoding object, for field \"" ++ field ++ "\": " ++ x
       );
   };
+
+  let note = failure =>
+    BsAbstract.Option.maybe(
+      ~f=a => Belt.Result.Ok(a),
+      ~default=Belt.Result.Error(failure)
+    );
+
+  let recoverWith = a => Alt.alt(_, Applicative.pure(a));
 };
 
 module D =
