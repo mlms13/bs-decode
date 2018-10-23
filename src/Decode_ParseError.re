@@ -8,8 +8,20 @@ and objError('a) =
 
 type failure = t(DecodeBase.failure);
 
-let arrPure = (pos, err) => Arr(NonEmptyList.pure((pos, err)));
+let rec map = (fn, v) =>
+  switch (v) {
+  | Val(a, json) => Val(fn(a), json)
+  | Arr(nel) => Arr(NonEmptyList.map(((i, a)) => (i, map(fn, a)), nel))
+  | Obj(nel) =>
+    Obj(NonEmptyList.map(((f, o)) => (f, mapObj(fn, o)), nel))
+  }
+and mapObj = (fn, obj) =>
+  switch (obj) {
+  | MissingField => MissingField
+  | InvalidField(a) => InvalidField(map(fn, a))
+  };
 
+let arrPure = (pos, err) => Arr(NonEmptyList.pure((pos, err)));
 let objPure = (field, err) => Obj(NonEmptyList.pure((field, err)));
 
 /*
@@ -90,7 +102,13 @@ let rec toDebugString = (~level=0, ~pre="", innerToString, v) => {
   spaces(level) ++ pre ++ msg;
 };
 
-module type ValError = {type t; let handle: DecodeBase.failure => t;};
+let failureToDebugString = err =>
+  toDebugString(DecodeBase.failureToString, err);
+
+module type ValError = {
+  type t;
+  let handle: DecodeBase.failure => t;
+};
 
 module ResultOf = (T: ValError) => {
   module Result = Belt.Result;
@@ -100,6 +118,9 @@ module ResultOf = (T: ValError) => {
   let result = BsAbstract.Result.result;
   let mapErr = (v, fn) =>
     BsAbstract.Result.Bifunctor.bimap(BsAbstract.Functions.id, v, fn);
+
+  let fromFailure = err => map(T.handle, err);
+  let fromFailureResult = err => mapErr(fromFailure, err);
 
   module Functor: FUNCTOR with type t('a) = r('a) = {
     type t('a) = r('a);
