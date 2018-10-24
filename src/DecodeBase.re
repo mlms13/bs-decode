@@ -57,7 +57,7 @@ module DecodeBase =
   let float = json => value(Js.Json.decodeNumber, `ExpectedNumber, json);
 
   let int = json => {
-    let isInt = v => mod_float(v, floor(v)) == 0.;
+    let isInt = v => v == 0. || mod_float(v, floor(v)) == 0.;
     float(json)
     ->(
         M.flat_map(v =>
