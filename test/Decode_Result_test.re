@@ -43,6 +43,7 @@ describe("Test value decoders", () => {
   let jsonString = Js.Json.string("Foo");
   let jsonFloat = Js.Json.number(1.4);
   let jsonInt: Js.Json.t = [%bs.raw {| 4 |}];
+  let jsonZero: Js.Json.t = [%bs.raw {| 0 |}];
   let jsonNull = Js.Json.null;
 
   test("Boolean succeeds on a boolean", () =>
@@ -83,6 +84,9 @@ describe("Test value decoders", () => {
   test("Float succeeds on int", () =>
     expect(D.float(jsonInt)) |> toEqual(Ok(4.0))
   );
+  test("Float succeeds on zero", () =>
+    expect(D.float(jsonZero)) |> toEqual(Ok(0.))
+  );
   test("Float fails on boolean", () =>
     expect(D.float(jsonBoolean))
     |> toEqual(Error(Val(`ExpectedNumber, jsonBoolean)))
@@ -98,6 +102,9 @@ describe("Test value decoders", () => {
 
   test("Int succeeds on int", () =>
     expect(D.int(jsonInt)) |> toEqual(Ok(4))
+  );
+  test("Int succeeds on 0", () =>
+    expect(D.int(jsonZero)) |> toEqual(Ok(0))
   );
   test("Int fails on float", () =>
     expect(D.int(jsonFloat))
