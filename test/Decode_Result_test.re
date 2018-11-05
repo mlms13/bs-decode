@@ -321,3 +321,65 @@ describe("Test optionally empty fields and values", () => {
     |> toEqual(Error(Val(`ExpectedNumber, jsonString)))
   );
 });
+
+type kind =
+  | S(string)
+  | N(option(float))
+  | B(bool);
+
+let makeS = s => S(s);
+let makeN = n => N(n);
+let makeB = b => B(b);
+
+describe("Test oneOf, trying multiple decoders", () => {
+  let json: Js.Json.t = [%bs.raw
+    {|
+     {
+       "strField": "string",
+       "numField": 3.14,
+       "boolField": false
+     }
+  |}
+  ];
+
+  let decoders =
+    D.oneOf(
+      NonEmptyList.make(
+        json => makeS <$> D.string(json),
+        [
+          json => makeN <$> D.optional(D.float, json),
+          json => {
+            Js.log("###################");
+            Js.log("trying to parse as boolean");
+            Js.log("###################");
+            makeB <$> D.boolean(json);
+          },
+        ],
+      ),
+    );
+
+  let badDecoders =
+    D.oneOf(
+      NonEmptyList.make(
+        json => makeS <$> D.string(json),
+        [
+          json => makeS <$> D.string(json),
+          json => makeS <$> D.string(json),
+        ],
+      ),
+    );
+
+  test("First in oneOf list succeeds", () =>
+    expect(D.field("strField", decoders, json))
+    |> toEqual(Ok(S("string")))
+  );
+
+  test("Last in oneOf list succeeds", () =>
+    expect(D.field("boolField", decoders, json)) |> toEqual(Ok(B(false)))
+  );
+
+  test("All decoders in oneOf fail", () =>
+    expect(badDecoders(Js.Json.boolean(false)))
+    |> toEqual(Error(Val(`ExpectedString, Js.Json.boolean(false))))
+  );
+});

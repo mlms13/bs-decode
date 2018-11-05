@@ -113,6 +113,13 @@ let fallback:
   ) =>
   Belt.Result.t('a, Decode_ParseError.failure);
 
+let oneOf:
+  (
+    NonEmptyList.t(Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure)),
+    Js.Json.t
+  ) =>
+  Belt.Result.t('a, Decode_ParseError.failure);
+
 module Pipeline: {
   let succeed: ('a, 'b) => Belt.Result.t('a, Decode_ParseError.failure);
 
