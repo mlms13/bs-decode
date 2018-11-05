@@ -348,12 +348,7 @@ describe("Test oneOf, trying multiple decoders", () => {
         json => makeS <$> D.string(json),
         [
           json => makeN <$> D.optional(D.float, json),
-          json => {
-            Js.log("###################");
-            Js.log("trying to parse as boolean");
-            Js.log("###################");
-            makeB <$> D.boolean(json);
-          },
+          json => makeB <$> D.boolean(json),
         ],
       ),
     );

@@ -5,6 +5,11 @@ module OptionTransform:
   let arrErr = (_, opt) => opt;
   let missingFieldErr = _ => None;
   let objErr = (_, opt) => opt;
+  let lazyAlt = (opt, fn) =>
+    switch (opt) {
+    | Some(v) => Some(v)
+    | None => fn()
+    };
 };
 
 module DecodeAsOption =

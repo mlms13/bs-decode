@@ -167,6 +167,11 @@ module ResultOf = (T: ValError) => {
     let arrErr = pos => mapErr(x => arrPure(pos, x));
     let missingFieldErr = field => err(objPure(field, MissingField));
     let objErr = field => mapErr(x => objPure(field, InvalidField(x)));
+    let lazyAlt = (res, fn) =>
+      switch (res) {
+      | Belt.Result.Ok(v) => Belt.Result.Ok(v)
+      | Belt.Result.Error(_) => fn()
+      };
   };
 
   let note = failure =>

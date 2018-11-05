@@ -12,17 +12,14 @@ module ResultUtil = {
   let mapErr = (v, fn) =>
     Result.Bifunctor.bimap(BsAbstract.Functions.id, v, fn);
 
-  module Functor: FUNCTOR with type t('a) = r('a) =
-    Result.Functor(NelStr);
+  module Functor: FUNCTOR with type t('a) = r('a) = Result.Functor(NelStr);
 
-  module Apply: APPLY with type t('a) = r('a) =
-    Result.Apply(NelStr);
+  module Apply: APPLY with type t('a) = r('a) = Result.Apply(NelStr);
 
   module Applicative: APPLICATIVE with type t('a) = r('a) =
     Result.Applicative(NelStr);
 
-  module Monad: MONAD with type t('a) = r('a) =
-    Result.Monad(NelStr);
+  module Monad: MONAD with type t('a) = r('a) = Result.Monad(NelStr);
 
   module Alt: ALT with type t('a) = r('a) = Result.Alt(NelStr);
 
@@ -58,12 +55,18 @@ module ResultUtil = {
       mapErr(x =>
         "While decoding object, for field \"" ++ field ++ "\": " ++ x
       );
+
+    let lazyAlt = (res, fn) =>
+      switch (res) {
+      | Belt.Result.Ok(v) => Belt.Result.Ok(v)
+      | Belt.Result.Error(_) => fn()
+      };
   };
 
   let note = failure =>
     BsAbstract.Option.maybe(
       ~f=a => Belt.Result.Ok(a),
-      ~default=Belt.Result.Error(failure)
+      ~default=Belt.Result.Error(failure),
     );
 
   let recoverWith = a => Alt.alt(_, Applicative.pure(a));

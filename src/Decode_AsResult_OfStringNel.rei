@@ -113,6 +113,13 @@ let fallback:
   ) =>
   Belt.Result.t('a, NonEmptyList.t(string));
 
+let oneOf:
+  (
+    NonEmptyList.t(Js.Json.t => Belt.Result.t('a, NonEmptyList.t(string))),
+    Js.Json.t
+  ) =>
+  Belt.Result.t('a, NonEmptyList.t(string));
+
 module Pipeline: {
   let succeed: ('a, 'b) => Belt.Result.t('a, NonEmptyList.t(string));
 

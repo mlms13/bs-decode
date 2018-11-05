@@ -27,7 +27,7 @@ module type TransformError = {
   let arrErr: (int, t('a)) => t('a);
   let missingFieldErr: string => t('a);
   let objErr: (string, t('a)) => t('a);
-  /* TODO: add lazy-alt somewhere... probably here */
+  let lazyAlt: (t('a), unit => t('a)) => t('a);
 };
 
 module DecodeBase =
@@ -139,7 +139,7 @@ module DecodeBase =
     switch (decoders) {
     | NonEmptyList.NonEmpty(decode, []) => decode(json)
     | NonEmptyList.NonEmpty(decode, [y, ...ys]) =>
-      decode(json) <|> oneOf(NonEmptyList.make(y, ys), json)
+      T.lazyAlt(decode(json), () => oneOf(NonEmptyList.make(y, ys), json))
     };
 
   module Pipeline = {
