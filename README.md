@@ -86,7 +86,7 @@ module User = {
 };
 
 /* Haskell style */
-let ((<$>), (<*>)) = D.ResultUtil.Ifnix.((<$>), (<*>));
+let ((<$>), (<*>)) = D.ResultUtil.Infix.((<$>), (<*>));
 let decodeUser = json =>
   User.make
     <$> D.field("name", D.string, json)
