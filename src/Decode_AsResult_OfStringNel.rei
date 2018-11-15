@@ -80,6 +80,10 @@ let tuple:
   ) =>
   Belt.Result.t(('a, 'b), NonEmptyList.t(string));
 
+let dict:
+  (Js.Json.t => Belt.Result.t('a, NonEmptyList.t(string)), Js.Json.t) =>
+  Belt.Result.t(Js.Dict.t('a), NonEmptyList.t(string));
+
 let at:
   (
     list(Js.Dict.key),

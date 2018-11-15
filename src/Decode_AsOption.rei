@@ -17,6 +17,8 @@ let tuple:
   ) =>
   option(('a, 'b));
 
+let dict: (Js.Json.t => option('a), Js.Json.t) => option(Js.Dict.t('a));
+
 let at:
   (list(Js.Dict.key), Js.Json.t => option('a), Js.Json.t) => option('a);
 

@@ -80,6 +80,10 @@ let tuple:
   ) =>
   Belt.Result.t(('a, 'b), Decode_ParseError.failure);
 
+let dict:
+  (Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure), Js.Json.t) =>
+  Belt.Result.t(Js.Dict.t('a), Decode_ParseError.failure);
+
 let at:
   (
     list(Js.Dict.key),

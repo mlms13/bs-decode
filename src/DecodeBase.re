@@ -40,7 +40,7 @@ module DecodeBase =
   module InfixAlt = BsAbstract.Infix.Alt(Alt);
 
   let ((<$>), (<*>), (>>=)) = InfixMonad.((<$>), (<*>), (>>=));
-  let (<|>) = InfixAlt.((<|>));
+  let ((<|>), (<#>)) = InfixAlt.((<|>), (<#>));
   let (>.) = BsAbstract.Function.Infix.(>.);
 
   let ok = v => M.pure(v);
@@ -96,6 +96,25 @@ module DecodeBase =
   };
 
   let list = (decode, json) => array(decode, json) |> M.map(Array.to_list);
+
+  let dict = (decode, json) => {
+    let rec decodeEntries = entries =>
+      switch (entries) {
+      | [] => []->ok
+      | [(key, value), ...xs] =>
+        map2(
+          (decodedValue, rest) => [(key, decodedValue), ...rest],
+          T.objErr(key, value->decode),
+          xs->decodeEntries,
+        )
+      };
+
+    value(Js.Json.decodeObject, `ExpectedObject, json)
+    <#> Js.Dict.entries
+    <#> Belt.List.fromArray
+    >>= decodeEntries
+    <#> Js.Dict.fromList;
+  };
 
   let rec at = (fields, decode, json) =>
     switch (fields) {
