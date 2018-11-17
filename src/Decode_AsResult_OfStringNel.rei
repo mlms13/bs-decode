@@ -60,6 +60,19 @@ let string: Js.Json.t => Belt.Result.t(string, NonEmptyList.t(string));
 let float: Js.Json.t => Belt.Result.t(float, NonEmptyList.t(string));
 let int: Js.Json.t => Belt.Result.t(int, NonEmptyList.t(string));
 let date: Js.Json.t => Belt.Result.t(Js.Date.t, NonEmptyList.t(string));
+let variantFromJson:
+  (
+    Js.Json.t => Belt.Result.t('a, NonEmptyList.t(string)),
+    'a => option('b),
+    Js.Json.t
+  ) =>
+  Belt.Result.t('b, NonEmptyList.t(string));
+let variantFromString:
+  (string => option('a), Js.Json.t) =>
+  Belt.Result.t('a, NonEmptyList.t(string));
+let variantFromInt:
+  (int => option('a), Js.Json.t) =>
+  Belt.Result.t('a, NonEmptyList.t(string));
 
 let optional:
   (Js.Json.t => Belt.Result.t('a, NonEmptyList.t(string)), Js.Json.t) =>

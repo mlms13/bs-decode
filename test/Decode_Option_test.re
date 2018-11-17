@@ -85,6 +85,34 @@ describe("Test decoding primitive values as option", () => {
   );
 });
 
+[@bs.deriving jsConverter]
+type color = [ | `blue | `red | `green];
+
+[@bs.deriving jsConverter]
+type numbers =
+  | Zero
+  | One
+  | Two;
+
+describe("Test decoding variants as option", () => {
+  test("Can decode string variants", () =>
+    expect(D.variantFromString(colorFromJs, "blue"->Js.Json.string))
+    |> toEqual(Some(`blue))
+  );
+  test("Can decode number variants", () =>
+    expect(D.variantFromInt(numbersFromJs, 0->float_of_int->Js.Json.number))
+    |> toEqual(Some(Zero))
+  );
+  test("Can fail on invalid string options", () =>
+    expect(D.variantFromString(colorFromJs, "yellow"->Js.Json.string))
+    |> toEqual(None)
+  );
+  test("Can fail on invalid number options", () =>
+    expect(D.variantFromInt(numbersFromJs, 5->float_of_int->Js.Json.number))
+    |> toEqual(None)
+  );
+});
+
 describe("Test decoding array as option", () => {
   let jsonArray =
     Js.Json.array([|
