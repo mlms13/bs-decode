@@ -5,6 +5,7 @@ type failure = [
   | `ExpectedInt
   | `ExpectedArray
   | `ExpectedObject
+  | `InvalidDate
 ];
 
 let failureToString = (v, json) =>
@@ -16,6 +17,7 @@ let failureToString = (v, json) =>
     | `ExpectedInt => "Expected int"
     | `ExpectedArray => "Expected array"
     | `ExpectedObject => "Expected object"
+    | `InvalidDate => "Expected a valid date"
     }
   )
   ++ " but found "
@@ -70,6 +72,19 @@ module DecodeBase =
         )
       );
   };
+
+  let date = json =>
+    json->float
+    <#> Js.Date.fromFloat
+    <|> (json->string <#> Js.Date.fromString)
+    >>= (
+      result =>
+        result
+        ->Js.Date.toJSONUnsafe
+        ->Js.Nullable.return
+        ->Js.Nullable.isNullable ?
+          T.valErr(`InvalidDate, json) : result->ok
+    );
 
   let optional = (decode, json) =>
     switch (Js.Json.decodeNull(json)) {

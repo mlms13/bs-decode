@@ -45,6 +45,10 @@ describe("Test value decoders", () => {
   let jsonInt: Js.Json.t = [%bs.raw {| 4 |}];
   let jsonZero: Js.Json.t = [%bs.raw {| 0 |}];
   let jsonNull = Js.Json.null;
+  let dateString = "2018-11-17T05:40:35.869Z";
+  let dateNumber = 1542433304450.0;
+  let jsonDateString = Js.Json.string(dateString);
+  let jsonDateNumber = Js.Json.number(dateNumber);
 
   test("Boolean succeeds on a boolean", () =>
     expect(D.boolean(jsonBoolean)) |> toEqual(Ok(true))
@@ -121,6 +125,23 @@ describe("Test value decoders", () => {
   test("Int fails on null", () =>
     expect(D.int(jsonNull))
     |> toEqual(Error(Val(`ExpectedNumber, jsonNull)))
+  );
+
+  test("Date succeeds on number value", () =>
+    expect(D.date(jsonDateNumber))
+    |> toEqual(Ok(dateNumber->Js.Date.fromFloat))
+  );
+  test("Date succeeds on string value", () =>
+    expect(D.date(jsonDateString))
+    |> toEqual(Ok(dateString->Js.Date.fromString))
+  );
+  test("Date fails on an invalid date value", () =>
+    expect(D.date(jsonString))
+    |> toEqual(Error(Val(`InvalidDate, jsonString)))
+  );
+  test("Date fails on a null value", () =>
+    expect(D.date(jsonNull))
+    |> toEqual(Error(Val(`ExpectedString, jsonNull)))
   );
 });
 

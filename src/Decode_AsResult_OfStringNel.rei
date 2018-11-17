@@ -59,6 +59,7 @@ let boolean: Js.Json.t => Belt.Result.t(bool, NonEmptyList.t(string));
 let string: Js.Json.t => Belt.Result.t(string, NonEmptyList.t(string));
 let float: Js.Json.t => Belt.Result.t(float, NonEmptyList.t(string));
 let int: Js.Json.t => Belt.Result.t(int, NonEmptyList.t(string));
+let date: Js.Json.t => Belt.Result.t(Js.Date.t, NonEmptyList.t(string));
 
 let optional:
   (Js.Json.t => Belt.Result.t('a, NonEmptyList.t(string)), Js.Json.t) =>

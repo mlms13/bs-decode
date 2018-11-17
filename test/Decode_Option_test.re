@@ -28,6 +28,10 @@ describe("Test decoding primitive values as option", () => {
   let jsonFloat = Js.Json.number(1.4);
   let jsonInt = Js.Json.number(4.);
   let jsonNull = Js.Json.null;
+  let dateString = "2018-11-17T05:40:35.869Z";
+  let dateNumber = 1542433304450.0;
+  let jsonDateString = Js.Json.string(dateString);
+  let jsonDateNumber = Js.Json.number(dateNumber);
 
   test("String succeeds on string", () =>
     expect(D.string(jsonString)) |> toEqual(Some("Foo"))
@@ -63,6 +67,21 @@ describe("Test decoding primitive values as option", () => {
   );
   test("Int fails on null", () =>
     expect(D.int(jsonNull)) |> toEqual(None)
+  );
+
+  test("Date succeeds on number value", () =>
+    expect(D.date(jsonDateNumber))
+    |> toEqual(Some(dateNumber->Js.Date.fromFloat))
+  );
+  test("Date succeeds on string value", () =>
+    expect(D.date(jsonDateString))
+    |> toEqual(Some(dateString->Js.Date.fromString))
+  );
+  test("Date fails on an invalid date value", () =>
+    expect(D.date(jsonString)) |> toEqual(None)
+  );
+  test("Date fails on a null value", () =>
+    expect(D.date(jsonNull)) |> toEqual(None)
   );
 });
 
@@ -145,7 +164,7 @@ module Url = {
 describe("Test mapping options with existing Option utilities", () => {
   let url = "http://www.example.com";
   let jsonUrl = Js.Json.string(url);
-  let decoded = D.string(jsonUrl) -> Belt.Option.map(Url.make);
+  let decoded = D.string(jsonUrl)->Belt.Option.map(Url.make);
 
   test("Output of decoding can be mapped using existing Option tools", () =>
     expect(decoded) |> toEqual(Some(Url.make(url)))

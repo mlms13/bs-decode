@@ -4,6 +4,7 @@ let boolean: Js.Json.t => option(bool);
 let string: Js.Json.t => option(Js.String.t);
 let float: Js.Json.t => option(float);
 let int: Js.Json.t => option(int);
+let date: Js.Json.t => option(Js.Date.t);
 
 let optional: (Js.Json.t => option('a), Js.Json.t) => option(option('a));
 
