@@ -59,6 +59,20 @@ let boolean: Js.Json.t => Belt.Result.t(bool, Decode_ParseError.failure);
 let string: Js.Json.t => Belt.Result.t(string, Decode_ParseError.failure);
 let float: Js.Json.t => Belt.Result.t(float, Decode_ParseError.failure);
 let int: Js.Json.t => Belt.Result.t(int, Decode_ParseError.failure);
+let date: Js.Json.t => Belt.Result.t(Js.Date.t, Decode_ParseError.failure);
+let variantFromJson:
+  (
+    Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure),
+    'a => option('b),
+    Js.Json.t
+  ) =>
+  Belt.Result.t('b, Decode_ParseError.failure);
+let variantFromString:
+  (string => option('a), Js.Json.t) =>
+  Belt.Result.t('a, Decode_ParseError.failure);
+let variantFromInt:
+  (int => option('a), Js.Json.t) =>
+  Belt.Result.t('a, Decode_ParseError.failure);
 
 let optional:
   (Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure), Js.Json.t) =>

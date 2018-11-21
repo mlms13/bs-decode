@@ -45,6 +45,10 @@ describe("Test value decoders", () => {
   let jsonInt: Js.Json.t = [%bs.raw {| 4 |}];
   let jsonZero: Js.Json.t = [%bs.raw {| 0 |}];
   let jsonNull = Js.Json.null;
+  let dateString = "2018-11-17T05:40:35.869Z";
+  let dateNumber = 1542433304450.0;
+  let jsonDateString = Js.Json.string(dateString);
+  let jsonDateNumber = Js.Json.number(dateNumber);
 
   test("Boolean succeeds on a boolean", () =>
     expect(D.boolean(jsonBoolean)) |> toEqual(Ok(true))
@@ -121,6 +125,53 @@ describe("Test value decoders", () => {
   test("Int fails on null", () =>
     expect(D.int(jsonNull))
     |> toEqual(Error(Val(`ExpectedNumber, jsonNull)))
+  );
+
+  test("Date succeeds on number value", () =>
+    expect(D.date(jsonDateNumber))
+    |> toEqual(Ok(dateNumber->Js.Date.fromFloat))
+  );
+  test("Date succeeds on string value", () =>
+    expect(D.date(jsonDateString))
+    |> toEqual(Ok(dateString->Js.Date.fromString))
+  );
+  test("Date fails on an invalid date value", () =>
+    expect(D.date(jsonString))
+    |> toEqual(Error(Val(`ExpectedValidDate, jsonString)))
+  );
+  test("Date fails on a null value", () =>
+    expect(D.date(jsonNull))
+    |> toEqual(Error(Val(`ExpectedString, jsonNull)))
+  );
+});
+
+[@bs.deriving jsConverter]
+type color = [ | `blue | `red | `green];
+
+[@bs.deriving jsConverter]
+type numbers =
+  | Zero
+  | One
+  | Two;
+
+describe("Test decoding variants as option", () => {
+  test("Can decode string variants", () =>
+    expect(D.variantFromString(colorFromJs, "blue"->Js.Json.string))
+    |> toEqual(Ok(`blue))
+  );
+  test("Can decode number variants", () =>
+    expect(D.variantFromInt(numbersFromJs, 0->float_of_int->Js.Json.number))
+    |> toEqual(Ok(Zero))
+  );
+  test("Can fail on invalid string options", () =>
+    expect(D.variantFromString(colorFromJs, "yellow"->Js.Json.string))
+    |> toEqual(Error(Val(`ExpectedValidOption, "yellow"->Js.Json.string)))
+  );
+  test("Can fail on invalid number options", () =>
+    expect(D.variantFromInt(numbersFromJs, 5->float_of_int->Js.Json.number))
+    |> toEqual(
+         Error(Val(`ExpectedValidOption, 5->float_of_int->Js.Json.number)),
+       )
   );
 });
 
