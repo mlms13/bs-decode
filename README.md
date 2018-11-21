@@ -28,7 +28,7 @@ The `Decode` module gives you access to submodules that can decode into options 
 
 **Decoding Simple Values**
 
-You can parse simple (non-object, non-array) JSON values using `D.string`, `D.float`, and `D.int` (which will fail for numbers with floating point values... if you don't want this behavor, use `D.float` and map through `int_of_float` instead):
+You can parse simple (non-object, non-array) JSON values using `D.string`, `D.float`, and `D.int` (which will fail for numbers with floating point values... if you don't want this behavior, use `D.float` and map through `int_of_float` instead):
 
 ```reason
 D.string(Js.Json.string("foo"));
