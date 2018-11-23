@@ -133,40 +133,45 @@ describe("Test decoding complex ADT from object", () => {
 });
 
 describe("Test decoding complex ADT with constructor as JSON value", () => {
+  let shapeFromKeyJson = (json, key) =>
+    switch (key) {
+    | "circle" => Shape.circle <$> D.at(["value", "radius"], D.float, json)
+    | "square" => Shape.square <$> D.at(["value", "length"], D.float, json)
+    | "rectangle" => Shape.rect <$> D.field("value", Shape.decodeWH, json)
+    | other => Error(Val(`InvalidShape, Js.Json.string(other)))
+    };
+
   /**
    * Now imagine we encode our Shape into JSON like this:
    * { key: "circle", value: { radius: 3.0 }}
    *
    */
   let decodeShape = json =>
-    D.field("key", D.string, json)
-    ->(
-        flatMap(key =>
-          switch (key) {
-          | "circle" =>
-            Shape.circle <$> D.at(["value", "radius"], D.float, json)
-          | "square" =>
-            Shape.square <$> D.at(["value", "length"], D.float, json)
-          | "rectangle" =>
-            Shape.rect <$> D.field("value", Shape.decodeWH, json)
-          | _ => Error(Val(`InvalidShape, json)) /* This is a sad lie to make the compiler happy */
-          }
-        )
-      );
+    D.field("key", D.string, json)->(flatMap(shapeFromKeyJson(json)));
 
-  let valid =
-    Js.Dict.fromList([
-      ("key", Js.Json.string("rectangle")),
-      (
-        "value",
-        Js.Dict.fromList([
-          ("width", Js.Json.number(3.0)),
-          ("height", Js.Json.number(4.0)),
-        ])
-        |> Js.Json.object_,
-      ),
-    ])
-    |> Js.Json.object_;
+  let shapePipeDecode = json =>
+    D.Pipeline.(succeed(v => v) |> pipe(decodeShape) |> run(json));
+
+  let shapeInnerFlatmap = json =>
+    D.Pipeline.(
+      succeed(v => v)
+      |> field("key", data =>
+           D.string(data)->(flatMap(shapeFromKeyJson(json)))
+         )
+      |> run(json)
+    );
+
+  let valid: Js.Json.t = [%bs.raw
+    {|
+    {
+      "key": "rectangle",
+      "value": {
+        "width": 3,
+        "height": 4.0
+      }
+    }
+  |}
+  ];
 
   let invalid =
     Js.Dict.fromList([("key", Js.Json.string("foo"))]) |> Js.Json.object_;
@@ -178,10 +183,17 @@ describe("Test decoding complex ADT with constructor as JSON value", () => {
   );
   test("ADT failure on invalid key", () =>
     expect(decodeShape(invalid))
-    |> toEqual(Error(Val(`InvalidShape, invalid)))
+    |> toEqual(Error(Val(`InvalidShape, Js.Json.string("foo"))))
   );
   test("ADT failure on empty object", () =>
     expect(decodeShape(emptyObj))
     |> toEqual(Error(objPure("key", MissingField)))
+  );
+  test("ADT succeeds when using `pipe` in pipeline", () =>
+    expect(shapePipeDecode(valid)) |> toEqual(Ok(Shape.rect((3.0, 4.0))))
+  );
+  test("ADT succeeds when flatMapping result of inner decode", () =>
+    expect(shapeInnerFlatmap(valid))
+    |> toEqual(Ok(Shape.rect((3.0, 4.0))))
   );
 });
