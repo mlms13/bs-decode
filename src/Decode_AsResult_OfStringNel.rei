@@ -192,6 +192,15 @@ module Pipeline: {
     ) =>
     Belt.Result.t('b, NonEmptyList.t(string));
 
+  let at:
+    (
+      list(Js.Dict.key),
+      Js.Json.t => Belt.Result.t('a, NonEmptyList.t(string)),
+      Js.Json.t => Belt.Result.t('a => 'b, NonEmptyList.t(string)),
+      Js.Json.t
+    ) =>
+    Belt.Result.t('b, NonEmptyList.t(string));
+
   let optionalField:
     (
       Js.Dict.key,

@@ -86,6 +86,15 @@ module Pipeline: {
     ) =>
     option('b);
 
+  let at:
+    (
+      list(Js.Dict.key),
+      Js.Json.t => option('a),
+      Js.Json.t => option('a => 'b),
+      Js.Json.t
+    ) =>
+    option('b);
+
   let optionalField:
     (
       Js.Dict.key,
