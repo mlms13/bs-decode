@@ -216,6 +216,8 @@ module DecodeBase =
 
     let field = (name, decode) => pipe(field(name, decode));
 
+    let at = (fields, decode) => pipe(at(fields, decode));
+
     let optionalField = (name, decode) => pipe(optionalField(name, decode));
 
     let fallback = (name, decode, alt) => pipe(fallback(name, decode, alt));

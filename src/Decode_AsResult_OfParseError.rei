@@ -192,6 +192,15 @@ module Pipeline: {
     ) =>
     Belt.Result.t('b, Decode_ParseError.failure);
 
+  let at:
+    (
+      list(Js.Dict.key),
+      Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure),
+      Js.Json.t => Belt.Result.t('a => 'b, Decode_ParseError.failure),
+      Js.Json.t
+    ) =>
+    Belt.Result.t('b, Decode_ParseError.failure);
+
   let optionalField:
     (
       Js.Dict.key,
