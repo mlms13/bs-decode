@@ -59,6 +59,24 @@ describe("Test decoding enum from string", () => {
     expect(Color.decode(jsonInvalidStr))
     |> toEqual(Error(Val(`InvalidColor, jsonInvalidStr)))
   );
+  test("Enum failure can be mapped to string", () => {
+    let message =
+      switch (Color.decode(jsonInvalidStr)) {
+      | Belt.Result.Ok(result) => result->Belt.Result.Ok
+      | Belt.Result.Error(parseError) =>
+        Decode_ParseError.toDebugString(
+          x =>
+            switch (x) {
+            | `InvalidColor => (_json => "Invalid color")
+            | `InvalidShape => (_json => "Invalid shape")
+            | #DecodeBase.failure as f => DecodeBase.failureToString(f)
+            },
+          parseError,
+        )
+        ->Belt.Result.Error
+      };
+    expect(message) |> toEqual(Error("Invalid color"));
+  });
 });
 
 module Shape = {
