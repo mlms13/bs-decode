@@ -75,7 +75,7 @@ D.field("missing", D.int, json);
 /* Error(Obj(NonEmptyList.pure(("missing", MissingField)))) */
 ```
 
-If you need to dig through multiple nested objects, you can use `decodeAt`, which accepts a list of string field names as its first argument, instead of a single string.
+If you need to dig through multiple nested objects, you can use `D.at`, which accepts a list of string field names as its first argument, instead of a single string.
 
 After decoding the fields of an object, you'll probably want to combine it back into a ReasonML record. You can combine the results of multiple decoders using either the Haskell-style infix `map` and `apply` functions (`<$>` and `<*>`) or by building up a larger decoder in the style of Elm Decode Pipeline.
 
