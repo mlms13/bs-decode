@@ -25,7 +25,9 @@ module User = {
     |> Js.Json.object_;
 
   let decode = json =>
-    make <$> D.field("name", D.string, json) <*> D.field("age", D.int, json);
+    make
+    <$> D.field("name", D.string, json)
+    <*> D.field("age", D.intFromNumber, json);
 };
 
 module Parent = {
@@ -83,47 +85,53 @@ describe("Test value decoders", () => {
   );
 
   test("Float succeeds on float", () =>
+    expect(D.floatFromNumber(jsonFloat)) |> toEqual(Ok(1.4))
+  );
+  test("Float gives deprecated warning", () =>
     expect(D.float(jsonFloat)) |> toEqual(Ok(1.4))
   );
   test("Float succeeds on int", () =>
-    expect(D.float(jsonInt)) |> toEqual(Ok(4.0))
+    expect(D.floatFromNumber(jsonInt)) |> toEqual(Ok(4.0))
   );
   test("Float succeeds on zero", () =>
-    expect(D.float(jsonZero)) |> toEqual(Ok(0.))
+    expect(D.floatFromNumber(jsonZero)) |> toEqual(Ok(0.))
   );
   test("Float fails on boolean", () =>
-    expect(D.float(jsonBoolean))
+    expect(D.floatFromNumber(jsonBoolean))
     |> toEqual(Error(Val(`ExpectedNumber, jsonBoolean)))
   );
   test("Float fails on string", () =>
-    expect(D.float(jsonString))
+    expect(D.floatFromNumber(jsonString))
     |> toEqual(Error(Val(`ExpectedNumber, jsonString)))
   );
   test("Float fails on null", () =>
-    expect(D.float(jsonNull))
+    expect(D.floatFromNumber(jsonNull))
     |> toEqual(Error(Val(`ExpectedNumber, jsonNull)))
   );
 
   test("Int succeeds on int", () =>
+    expect(D.intFromNumber(jsonInt)) |> toEqual(Ok(4))
+  );
+  test("Int gives deprecation warning", () =>
     expect(D.int(jsonInt)) |> toEqual(Ok(4))
   );
   test("Int succeeds on 0", () =>
-    expect(D.int(jsonZero)) |> toEqual(Ok(0))
+    expect(D.intFromNumber(jsonZero)) |> toEqual(Ok(0))
   );
   test("Int fails on float", () =>
-    expect(D.int(jsonFloat))
+    expect(D.intFromNumber(jsonFloat))
     |> toEqual(Error(Val(`ExpectedInt, jsonFloat)))
   );
   test("Int fails on boolean", () =>
-    expect(D.int(jsonBoolean))
+    expect(D.intFromNumber(jsonBoolean))
     |> toEqual(Error(Val(`ExpectedNumber, jsonBoolean)))
   );
   test("Int fails on string", () =>
-    expect(D.int(jsonString))
+    expect(D.intFromNumber(jsonString))
     |> toEqual(Error(Val(`ExpectedNumber, jsonString)))
   );
   test("Int fails on null", () =>
-    expect(D.int(jsonNull))
+    expect(D.intFromNumber(jsonNull))
     |> toEqual(Error(Val(`ExpectedNumber, jsonNull)))
   );
 
@@ -209,14 +217,15 @@ describe("Test array decoders", () => {
     expect(D.array(D.string, jsonEmptyArray)) |> toEqual(Ok([||]))
   );
   test("Array int succeeds on empty array", () =>
-    expect(D.array(D.int, jsonEmptyArray)) |> toEqual(Ok([||]))
+    expect(D.array(D.intFromNumber, jsonEmptyArray)) |> toEqual(Ok([||]))
   );
   test("Array fails on string", () =>
     expect(D.array(D.string, jsonString))
     |> toEqual(Error(Val(`ExpectedArray, jsonString)))
   );
   test("Array inner decode int fails on array of string", () =>
-    expect(D.array(D.int, jsonArray)) |> toEqual(Error(Arr(decodeErrs)))
+    expect(D.array(D.intFromNumber, jsonArray))
+    |> toEqual(Error(Arr(decodeErrs)))
   );
   test("Array fails on mixed array", () =>
     expect(D.array(D.string, jsonArrayMixed))
@@ -240,7 +249,8 @@ describe("Test array decoders", () => {
     |> toEqual(Error(Val(`ExpectedArray, Js.Json.null)))
   );
   test("List inner decode int fails on array of string", () =>
-    expect(D.list(D.int, jsonArray)) |> toEqual(Error(Arr(decodeErrs)))
+    expect(D.list(D.intFromNumber, jsonArray))
+    |> toEqual(Error(Arr(decodeErrs)))
   );
 });
 
@@ -256,7 +266,7 @@ describe("Test record field decoders", () => {
   let decodeFail =
     User.make
     <$> D.field("missing", D.string, obj)
-    <*> D.field("name", D.int, obj);
+    <*> D.field("name", D.intFromNumber, obj);
 
   let decodeErrors =
     Error(
@@ -272,14 +282,14 @@ describe("Test record field decoders", () => {
     expect(D.field("name", D.string, obj)) |> toEqual(Ok("Foo"))
   );
   test("Int field succeeds", () =>
-    expect(D.field("age", D.int, obj)) |> toEqual(Ok(30))
+    expect(D.field("age", D.intFromNumber, obj)) |> toEqual(Ok(30))
   );
   test("Field fails when missing", () =>
-    expect(D.field("blah", D.int, obj))
+    expect(D.field("blah", D.intFromNumber, obj))
     |> toEqual(Error(objPure("blah", MissingField)))
   );
   test("Field fails on wrong type", () =>
-    expect(D.field("name", D.int, obj))
+    expect(D.field("name", D.intFromNumber, obj))
     |> toEqual(Error(objPure("name", nameAsIntError)))
   );
   test("Decode all fields of user record into User", () =>
@@ -296,7 +306,7 @@ describe("Test record field decoders", () => {
 
 describe("Test value and field recovery from failed parse", () => {
   let jsonNumber = Js.Json.number(3.14);
-  let successParse = D.float(jsonNumber);
+  let successParse = D.floatFromNumber(jsonNumber);
   let failedParse = D.string(jsonNumber);
 
   let invalidUserObj =
@@ -306,7 +316,7 @@ describe("Test value and field recovery from failed parse", () => {
   let objRecovery =
     User.make
     <$> D.fallback("name", D.string, "Foo", invalidUserObj)
-    <*> D.field("age", D.int, invalidUserObj);
+    <*> D.field("age", D.intFromNumber, invalidUserObj);
 
   test("Failed parse can be recovered with literal value", () =>
     expect(failedParse |> recoverWith("foo")) |> toEqual(Ok("foo"))
@@ -332,10 +342,10 @@ describe("Test optionally empty fields and values", () => {
 
   let optFieldString = D.optionalField("s", D.string, obj);
   let reqFieldOptValueString = D.field("s", optStr, obj);
-  let optFieldInt = D.optionalField("x", D.int, obj);
-  let optValueInt = D.field("x", D.optional(D.int), obj);
-  let nullFieldInt = D.optionalField("n", D.int, obj);
-  let nullValueInt = D.field("n", D.optional(D.int), obj);
+  let optFieldInt = D.optionalField("x", D.intFromNumber, obj);
+  let optValueInt = D.field("x", D.optional(D.intFromNumber), obj);
+  let nullFieldInt = D.optionalField("n", D.intFromNumber, obj);
+  let nullValueInt = D.field("n", D.optional(D.intFromNumber), obj);
 
   test("Present value parses as Some string", () =>
     expect(optStr(jsonString)) |> toEqual(Ok(Some("Foo")))
@@ -368,7 +378,7 @@ describe("Test optionally empty fields and values", () => {
     expect(nullValueInt) |> toEqual(Ok(None))
   );
   test("Trying to parse string field as int is Error, not None", () =>
-    expect(D.optionalField("s", D.int, obj))
+    expect(D.optionalField("s", D.intFromNumber, obj))
     |> toEqual(Error(Val(`ExpectedNumber, jsonString)))
   );
 });
@@ -398,7 +408,7 @@ describe("Test oneOf, trying multiple decoders", () => {
       NonEmptyList.make(
         json => makeS <$> D.string(json),
         [
-          json => makeN <$> D.optional(D.float, json),
+          json => makeN <$> D.optional(D.floatFromNumber, json),
           json => makeB <$> D.boolean(json),
         ],
       ),

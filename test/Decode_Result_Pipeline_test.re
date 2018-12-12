@@ -46,7 +46,11 @@ module User = {
 
 describe("Test lazily executing decoders with a single JSON object", () => {
   let decoded =
-    map2(Point.make, D.field("x", D.float), D.field("y", D.float))
+    map2(
+      Point.make,
+      D.field("x", D.floatFromNumber),
+      D.field("y", D.floatFromNumber),
+    )
     |> run(Point.sample);
 
   test("Lazy execution successfully parses point", () =>
@@ -57,8 +61,8 @@ describe("Test lazily executing decoders with a single JSON object", () => {
 describe("Test piping to build up decoders, using |>", () => {
   let decoded =
     succeed(Point.make)
-    |> field("x", D.float)
-    |> field("y", D.float)
+    |> field("x", D.floatFromNumber)
+    |> field("y", D.floatFromNumber)
     |> run(Point.sample);
 
   test("Pipeline of required fields parses point", () =>
@@ -70,7 +74,7 @@ describe("Test optional, fallback, hardcoded helpers", () => {
   let decoder =
     succeed(User.make)
     |> fallback("name", D.string, "Bar")
-    |> optionalField("age", D.int)
+    |> optionalField("age", D.intFromNumber)
     |> optionalField("email", D.string)
     |> hardcoded("No note");
 

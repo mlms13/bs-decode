@@ -20,7 +20,9 @@ module User = {
     |> Js.Json.object_;
 
   let decode = json =>
-    make <$> D.field("name", D.string, json) <*> D.field("age", D.int, json);
+    make
+    <$> D.field("name", D.string, json)
+    <*> D.field("age", D.intFromNumber, json);
 };
 
 describe("Test decoding primitive values as option", () => {
@@ -44,29 +46,35 @@ describe("Test decoding primitive values as option", () => {
   );
 
   test("Float succeeds on float", () =>
+    expect(D.floatFromNumber(jsonFloat)) |> toEqual(Some(1.4))
+  );
+  test("Float gives deprecated warning", () =>
     expect(D.float(jsonFloat)) |> toEqual(Some(1.4))
   );
   test("Float succeeds on int", () =>
-    expect(D.float(jsonInt)) |> toEqual(Some(4.0))
+    expect(D.floatFromNumber(jsonInt)) |> toEqual(Some(4.0))
   );
   test("Float fails on string", () =>
-    expect(D.float(jsonString)) |> toEqual(None)
+    expect(D.floatFromNumber(jsonString)) |> toEqual(None)
   );
   test("Float fails on null", () =>
-    expect(D.float(jsonNull)) |> toEqual(None)
+    expect(D.floatFromNumber(jsonNull)) |> toEqual(None)
   );
 
   test("Int succeeds on int", () =>
+    expect(D.intFromNumber(jsonInt)) |> toEqual(Some(4))
+  );
+  test("Int gives deprecated warning", () =>
     expect(D.int(jsonInt)) |> toEqual(Some(4))
   );
   test("Int fails on float", () =>
-    expect(D.int(jsonFloat)) |> toEqual(None)
+    expect(D.intFromNumber(jsonFloat)) |> toEqual(None)
   );
   test("Int fails on string", () =>
-    expect(D.int(jsonString)) |> toEqual(None)
+    expect(D.intFromNumber(jsonString)) |> toEqual(None)
   );
   test("Int fails on null", () =>
-    expect(D.int(jsonNull)) |> toEqual(None)
+    expect(D.intFromNumber(jsonNull)) |> toEqual(None)
   );
 
   test("Date succeeds on number value", () =>
@@ -145,7 +153,7 @@ describe("Test decoding record as option", () => {
     expect(D.field("blah", D.string, obj)) |> toEqual(None)
   );
   test("Field fails when wrong type", () =>
-    expect(D.field("name", D.float, obj)) |> toEqual(None)
+    expect(D.field("name", D.floatFromNumber, obj)) |> toEqual(None)
   );
   test("Decode all fields into record type", () =>
     expect(User.decode(obj)) |> toEqual(Some(User.make("Foo", 30)))
@@ -162,15 +170,16 @@ describe("Test decoding optional fields and values", () => {
     Js.Dict.fromList([("float", jsonFloat), ("empty", jsonNull)])
     |> Js.Json.object_;
 
-  let optMissingField = D.optionalField("x", D.int, jsonObj);
-  let optMissingValue = D.optionalField("empty", D.int, jsonObj);
+  let optMissingField = D.optionalField("x", D.intFromNumber, jsonObj);
+  let optMissingValue = D.optionalField("empty", D.intFromNumber, jsonObj);
   let optFloatAsString = D.optionalField("float", D.string, jsonObj);
 
   test("Present value parses as Some", () =>
-    expect(D.optional(D.float, jsonFloat)) |> toEqual(Some(Some(3.14)))
+    expect(D.optional(D.floatFromNumber, jsonFloat))
+    |> toEqual(Some(Some(3.14)))
   );
   test("Missing optional value parses as Some(None)", () =>
-    expect(D.optional(D.float, jsonNull)) |> toEqual(Some(None))
+    expect(D.optional(D.floatFromNumber, jsonNull)) |> toEqual(Some(None))
   );
   test("Present field with null value parses as None for optional field", () =>
     expect(optMissingField) |> toEqual(Some(None))
