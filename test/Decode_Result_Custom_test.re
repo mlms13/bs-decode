@@ -90,13 +90,17 @@ module Shape = {
   let rect = ((width, height)) => Rect(width, height);
 
   let decodeWH = json =>
-    D.tuple(("width", D.float), ("height", D.float), json);
+    D.tuple(
+      ("width", D.floatFromNumber),
+      ("height", D.floatFromNumber),
+      json,
+    );
 
   /* e.g. { "circle": { "radius": 1.4 }} */
   let decode = json =>
     circle
-    <$> D.at(["circle", "radius"], D.float, json)
-    <|> (square <$> D.at(["square", "length"], D.float, json))
+    <$> D.at(["circle", "radius"], D.floatFromNumber, json)
+    <|> (square <$> D.at(["square", "length"], D.floatFromNumber, json))
     <|> (rect <$> D.field("rectangle", decodeWH, json))
     |> R.mapErr(_ => `InvalidShape(json));
 };
@@ -153,8 +157,10 @@ describe("Test decoding complex ADT from object", () => {
 describe("Test decoding complex ADT with constructor as JSON value", () => {
   let shapeFromKeyJson = (json, key) =>
     switch (key) {
-    | "circle" => Shape.circle <$> D.at(["value", "radius"], D.float, json)
-    | "square" => Shape.square <$> D.at(["value", "length"], D.float, json)
+    | "circle" =>
+      Shape.circle <$> D.at(["value", "radius"], D.floatFromNumber, json)
+    | "square" =>
+      Shape.square <$> D.at(["value", "length"], D.floatFromNumber, json)
     | "rectangle" => Shape.rect <$> D.field("value", Shape.decodeWH, json)
     | other => Error(Val(`InvalidShape, Js.Json.string(other)))
     };

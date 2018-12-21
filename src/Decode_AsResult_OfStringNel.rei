@@ -57,8 +57,13 @@ let ok: 'a => Belt.Result.t('a, NonEmptyList.t(string));
 
 let boolean: Js.Json.t => Belt.Result.t(bool, NonEmptyList.t(string));
 let string: Js.Json.t => Belt.Result.t(string, NonEmptyList.t(string));
+[@ocaml.deprecated "Use floatFromNumber instead."]
 let float: Js.Json.t => Belt.Result.t(float, NonEmptyList.t(string));
+[@ocaml.deprecated "Use intFromNumber instead."]
 let int: Js.Json.t => Belt.Result.t(int, NonEmptyList.t(string));
+let floatFromNumber:
+  Js.Json.t => Belt.Result.t(float, NonEmptyList.t(string));
+let intFromNumber: Js.Json.t => Belt.Result.t(int, NonEmptyList.t(string));
 let date: Js.Json.t => Belt.Result.t(Js.Date.t, NonEmptyList.t(string));
 let variantFromJson:
   (

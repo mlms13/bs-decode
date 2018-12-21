@@ -59,11 +59,15 @@ module DecodeBase =
 
   let string = value(Js.Json.decodeString, `ExpectedString);
 
-  let float = json => value(Js.Json.decodeNumber, `ExpectedNumber, json);
+  let floatFromNumber = json =>
+    value(Js.Json.decodeNumber, `ExpectedNumber, json);
 
-  let int = json => {
+  [@ocaml.deprecated "Use floatFromNumber instead."]
+  let float = floatFromNumber;
+
+  let intFromNumber = json => {
     let isInt = v => v == 0. || mod_float(v, floor(v)) == 0.;
-    float(json)
+    floatFromNumber(json)
     ->(
         M.flat_map(v =>
           if (isInt(v)) {
@@ -75,8 +79,11 @@ module DecodeBase =
       );
   };
 
+  [@ocaml.deprecated "Use intFromNumber instead."]
+  let int = intFromNumber;
+
   let date = json =>
-    json->float
+    json->floatFromNumber
     <#> Js.Date.fromFloat
     <|> (json->string <#> Js.Date.fromString)
     >>= (
@@ -103,7 +110,7 @@ module DecodeBase =
     variantFromJson(string, stringToVariant, json);
 
   let variantFromInt = (intToVariant, json) =>
-    variantFromJson(int, intToVariant, json);
+    variantFromJson(intFromNumber, intToVariant, json);
 
   let optional = (decode, json) =>
     switch (Js.Json.decodeNull(json)) {

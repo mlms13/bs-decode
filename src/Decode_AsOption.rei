@@ -2,8 +2,12 @@ let ok: 'a => option('a);
 
 let boolean: Js.Json.t => option(bool);
 let string: Js.Json.t => option(Js.String.t);
+[@ocaml.deprecated "Use floatFromNumber instead."]
 let float: Js.Json.t => option(float);
+[@ocaml.deprecated "Use intFromNumber instead."]
 let int: Js.Json.t => option(int);
+let floatFromNumber: Js.Json.t => option(float);
+let intFromNumber: Js.Json.t => option(int);
 let date: Js.Json.t => option(Js.Date.t);
 let variantFromJson:
   (Js.Json.t => option('a), 'a => option('b), Js.Json.t) => option('b);
