@@ -68,7 +68,7 @@ Decoding values from a JSON object requires specifying the string key of the fie
 D.field("foo", D.string, json);
 /* Ok("bar") */
 
-D.field("bar", D.int, json);
+D.field("baz", D.int, json);
 /* Ok(4) */
 
 D.field("missing", D.int, json);
