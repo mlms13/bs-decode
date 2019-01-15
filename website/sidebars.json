@@ -1,0 +1,18 @@
+{
+  "docs": {
+    "Getting Started": [
+      "what-and-why",
+      "installation",
+      "simple-example",
+      "return-types",
+      "handling-errors"
+    ],
+    "Decoding Guide": [
+      "decoding-simple-values",
+      "decoding-optional-values",
+      "decoding-objects",
+      "decoding-variants"
+    ],
+    "API": ["result-of-parseerror"]
+  }
+}
