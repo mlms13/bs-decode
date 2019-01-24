@@ -5,7 +5,7 @@ title: Simple Example
 
 Let's explore the basics of decoding with a simple User record type:
 
-```re
+```reason
 type user = {
   name: string,
   age: int,
@@ -16,7 +16,7 @@ type user = {
 
 Next we'll build a decode function for our `user` type. `bs-decode` offers a few ways to decode JSON objects. For this example, we'll pick the "Pipeline" approach.
 
-```re
+```reason
 /* start with a simple constructor function for our type */
 let make = (name, age, isAdmin, lastLogin) =>
   { name, age, isAdmin, lastLogin };
@@ -36,7 +36,7 @@ let decode = json =>
 
 Finally, imagine we have the following JSON value:
 
-```re
+```reason
 let obj: Js.Json.t = [%bs.raw {|
   {
     "name": "Michael",
@@ -48,7 +48,7 @@ let obj: Js.Json.t = [%bs.raw {|
 
 We can decode this JSON object:
 
-```re
+```reason
 decode(obj); /* Belt.Result.Ok({...}) */
 ```
 
