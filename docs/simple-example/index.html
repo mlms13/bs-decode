@@ -1,0 +1,70 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>Simple Example · bs-decode</title><meta name="viewport" content="width=device-width"/><meta name="generator" content="Docusaurus"/><meta name="description" content="&lt;p&gt;Let&#x27;s explore the basics of decoding with a simple User record type:&lt;/p&gt;
+"/><meta name="docsearch:language" content="en"/><meta property="og:title" content="Simple Example · bs-decode"/><meta property="og:type" content="website"/><meta property="og:url" content="https://mlms13.github.io/bs-decode/index.html"/><meta property="og:description" content="&lt;p&gt;Let&#x27;s explore the basics of decoding with a simple User record type:&lt;/p&gt;
+"/><meta name="twitter:card" content="summary"/><link rel="shortcut icon" href="/bs-decode/img/favicon.png"/><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css"/><link rel="stylesheet" href="/bs-decode/css/main.css"/></head><body class="sideNavVisible separateOnPageNav"><div class="fixedHeaderContainer"><div class="headerWrapper wrapper"><header><a href="/bs-decode/"><h2 class="headerTitle">bs-decode</h2></a><div class="navigationWrapper navigationSlider"><nav class="slidingNav"><ul class="nav-site nav-site-internal"><li class="siteNavGroupActive"><a href="/bs-decode/docs/what-and-why" target="_self">Docs</a></li><li class=""><a href="https://github.com/mlms13/bs-decode" target="_self">GitHub</a></li></ul></nav></div></header></div></div><div class="navPusher"><div class="docMainWrapper wrapper"><div class="container docsNavContainer" id="docsNav"><nav class="toc"><div class="toggleNav"><section class="navWrapper wrapper"><div class="navBreadcrumb wrapper"><div class="navToggle" id="navToggler"><i></i></div><h2><i>›</i><span>Getting Started</span></h2><div class="tocToggler" id="tocToggler"><i class="icon-toc"></i></div></div><div class="navGroups"><div class="navGroup"><h3 class="navGroupCategoryTitle">Getting Started</h3><ul><li class="navListItem"><a class="navItem" href="/bs-decode/docs/what-and-why">What &amp; Why</a></li><li class="navListItem"><a class="navItem" href="/bs-decode/docs/installation">Installation</a></li><li class="navListItem navListItemActive"><a class="navItem" href="/bs-decode/docs/simple-example">Simple Example</a></li><li class="navListItem"><a class="navItem" href="/bs-decode/docs/return-types">Return Types</a></li><li class="navListItem"><a class="navItem" href="/bs-decode/docs/handling-errors">Handling Errors</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Decoding Guide</h3><ul><li class="navListItem"><a class="navItem" href="/bs-decode/docs/decoding-simple-values">Simple Values</a></li><li class="navListItem"><a class="navItem" href="/bs-decode/docs/decoding-optional-values">Optional Values and Recovery</a></li><li class="navListItem"><a class="navItem" href="/bs-decode/docs/decoding-objects">Decoding Object Fields</a></li><li class="navListItem"><a class="navItem" href="/bs-decode/docs/decoding-variants">Decoding Variants</a></li></ul></div></div></section></div><script>
+            document.addEventListener('DOMContentLoaded', function() {
+              createToggler('#navToggler', '#docsNav', 'docsSliderActive');
+              createToggler('#tocToggler', 'body', 'tocActive');
+
+              const headings = document.querySelector('.toc-headings');
+              headings && headings.addEventListener('click', function(event) {
+                if (event.target.tagName === 'A') {
+                  document.body.classList.remove('tocActive');
+                }
+              }, false);
+
+              function createToggler(togglerSelector, targetSelector, className) {
+                var toggler = document.querySelector(togglerSelector);
+                var target = document.querySelector(targetSelector);
+
+                if (!toggler) {
+                  return;
+                }
+
+                toggler.onclick = function(event) {
+                  event.preventDefault();
+
+                  target.classList.toggle(className);
+                };
+              }
+            });
+        </script></nav></div><div class="container mainContainer"><div class="wrapper"><div class="post"><header class="postHeader"><h1 class="postHeaderTitle">Simple Example</h1></header><article><div><span><p>Let's explore the basics of decoding with a simple User record type:</p>
+<pre><code class="hljs css language-reason">type<span class="hljs-built_in"> user </span>= {
+  name: string,
+  age: int,
+  isAdmin: bool,
+  lastLogin: option(Js.Date.t)
+};
+</code></pre>
+<p>Next we'll build a decode function for our <code>user</code> type. <code>bs-decode</code> offers a few ways to decode JSON objects. For this example, we'll pick the &quot;Pipeline&quot; approach.</p>
+<pre><code class="hljs css language-reason">/* start <span class="hljs-built_in">with</span> a <span class="hljs-built_in">simple</span> <span class="hljs-built_in">constructor</span> function <span class="hljs-keyword">for</span> our type */
+<span class="hljs-keyword">let</span> make = (name, age, isAdmin, lastLogin) =&gt;
+  { name, age, isAdmin, lastLogin };
+
+/* now we build up a decoder */
+module D = Decode.AsResult.OfParseError;
+<span class="hljs-keyword">let</span> decode = json =&gt;
+  D.Pipeline.(
+    succeed(make)
+    |<span class="hljs-type">&gt; field</span>(<span class="hljs-string">"name"</span>, D.string)
+    |<span class="hljs-type">&gt; field</span>(<span class="hljs-string">"age"</span>, D.intFromNumber)
+    |<span class="hljs-type">&gt; field</span>(<span class="hljs-string">"isAdmin"</span>, D.boolean)
+    |<span class="hljs-type">&gt; optionalField</span>(<span class="hljs-string">"lastLogin"</span>, D.date)
+    |<span class="hljs-type">&gt; run</span>(json)
+  );
+</code></pre>
+<p>Finally, imagine we have the following JSON value:</p>
+<pre><code class="hljs css language-reason"><span class="hljs-keyword">let</span> obj: Js.Json.t = [<span class="hljs-meta">%bs</span>.raw {|
+  {
+    <span class="hljs-string">"name"</span>: <span class="hljs-string">"Michael"</span>,
+    <span class="hljs-string">"age"</span>: <span class="hljs-number">32</span>,
+    <span class="hljs-string">"isAdmin"</span>: true
+  }
+|}];
+</code></pre>
+<p>We can decode this JSON object:</p>
+<pre><code class="hljs css language-reason">decode(obj); /* <span class="hljs-type">Belt</span>.<span class="hljs-type">Result</span>.<span class="hljs-type">Ok</span>(<span class="hljs-meta">{...}</span>) */
+</code></pre>
+<p>Hopefully this is enough to get you started. You can learn more about <a href="/bs-decode/docs/decoding-simple-values">decoding primitive values</a> and other techniques for <a href="/bs-decode/docs/decoding-objects">decoding objects</a>. If you want to <a href="/bs-decode/docs/decoding-variants">decode custom variants</a> directly from the JSON, that's a bit more involved but definitely possible.</p>
+<p>You may have also noticed that we aliased <code>Decode.AsResult.OfParseError</code> as <code>D</code>. The full module path of that decoder is a mouthful, but <a href="/bs-decode/docs/return-types">other options are available</a> if you'd rather decode into an Option or a Result with string errors.</p>
+<p>Finally, we only demonstrated here what happens when you attempt to decode good JSON values. When you use the decoder we built above to decode bad JSON, you'll get back a <code>Belt.Result.Error</code> containing a structured error type. You can read more about <a href="/bs-decode/docs/handling-errors">working with errors</a>.</p>
+</span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/bs-decode/docs/installation"><span class="arrow-prev">← </span><span>Installation</span></a><a class="docs-next button" href="/bs-decode/docs/return-types"><span>Return Types</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><div><a href="https://github.com/mlms13/bs-decode">GitHub</a></div></section><section class="copyright">Copyright © 2019 Michael Martin-Smucker</section></footer></div></body></html>

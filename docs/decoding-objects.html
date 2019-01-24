@@ -1,0 +1,89 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>Decoding Object Fields · bs-decode</title><meta name="viewport" content="width=device-width"/><meta name="generator" content="Docusaurus"/><meta name="description" content="&lt;h2&gt;&lt;a class=&quot;anchor&quot; aria-hidden=&quot;true&quot; id=&quot;decoding-fields&quot;&gt;&lt;/a&gt;&lt;a href=&quot;#decoding-fields&quot; aria-hidden=&quot;true&quot; class=&quot;hash-link&quot;&gt;&lt;svg class=&quot;hash-link-icon&quot; aria-hidden=&quot;true&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Decoding Fields&lt;/h2&gt;
+"/><meta name="docsearch:language" content="en"/><meta property="og:title" content="Decoding Object Fields · bs-decode"/><meta property="og:type" content="website"/><meta property="og:url" content="https://mlms13.github.io/bs-decode/index.html"/><meta property="og:description" content="&lt;h2&gt;&lt;a class=&quot;anchor&quot; aria-hidden=&quot;true&quot; id=&quot;decoding-fields&quot;&gt;&lt;/a&gt;&lt;a href=&quot;#decoding-fields&quot; aria-hidden=&quot;true&quot; class=&quot;hash-link&quot;&gt;&lt;svg class=&quot;hash-link-icon&quot; aria-hidden=&quot;true&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Decoding Fields&lt;/h2&gt;
+"/><meta name="twitter:card" content="summary"/><link rel="shortcut icon" href="/bs-decode/img/favicon.png"/><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css"/><link rel="stylesheet" href="/bs-decode/css/main.css"/></head><body class="sideNavVisible separateOnPageNav"><div class="fixedHeaderContainer"><div class="headerWrapper wrapper"><header><a href="/bs-decode/"><h2 class="headerTitle">bs-decode</h2></a><div class="navigationWrapper navigationSlider"><nav class="slidingNav"><ul class="nav-site nav-site-internal"><li class="siteNavGroupActive"><a href="/bs-decode/docs/what-and-why" target="_self">Docs</a></li><li class=""><a href="https://github.com/mlms13/bs-decode" target="_self">GitHub</a></li></ul></nav></div></header></div></div><div class="navPusher"><div class="docMainWrapper wrapper"><div class="container docsNavContainer" id="docsNav"><nav class="toc"><div class="toggleNav"><section class="navWrapper wrapper"><div class="navBreadcrumb wrapper"><div class="navToggle" id="navToggler"><i></i></div><h2><i>›</i><span>Decoding Guide</span></h2><div class="tocToggler" id="tocToggler"><i class="icon-toc"></i></div></div><div class="navGroups"><div class="navGroup"><h3 class="navGroupCategoryTitle">Getting Started</h3><ul><li class="navListItem"><a class="navItem" href="/bs-decode/docs/what-and-why">What &amp; Why</a></li><li class="navListItem"><a class="navItem" href="/bs-decode/docs/installation">Installation</a></li><li class="navListItem"><a class="navItem" href="/bs-decode/docs/simple-example">Simple Example</a></li><li class="navListItem"><a class="navItem" href="/bs-decode/docs/return-types">Return Types</a></li><li class="navListItem"><a class="navItem" href="/bs-decode/docs/handling-errors">Handling Errors</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Decoding Guide</h3><ul><li class="navListItem"><a class="navItem" href="/bs-decode/docs/decoding-simple-values">Simple Values</a></li><li class="navListItem"><a class="navItem" href="/bs-decode/docs/decoding-optional-values">Optional Values and Recovery</a></li><li class="navListItem navListItemActive"><a class="navItem" href="/bs-decode/docs/decoding-objects">Decoding Object Fields</a></li><li class="navListItem"><a class="navItem" href="/bs-decode/docs/decoding-variants">Decoding Variants</a></li></ul></div></div></section></div><script>
+            document.addEventListener('DOMContentLoaded', function() {
+              createToggler('#navToggler', '#docsNav', 'docsSliderActive');
+              createToggler('#tocToggler', 'body', 'tocActive');
+
+              const headings = document.querySelector('.toc-headings');
+              headings && headings.addEventListener('click', function(event) {
+                if (event.target.tagName === 'A') {
+                  document.body.classList.remove('tocActive');
+                }
+              }, false);
+
+              function createToggler(togglerSelector, targetSelector, className) {
+                var toggler = document.querySelector(togglerSelector);
+                var target = document.querySelector(targetSelector);
+
+                if (!toggler) {
+                  return;
+                }
+
+                toggler.onclick = function(event) {
+                  event.preventDefault();
+
+                  target.classList.toggle(className);
+                };
+              }
+            });
+        </script></nav></div><div class="container mainContainer"><div class="wrapper"><div class="post"><header class="postHeader"><h1 class="postHeaderTitle">Decoding Object Fields</h1></header><article><div><span><h2><a class="anchor" aria-hidden="true" id="decoding-fields"></a><a href="#decoding-fields" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Decoding Fields</h2>
+<p>Decoding values from a JSON object requires specifying the string key of the field to be decoded, as well as an inner decode function to parse the value.</p>
+<pre><code class="hljs css language-reason"><span class="hljs-comment">/* imagine `obj` is `{ "foo": "xyz", "bar": 4 }` */</span>
+
+<span class="hljs-comment">/* Ok("xyz") */</span>
+<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">D</span>.</span></span>field(<span class="hljs-string">"foo"</span>, <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">D</span>.</span></span><span class="hljs-built_in">string</span>, obj);
+
+<span class="hljs-comment">/* Ok(4) */</span>
+<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">D</span>.</span></span>field(<span class="hljs-string">"bar"</span>, <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">D</span>.</span></span>intFromNumber, obj);
+
+<span class="hljs-comment">/* Error(Obj(NonEmptyList.pure(("missing", MissingField)))) */</span>
+<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">D</span>.</span></span>field(<span class="hljs-string">"missing"</span>, <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">D</span>.</span></span>intFromNumber, obj);
+
+<span class="hljs-comment">/* Ok(None) */</span>
+<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">D</span>.</span></span>optional<span class="hljs-constructor">Field(<span class="hljs-string">"missing"</span>, D.<span class="hljs-params">intFromNumber</span>, <span class="hljs-params">obj</span>)</span>;
+</code></pre>
+<h3><a class="anchor" aria-hidden="true" id="decoding-nested-fields"></a><a href="#decoding-nested-fields" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Decoding Nested Fields</h3>
+<p>If a value you need is nested deeply in a JSON structure and you don't want to decode all of the intermediate bits of JSON, you can use <code>at</code> to dig through multiple keys:</p>
+<pre><code class="hljs css language-reason">/* json looks like { <span class="hljs-string">"a"</span>: { <span class="hljs-string">"b"</span>: { <span class="hljs-string">"c"</span>: <span class="hljs-literal">false</span> }}} */
+D.<span class="hljs-keyword">at</span>([<span class="hljs-string">"a"</span>, <span class="hljs-string">"b"</span>, <span class="hljs-string">"c"</span>], D.<span class="hljs-built_in">boolean</span>); /* Ok(<span class="hljs-literal">false</span>) */
+D.<span class="hljs-keyword">at</span>([<span class="hljs-string">"a"</span>, <span class="hljs-string">"b"</span>, <span class="hljs-string">"c"</span>, <span class="hljs-string">"d"</span>], D.<span class="hljs-built_in">boolean</span>); /* Error(Obj((<span class="hljs-string">"d"</span>, MissingField))) */
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="building-records"></a><a href="#building-records" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Building Records</h2>
+<p>Back to that <code>user</code> type we defined in our <a href="/bs-decode/docs/simple-example">simple example</a>:</p>
+<pre><code class="hljs css language-reason"><span class="hljs-keyword">type</span> user = {
+  name: <span class="hljs-built_in">string</span>,
+  age: <span class="hljs-built_in">int</span>,
+  isAdmin: <span class="hljs-built_in">bool</span>,
+  lastLogin: option(<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">Js</span>.</span><span class="hljs-module"><span class="hljs-identifier">Date</span>.</span></span>t)
+};
+
+<span class="hljs-keyword">let</span> make =<span class="hljs-function"> (<span class="hljs-params">name</span>, <span class="hljs-params">age</span>, <span class="hljs-params">isAdmin</span>, <span class="hljs-params">lastLogin</span>) =&gt;</span>
+  { name, age, isAdmin, lastLogin };
+</code></pre>
+<p>...the real goal of <code>bs-decode</code> is to give you the tools you need to build up complex record types (like this one) from JSON. You can certainly use <code>field</code> and <code>optionalField</code> to piece these things together, but two approaches follow that will make your life easier.</p>
+<h3><a class="anchor" aria-hidden="true" id="pipeline-style"></a><a href="#pipeline-style" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Pipeline-Style</h3>
+<p>Given the <code>user</code> type above and its <code>make</code> function, you can build up a record by decoding each field in a style inspired by the <a href="https://package.elm-lang.org/packages/NoRedInk/elm-decode-pipeline/3.0.1/">Elm Decode Pipeline</a> library for Elm. Order matters here, as each decoded field is passed into the next available slot in the <code>make</code> function.</p>
+<pre><code class="hljs css language-reason"><span class="hljs-keyword">let</span> decode = json =&gt;
+  D.Pipeline.(
+    succeed(make)
+    |<span class="hljs-type">&gt; field</span>(<span class="hljs-string">"name"</span>, D.string)
+    |<span class="hljs-type">&gt; field</span>(<span class="hljs-string">"age"</span>, D.intFromNumber)
+    |<span class="hljs-type">&gt; field</span>(<span class="hljs-string">"isAdmin"</span>, D.boolean)
+    |<span class="hljs-type">&gt; optionalField</span>(<span class="hljs-string">"lastLogin"</span>, D.date)
+    |<span class="hljs-type">&gt; run</span>(json)
+  );
+</code></pre>
+<p>Unlike other decode functions we've looked at, the Pipeline style is not eager. Instead, nothing will be decoded until the whole pipeline is executed by using the <code>run</code> function with the appropriate JSON.</p>
+<h3><a class="anchor" aria-hidden="true" id="haskell-validation-style"></a><a href="#haskell-validation-style" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Haskell Validation-Style</h3>
+<p>It's also possible to use <code>map</code> and <code>apply</code> functions (often in their infix form <code>&lt;$&gt;</code> and <code>&lt;*&gt;</code>) to combine smaller decoders, using them to call the <code>make</code> function. This style my look more familiar if you've used validation libraries in Haskell.</p>
+<pre><code class="hljs css language-reason"><span class="hljs-keyword">let</span> ((&lt;$&gt;), (&lt;*&gt;)) = D.ResultUtil.<span class="hljs-constructor">Applicative(<span class="hljs-params">map</span>, <span class="hljs-params">apply</span>)</span>;
+
+<span class="hljs-keyword">let</span> decode =<span class="hljs-function"> <span class="hljs-params">json</span> =&gt;</span>
+  <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">User</span>.</span></span>make
+    &lt;$&gt; <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">D</span>.</span></span>field(<span class="hljs-string">"name"</span>, <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">D</span>.</span></span><span class="hljs-built_in">string</span>, json)
+    &lt;*&gt; <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">D</span>.</span></span>field(<span class="hljs-string">"age"</span>, <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">D</span>.</span></span>intFromNumber, json)
+    &lt;*&gt; <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">D</span>.</span></span>field(<span class="hljs-string">"isAdmin"</span>, <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">D</span>.</span></span>boolean, json)
+    &lt;*&gt; <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">D</span>.</span></span>optional<span class="hljs-constructor">Field(<span class="hljs-string">"lastLogin"</span>, D.<span class="hljs-params">date</span>, <span class="hljs-params">json</span>)</span>;
+</code></pre>
+</span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/bs-decode/docs/decoding-optional-values"><span class="arrow-prev">← </span><span>Optional Values and Recovery</span></a><a class="docs-next button" href="/bs-decode/docs/decoding-variants"><span>Decoding Variants</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#decoding-fields">Decoding Fields</a><ul class="toc-headings"><li><a href="#decoding-nested-fields">Decoding Nested Fields</a></li></ul></li><li><a href="#building-records">Building Records</a><ul class="toc-headings"><li><a href="#pipeline-style">Pipeline-Style</a></li><li><a href="#haskell-validation-style">Haskell Validation-Style</a></li></ul></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><div><a href="https://github.com/mlms13/bs-decode">GitHub</a></div></section><section class="copyright">Copyright © 2019 Michael Martin-Smucker</section></footer></div></body></html>
