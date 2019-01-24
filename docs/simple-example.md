@@ -9,7 +9,7 @@ Let's explore the basics of decoding with a simple User record type:
 type user = {
   name: string,
   age: int,
-  isAdmin: true,
+  isAdmin: bool,
   lastLogin: option(Js.Date.t)
 };
 ```
@@ -27,7 +27,7 @@ let decode = json =>
   D.Pipeline.(
     succeed(make)
     |> field("name", D.string)
-    |> field("age", D.int)
+    |> field("age", D.intFromNumber)
     |> field("isAdmin", D.boolean)
     |> optionalField("lastLogin", D.date)
     |> run(json)
