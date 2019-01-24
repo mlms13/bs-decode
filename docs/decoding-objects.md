@@ -10,17 +10,17 @@ Decoding values from a JSON object requires specifying the string key of the fie
 ```reason
 /* imagine `obj` is `{ "foo": "xyz", "bar": 4 }` */
 
-D.field("foo", D.string, obj);
 /* Ok("xyz") */
+D.field("foo", D.string, obj);
 
-D.field("bar", D.int, obj);
 /* Ok(4) */
+D.field("bar", D.intFromNumber, obj);
 
-D.field("missing", D.int, obj);
 /* Error(Obj(NonEmptyList.pure(("missing", MissingField)))) */
+D.field("missing", D.intFromNumber, obj);
 
-D.optionalField("missing", D.int, obj);
 /* Ok(None) */
+D.optionalField("missing", D.intFromNumber, obj);
 ```
 
 ### Decoding Nested Fields

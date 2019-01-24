@@ -49,7 +49,7 @@ describe("Test decoding primitive values as option", () => {
     expect(D.floatFromNumber(jsonFloat)) |> toEqual(Some(1.4))
   );
   test("Float gives deprecated warning", () =>
-    expect(D.float(jsonFloat)) |> toEqual(Some(1.4))
+    expect(D.floatFromNumber(jsonFloat)) |> toEqual(Some(1.4))
   );
   test("Float succeeds on int", () =>
     expect(D.floatFromNumber(jsonInt)) |> toEqual(Some(4.0))
@@ -65,7 +65,7 @@ describe("Test decoding primitive values as option", () => {
     expect(D.intFromNumber(jsonInt)) |> toEqual(Some(4))
   );
   test("Int gives deprecated warning", () =>
-    expect(D.int(jsonInt)) |> toEqual(Some(4))
+    expect(D.intFromNumber(jsonInt)) |> toEqual(Some(4))
   );
   test("Int fails on float", () =>
     expect(D.intFromNumber(jsonFloat)) |> toEqual(None)

@@ -88,7 +88,7 @@ describe("Test value decoders", () => {
     expect(D.floatFromNumber(jsonFloat)) |> toEqual(Ok(1.4))
   );
   test("Float gives deprecated warning", () =>
-    expect(D.float(jsonFloat)) |> toEqual(Ok(1.4))
+    expect(D.floatFromNumber(jsonFloat)) |> toEqual(Ok(1.4))
   );
   test("Float succeeds on int", () =>
     expect(D.floatFromNumber(jsonInt)) |> toEqual(Ok(4.0))
@@ -113,7 +113,7 @@ describe("Test value decoders", () => {
     expect(D.intFromNumber(jsonInt)) |> toEqual(Ok(4))
   );
   test("Int gives deprecation warning", () =>
-    expect(D.int(jsonInt)) |> toEqual(Ok(4))
+    expect(D.intFromNumber(jsonInt)) |> toEqual(Ok(4))
   );
   test("Int succeeds on 0", () =>
     expect(D.intFromNumber(jsonZero)) |> toEqual(Ok(0))

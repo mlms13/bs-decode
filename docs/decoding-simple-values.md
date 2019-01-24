@@ -35,7 +35,7 @@ Note that `intFromNumber` will reject numbers with fractional parts (rather than
 
 **Boolean**
 
-```re
+```reason
 let json = Js.Json.boolean(true);
 D.boolean(json); /* Ok(true) */
 ```
@@ -44,21 +44,21 @@ D.boolean(json); /* Ok(true) */
 
 JSON arrays can be decoded into either arrays or lists. Decoding a JSON array requires you to also pass a decoder for the inner type.
 
-```re
+```reason
 let json = Js.Json.array([| Js.Json.string("a") |]);
 
 D.array(D.string, json); /* Ok([| "a" |]) */
 D.list(D.string, json); /* Ok([ "a" ]) */
 
-D.list(D.int, json);
 /* Error(Arr(NonEmptyList.pure((0, Val(`ExpectedInt, Js.Json.string("")))))) */
+D.list(D.intFromNumber, json);
 ```
 
 **Date**
 
 JSON doesn't natively support dates, but `bs-decode` provides decoders that will try to build a date from a JSON float or from a JSON string that can be understood by `new Date` in JavaScript.
 
-```re
+```reason
 let json = Js.Json.string("2018-11-17T05:40:35.869Z");
 D.date(json); /* Ok(Js.Date.fromString("2018-11-17T05:40:35.869Z")) */
 
@@ -72,12 +72,12 @@ While the `Js.Date.from*` functions in the comments above could return invalid D
 
 JSON objects can also be used to store key/value pairs, where the keys are strings. This can be represented as a `Js.Dict.t('a)` in ReasonML.
 
-```re
+```reason
 /**
  * Assume `json` is a value that looks like:
  * { "foo": 3, "bar": 2 }
  */
 
-D.dict(D.int, json);
 /* Ok(Js.Dict.fromList([("foo", 3), ("bar", 2)])) */
+D.dict(D.intFromNumber, json);
 ```
