@@ -19,7 +19,7 @@ Decode JSON values into structured ReasonML and OCaml types. Inspired by Elm's [
 
 ## Usage
 
-The following is available to give you an idea of how the library works, but [the complete documentation](https://mlms13.github.com/bs-decode/docs) will probably be more useful if you want to write your own decoders.
+The following is available to give you an idea of how the library works, but [the complete documentation](https://mlms13.github.io/bs-decode/docs/what-and-why) will probably be more useful if you want to write your own decoders.
 
 ```reason
 /* imagine you have a `user` type and `make` function to construct one */
