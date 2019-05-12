@@ -45,7 +45,6 @@ let map5:
 module ResultUtil: {
   type r('a) = Belt.Result.t('a, Decode_ParseError.failure);
 
-  let result: ('a => 'b, 'c => 'b, Belt.Result.t('a, 'c)) => 'b;
   let mapErr: ('a => 'b, Belt.Result.t('c, 'a)) => Belt.Result.t('c, 'b);
 
   module Functor: {
@@ -91,7 +90,6 @@ module ResultUtil: {
     let (<|>): (r('a), r('a)) => r('a);
   };
 
-  let note: ('a, option('b)) => Belt.Result.t('b, 'a);
   let recoverWith:
     ('a, Belt.Result.t('a, Decode_ParseError.failure)) =>
     Belt.Result.t('a, Decode_ParseError.failure);

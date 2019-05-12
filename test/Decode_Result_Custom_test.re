@@ -1,6 +1,7 @@
+open Relude.Globals;
+
 open Jest;
 open Expect;
-open Belt.Result;
 open Decode.ParseError;
 
 /**
@@ -12,7 +13,7 @@ open Decode.ParseError;
  * Until bs-decode hits 1.0, assume that this will go through some changes.
  */
 module R =
-  Decode.ParseError.ResultOf({
+  ResultOf({
     type t = [ DecodeBase.failure | `InvalidColor | `InvalidShape];
     let handle = x => (x :> t);
   });
@@ -29,10 +30,10 @@ module Color = {
 
   let fromString = str =>
     switch (str) {
-    | "Red" => Ok(Red)
-    | "Green" => Ok(Green)
-    | "Blue" => Ok(Blue)
-    | _ => Error(Val(`InvalidColor, Js.Json.string(str)))
+    | "Red" => Result.ok(Red)
+    | "Green" => Result.ok(Green)
+    | "Blue" => Result.ok(Blue)
+    | _ => Result.error(Val(`InvalidColor, Js.Json.string(str)))
     };
 
   let decode = json => D.string(json) >>= fromString;
@@ -45,26 +46,26 @@ describe("Test decoding enum from string", () => {
   let jsonValidStr = Js.Json.string("Blue");
 
   test("Enum success on valid string", () =>
-    expect(Color.decode(jsonValidStr)) |> toEqual(Ok(Color.Blue))
+    expect(Color.decode(jsonValidStr)) |> toEqual(Result.ok(Color.Blue))
   );
   test("Enum failure on null", () =>
     expect(Color.decode(jsonNull))
-    |> toEqual(Error(Val(`ExpectedString, jsonNull)))
+    |> toEqual(Result.error(Val(`ExpectedString, jsonNull)))
   );
   test("Enum failure on int", () =>
     expect(Color.decode(jsonInt))
-    |> toEqual(Error(Val(`ExpectedString, jsonInt)))
+    |> toEqual(Result.error(Val(`ExpectedString, jsonInt)))
   );
   test("Enum failure on invalid string", () =>
     expect(Color.decode(jsonInvalidStr))
-    |> toEqual(Error(Val(`InvalidColor, jsonInvalidStr)))
+    |> toEqual(Result.error(Val(`InvalidColor, jsonInvalidStr)))
   );
   test("Enum failure can be mapped to string", () => {
     let message =
       switch (Color.decode(jsonInvalidStr)) {
-      | Belt.Result.Ok(result) => result->Belt.Result.Ok
-      | Belt.Result.Error(parseError) =>
-        Decode_ParseError.toDebugString(
+      | Ok(_) as ok => ok
+      | Error(parseError) =>
+        Decode.ParseError.toDebugString(
           x =>
             switch (x) {
             | `InvalidColor => (_json => "Invalid color")
@@ -73,9 +74,9 @@ describe("Test decoding enum from string", () => {
             },
           parseError,
         )
-        ->Belt.Result.Error
+        |> Result.error
       };
-    expect(message) |> toEqual(Error("Invalid color"));
+    expect(message) |> toEqual(Result.error("Invalid color"));
   });
 });
 
@@ -135,27 +136,29 @@ describe("Test decoding complex ADT from object", () => {
   let invalidVal = objOfList([("square", Js.Json.string("foo"))]);
 
   test("ADT success on valid circle", () =>
-    expect(Shape.decode(circleAsKey)) |> toEqual(Ok(Shape.circle(3.2)))
+    expect(Shape.decode(circleAsKey))
+    |> toEqual(Result.ok(Shape.circle(3.2)))
   );
   test("ADT success on valid rectangle", () =>
-    expect(Shape.decode(rectAsKey)) |> toEqual(Ok(Shape.rect((2.1, 3.4))))
+    expect(Shape.decode(rectAsKey))
+    |> toEqual(Result.ok(Shape.rect((2.1, 3.4))))
   );
   test("ADT failure on invalid square length", () =>
     expect(Shape.decode(invalidNested))
-    |> toEqual(Error(`InvalidShape(invalidNested)))
+    |> toEqual(Result.error(`InvalidShape(invalidNested)))
   );
   test("ADT failure on invalid square value type", () =>
     expect(Shape.decode(invalidVal))
-    |> toEqual(Error(`InvalidShape(invalidVal)))
+    |> toEqual(Result.error(`InvalidShape(invalidVal)))
   );
   test("ADT failure on JSON null", () =>
     expect(Shape.decode(jsonNull))
-    |> toEqual(Error(`InvalidShape(jsonNull)))
+    |> toEqual(Result.error(`InvalidShape(jsonNull)))
   );
 });
 
 describe("Test decoding complex ADT with constructor as JSON value", () => {
-  let shapeFromKeyJson = (json, key) =>
+  let shapeFromKeyJson = (key, json) =>
     switch (key) {
     | "circle" =>
       Shape.circle <$> D.at(["value", "radius"], D.floatFromNumber, json)
@@ -168,23 +171,7 @@ describe("Test decoding complex ADT with constructor as JSON value", () => {
   /**
    * Now imagine we encode our Shape into JSON like this:
    * { key: "circle", value: { radius: 3.0 }}
-   *
    */
-  let decodeShape = json =>
-    D.field("key", D.string, json)->(flatMap(shapeFromKeyJson(json)));
-
-  let shapePipeDecode = json =>
-    D.Pipeline.(succeed(v => v) |> pipe(decodeShape) |> run(json));
-
-  let shapeInnerFlatmap = json =>
-    D.Pipeline.(
-      succeed(v => v)
-      |> field("key", data =>
-           D.string(data)->(flatMap(shapeFromKeyJson(json)))
-         )
-      |> run(json)
-    );
-
   let valid: Js.Json.t = [%bs.raw
     {|
     {
@@ -197,27 +184,28 @@ describe("Test decoding complex ADT with constructor as JSON value", () => {
   |}
   ];
 
+  let decodeShape = D.(field("key", string) |> flatMap(shapeFromKeyJson));
+  let shapePipeDecode = D.Pipeline.(succeed(id) |> pipe(decodeShape));
+
   let invalid =
     Js.Dict.fromList([("key", Js.Json.string("foo"))]) |> Js.Json.object_;
 
   let emptyObj = Js.Dict.fromList([]) |> Js.Json.object_;
 
   test("ADT success on valid rectangle", () =>
-    expect(decodeShape(valid)) |> toEqual(Ok(Shape.rect((3.0, 4.0))))
+    expect(decodeShape(valid))
+    |> toEqual(Result.ok(Shape.rect((3.0, 4.0))))
   );
   test("ADT failure on invalid key", () =>
     expect(decodeShape(invalid))
-    |> toEqual(Error(Val(`InvalidShape, Js.Json.string("foo"))))
+    |> toEqual(Result.error(Val(`InvalidShape, Js.Json.string("foo"))))
   );
   test("ADT failure on empty object", () =>
     expect(decodeShape(emptyObj))
-    |> toEqual(Error(objPure("key", MissingField)))
+    |> toEqual(Result.error(objPure("key", MissingField)))
   );
   test("ADT succeeds when using `pipe` in pipeline", () =>
-    expect(shapePipeDecode(valid)) |> toEqual(Ok(Shape.rect((3.0, 4.0))))
-  );
-  test("ADT succeeds when flatMapping result of inner decode", () =>
-    expect(shapeInnerFlatmap(valid))
-    |> toEqual(Ok(Shape.rect((3.0, 4.0))))
+    expect(shapePipeDecode(valid))
+    |> toEqual(Result.ok(Shape.rect((3.0, 4.0))))
   );
 });

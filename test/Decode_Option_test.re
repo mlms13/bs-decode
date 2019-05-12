@@ -1,9 +1,8 @@
+open Relude.Globals;
 open Jest;
 open Expect;
 
 module D = Decode.AsOption;
-
-let ((<$>), (<*>)) = BsAbstract.Option.Infix.((<$>), (<*>));
 
 module User = {
   type t = {
@@ -12,17 +11,16 @@ module User = {
   };
   let make = (name, age) => {name, age};
 
-  let jsonSample =
-    Js.Dict.fromList([
-      ("name", Js.Json.string("Foo")),
-      ("age", Js.Json.number(30.)),
-    ])
-    |> Js.Json.object_;
+  let jsonSample: Js.Json.t = [%raw {|
+    { "name": "Foo", "age": 30 }
+  |}];
 
   let decode = json =>
-    make
-    <$> D.field("name", D.string, json)
-    <*> D.field("age", D.intFromNumber, json);
+    Option.Infix.(
+      make
+      <$> D.field("name", D.string, json)
+      <*> D.field("age", D.intFromNumber, json)
+    );
 };
 
 describe("Test decoding primitive values as option", () => {
@@ -79,11 +77,11 @@ describe("Test decoding primitive values as option", () => {
 
   test("Date succeeds on number value", () =>
     expect(D.date(jsonDateNumber))
-    |> toEqual(Some(dateNumber->Js.Date.fromFloat))
+    |> toEqual(Some(Js.Date.fromFloat(dateNumber)))
   );
   test("Date succeeds on string value", () =>
     expect(D.date(jsonDateString))
-    |> toEqual(Some(dateString->Js.Date.fromString))
+    |> toEqual(Some(Js.Date.fromString(dateString)))
   );
   test("Date fails on an invalid date value", () =>
     expect(D.date(jsonString)) |> toEqual(None)
@@ -104,30 +102,26 @@ type numbers =
 
 describe("Test decoding variants as option", () => {
   test("Can decode string variants", () =>
-    expect(D.variantFromString(colorFromJs, "blue"->Js.Json.string))
+    expect(D.variantFromString(colorFromJs, Js.Json.string("blue")))
     |> toEqual(Some(`blue))
   );
   test("Can decode number variants", () =>
-    expect(D.variantFromInt(numbersFromJs, 0->float_of_int->Js.Json.number))
+    expect(D.variantFromInt(numbersFromJs, Js.Json.number(0.0)))
     |> toEqual(Some(Zero))
   );
   test("Can fail on invalid string options", () =>
-    expect(D.variantFromString(colorFromJs, "yellow"->Js.Json.string))
+    expect(D.variantFromString(colorFromJs, Js.Json.string("yellow")))
     |> toEqual(None)
   );
   test("Can fail on invalid number options", () =>
-    expect(D.variantFromInt(numbersFromJs, 5->float_of_int->Js.Json.number))
+    expect(D.variantFromInt(numbersFromJs, Js.Json.number(5.0)))
     |> toEqual(None)
   );
 });
 
 describe("Test decoding array as option", () => {
   let jsonArray =
-    Js.Json.array([|
-      Js.Json.string("a"),
-      Js.Json.string("b"),
-      Js.Json.string("c"),
-    |]);
+    Js.Json.(array([|string("a"), string("b"), string("c")|]));
   let jsonEmptyArray = Js.Json.array([||]);
   let jsonString = Js.Json.string("Foo");
 
@@ -201,7 +195,7 @@ module Url = {
 describe("Test mapping options with existing Option utilities", () => {
   let url = "http://www.example.com";
   let jsonUrl = Js.Json.string(url);
-  let decoded = D.string(jsonUrl)->Belt.Option.map(Url.make);
+  let decoded = D.string(jsonUrl) |> Option.map(Url.make);
 
   test("Output of decoding can be mapped using existing Option tools", () =>
     expect(decoded) |> toEqual(Some(Url.make(url)))
