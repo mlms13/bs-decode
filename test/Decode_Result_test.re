@@ -2,7 +2,9 @@ open Jest;
 open Expect;
 open Decode.ParseError;
 open Belt.Result;
+
 module D = Decode.AsResult.OfParseError;
+module Nel = D.NonEmptyList;
 
 let ((<$>), (<*>), (<|>), recoverWith, mapErr) =
   D.ResultUtil.(Infix.(<$>), Infix.(<*>), Infix.(<|>), recoverWith, mapErr);
@@ -202,12 +204,9 @@ describe("Test array decoders", () => {
   let numError = str => Val(`ExpectedNumber, Js.Json.string(str));
 
   let decodeErrs =
-    NonEmptyList.cons(
+    Nel.make(
       (0, numError("a")),
-      NonEmptyList.cons(
-        (1, numError("b")),
-        NonEmptyList.pure((2, numError("c"))),
-      ),
+      [(1, numError("b")), (2, numError("c"))],
     );
 
   test("Array succeeds on array of string", () =>
@@ -231,12 +230,7 @@ describe("Test array decoders", () => {
     expect(D.array(D.string, jsonArrayMixed))
     |> toEqual(
          Error(
-           Arr(
-             NonEmptyList.pure((
-               2,
-               Val(`ExpectedString, Js.Json.number(3.5)),
-             )),
-           ),
+           Arr(Nel.pure((2, Val(`ExpectedString, Js.Json.number(3.5))))),
          ),
        )
   );
@@ -256,7 +250,6 @@ describe("Test array decoders", () => {
 
 describe("Test record field decoders", () => {
   let (string, object_) = Js.Json.(string, object_);
-  let (singleton, cons) = NonEmptyList.(pure, cons);
   let obj = User.jsonSample;
 
   let parentObj = Js.Dict.fromList([("user", obj)]) |> object_;
@@ -271,10 +264,7 @@ describe("Test record field decoders", () => {
   let decodeErrors =
     Error(
       Obj(
-        cons(
-          ("missing", MissingField),
-          singleton(("name", nameAsIntError)),
-        ),
+        Nel.make(("missing", MissingField), [("name", nameAsIntError)]),
       ),
     );
 
@@ -405,7 +395,7 @@ describe("Test oneOf, trying multiple decoders", () => {
 
   let decoders =
     D.oneOf(
-      NonEmptyList.make(
+      Nel.make(
         json => makeS <$> D.string(json),
         [
           json => makeN <$> D.optional(D.floatFromNumber, json),
@@ -416,7 +406,7 @@ describe("Test oneOf, trying multiple decoders", () => {
 
   let badDecoders =
     D.oneOf(
-      NonEmptyList.make(
+      Nel.make(
         json => makeS <$> D.string(json),
         [
           json => makeS <$> D.string(json),

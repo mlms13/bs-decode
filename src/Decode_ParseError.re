@@ -1,7 +1,9 @@
+module Nel = Relude.NonEmpty.List;
+
 type t('a) =
   | Val('a, Js.Json.t)
-  | Arr(NonEmptyList.t((int, t('a))))
-  | Obj(NonEmptyList.t((string, objError('a))))
+  | Arr(Nel.t((int, t('a))))
+  | Obj(Nel.t((string, objError('a))))
 and objError('a) =
   | MissingField
   | InvalidField(t('a));
@@ -11,9 +13,8 @@ type failure = t(DecodeBase.failure);
 let rec map = (fn, v) =>
   switch (v) {
   | Val(a, json) => Val(fn(a), json)
-  | Arr(nel) => Arr(NonEmptyList.map(((i, a)) => (i, map(fn, a)), nel))
-  | Obj(nel) =>
-    Obj(NonEmptyList.map(((f, o)) => (f, mapObj(fn, o)), nel))
+  | Arr(nel) => Arr(Nel.map(((i, a)) => (i, map(fn, a)), nel))
+  | Obj(nel) => Obj(Nel.map(((f, o)) => (f, mapObj(fn, o)), nel))
   }
 and mapObj = (fn, obj) =>
   switch (obj) {
@@ -21,8 +22,8 @@ and mapObj = (fn, obj) =>
   | InvalidField(a) => InvalidField(map(fn, a))
   };
 
-let arrPure = (pos, err) => Arr(NonEmptyList.pure((pos, err)));
-let objPure = (field, err) => Obj(NonEmptyList.pure((field, err)));
+let arrPure = (pos, err) => Arr(Nel.pure((pos, err)));
+let objPure = (field, err) => Obj(Nel.pure((field, err)));
 
 /*
  * This is almost like Semigroup's `append`, but associativity only holds when
@@ -31,8 +32,8 @@ let objPure = (field, err) => Obj(NonEmptyList.pure((field, err)));
  */
 let combine = (a, b) =>
   switch (a, b) {
-  | (Arr(nela), Arr(nelb)) => Arr(NonEmptyList.append(nela, nelb))
-  | (Obj(nela), Obj(nelb)) => Obj(NonEmptyList.append(nela, nelb))
+  | (Arr(nela), Arr(nelb)) => Arr(Nel.concat(nela, nelb))
+  | (Obj(nela), Obj(nelb)) => Obj(Nel.concat(nela, nelb))
   /* | (Val(a, jsona), Val(b, jsonb)) => f((a, jsona), (b, jsonb)) */
   | _ => a
   };
@@ -58,7 +59,7 @@ let rec toDebugString = (~level=0, ~pre="", innerToString, v) => {
     | Arr(nel) =>
       let childMessages =
         nel
-        |> NonEmptyList.map(((i, err)) =>
+        |> Nel.map(((i, err)) =>
              toDebugString(
                ~level=level + 1,
                ~pre="At position " ++ string_of_int(i) ++ ": ",
@@ -66,7 +67,7 @@ let rec toDebugString = (~level=0, ~pre="", innerToString, v) => {
                err,
              )
            )
-        |> NonEmptyList.toT
+        |> Nel.toSequence
         |> Array.of_list
         |> Js.Array.joinWith("\n");
 
@@ -75,7 +76,7 @@ let rec toDebugString = (~level=0, ~pre="", innerToString, v) => {
     | Obj(nel) =>
       let childMessages =
         nel
-        |> NonEmptyList.map(((field, err)) => {
+        |> Nel.map(((field, err)) => {
              let fieldStr = "\"" ++ field ++ "\"";
              switch (err) {
              | MissingField =>
@@ -92,7 +93,7 @@ let rec toDebugString = (~level=0, ~pre="", innerToString, v) => {
                )
              };
            })
-        |> NonEmptyList.toT
+        |> Nel.toSequence
         |> Array.of_list
         |> Js.Array.joinWith("\n");
 

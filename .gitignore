@@ -8,6 +8,7 @@ node_modules
 /dist
 .merlin
 .bsb.lock
+/website/build
 
 # os files
 .DS_Store

@@ -1,3 +1,5 @@
+module NonEmptyList = Relude.NonEmpty.List;
+
 module ResultUtil = {
   open BsAbstract;
   open BsAbstract.Interface;
