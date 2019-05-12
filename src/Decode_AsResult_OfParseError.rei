@@ -1,5 +1,47 @@
 module NonEmptyList: Decode_NonEmptyList.Nel;
 
+let map2:
+  (
+    ('a, 'b) => 'c,
+    Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure),
+    Js.Json.t => Belt.Result.t('b, Decode_ParseError.failure),
+    Js.Json.t
+  ) =>
+  Belt.Result.t('c, Decode_ParseError.failure);
+
+let map3:
+  (
+    ('a, 'b, 'c) => 'd,
+    Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure),
+    Js.Json.t => Belt.Result.t('b, Decode_ParseError.failure),
+    Js.Json.t => Belt.Result.t('c, Decode_ParseError.failure),
+    Js.Json.t
+  ) =>
+  Belt.Result.t('d, Decode_ParseError.failure);
+
+let map4:
+  (
+    ('a, 'b, 'c, 'd) => 'e,
+    Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure),
+    Js.Json.t => Belt.Result.t('b, Decode_ParseError.failure),
+    Js.Json.t => Belt.Result.t('c, Decode_ParseError.failure),
+    Js.Json.t => Belt.Result.t('d, Decode_ParseError.failure),
+    Js.Json.t
+  ) =>
+  Belt.Result.t('e, Decode_ParseError.failure);
+
+let map5:
+  (
+    ('a, 'b, 'c, 'd, 'e) => 'f,
+    Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure),
+    Js.Json.t => Belt.Result.t('b, Decode_ParseError.failure),
+    Js.Json.t => Belt.Result.t('c, Decode_ParseError.failure),
+    Js.Json.t => Belt.Result.t('d, Decode_ParseError.failure),
+    Js.Json.t => Belt.Result.t('e, Decode_ParseError.failure),
+    Js.Json.t
+  ) =>
+  Belt.Result.t('f, Decode_ParseError.failure);
+
 module ResultUtil: {
   type r('a) = Belt.Result.t('a, Decode_ParseError.failure);
 
@@ -147,48 +189,6 @@ let oneOf:
 module Pipeline: {
   let succeed: ('a, 'b) => Belt.Result.t('a, Decode_ParseError.failure);
 
-  let map2:
-    (
-      ('a, 'b) => 'c,
-      'd => Belt.Result.t('a, Decode_ParseError.failure),
-      'd => Belt.Result.t('b, Decode_ParseError.failure),
-      'd
-    ) =>
-    Belt.Result.t('c, Decode_ParseError.failure);
-
-  let map3:
-    (
-      ('a, 'b, 'c) => 'd,
-      'e => Belt.Result.t('a, Decode_ParseError.failure),
-      'e => Belt.Result.t('b, Decode_ParseError.failure),
-      'e => Belt.Result.t('c, Decode_ParseError.failure),
-      'e
-    ) =>
-    Belt.Result.t('d, Decode_ParseError.failure);
-
-  let map4:
-    (
-      ('a, 'b, 'c, 'd) => 'e,
-      'f => Belt.Result.t('a, Decode_ParseError.failure),
-      'f => Belt.Result.t('b, Decode_ParseError.failure),
-      'f => Belt.Result.t('c, Decode_ParseError.failure),
-      'f => Belt.Result.t('d, Decode_ParseError.failure),
-      'f
-    ) =>
-    Belt.Result.t('e, Decode_ParseError.failure);
-
-  let map5:
-    (
-      ('a, 'b, 'c, 'd, 'e) => 'f,
-      'g => Belt.Result.t('a, Decode_ParseError.failure),
-      'g => Belt.Result.t('b, Decode_ParseError.failure),
-      'g => Belt.Result.t('c, Decode_ParseError.failure),
-      'g => Belt.Result.t('d, Decode_ParseError.failure),
-      'g => Belt.Result.t('e, Decode_ParseError.failure),
-      'g
-    ) =>
-    Belt.Result.t('f, Decode_ParseError.failure);
-
   let field:
     (
       Js.Dict.key,
@@ -227,7 +227,11 @@ module Pipeline: {
     Belt.Result.t('b, Decode_ParseError.failure);
 
   let hardcoded:
-    ('a, 'b => Belt.Result.t('a => 'c, Decode_ParseError.failure), 'b) =>
+    (
+      'a,
+      Js.Json.t => Belt.Result.t('a => 'c, Decode_ParseError.failure),
+      Js.Json.t
+    ) =>
     Belt.Result.t('c, Decode_ParseError.failure);
 
   let run:

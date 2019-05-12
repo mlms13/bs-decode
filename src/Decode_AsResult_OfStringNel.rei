@@ -1,5 +1,47 @@
 module NonEmptyList: Decode_NonEmptyList.Nel;
 
+let map2:
+  (
+    ('a, 'b) => 'c,
+    Js.Json.t => Belt.Result.t('a, NonEmptyList.t(string)),
+    Js.Json.t => Belt.Result.t('b, NonEmptyList.t(string)),
+    Js.Json.t
+  ) =>
+  Belt.Result.t('c, NonEmptyList.t(string));
+
+let map3:
+  (
+    ('a, 'b, 'c) => 'd,
+    Js.Json.t => Belt.Result.t('a, NonEmptyList.t(string)),
+    Js.Json.t => Belt.Result.t('b, NonEmptyList.t(string)),
+    Js.Json.t => Belt.Result.t('c, NonEmptyList.t(string)),
+    Js.Json.t
+  ) =>
+  Belt.Result.t('d, NonEmptyList.t(string));
+
+let map4:
+  (
+    ('a, 'b, 'c, 'd) => 'e,
+    Js.Json.t => Belt.Result.t('a, NonEmptyList.t(string)),
+    Js.Json.t => Belt.Result.t('b, NonEmptyList.t(string)),
+    Js.Json.t => Belt.Result.t('c, NonEmptyList.t(string)),
+    Js.Json.t => Belt.Result.t('d, NonEmptyList.t(string)),
+    Js.Json.t
+  ) =>
+  Belt.Result.t('e, NonEmptyList.t(string));
+
+let map5:
+  (
+    ('a, 'b, 'c, 'd, 'e) => 'f,
+    Js.Json.t => Belt.Result.t('a, NonEmptyList.t(string)),
+    Js.Json.t => Belt.Result.t('b, NonEmptyList.t(string)),
+    Js.Json.t => Belt.Result.t('c, NonEmptyList.t(string)),
+    Js.Json.t => Belt.Result.t('d, NonEmptyList.t(string)),
+    Js.Json.t => Belt.Result.t('e, NonEmptyList.t(string)),
+    Js.Json.t
+  ) =>
+  Belt.Result.t('f, NonEmptyList.t(string));
+
 module ResultUtil: {
   type r('a) = Belt.Result.t('a, NonEmptyList.t(string));
 
@@ -147,48 +189,6 @@ let oneOf:
 module Pipeline: {
   let succeed: ('a, 'b) => Belt.Result.t('a, NonEmptyList.t(string));
 
-  let map2:
-    (
-      ('a, 'b) => 'c,
-      'd => Belt.Result.t('a, NonEmptyList.t(string)),
-      'd => Belt.Result.t('b, NonEmptyList.t(string)),
-      'd
-    ) =>
-    Belt.Result.t('c, NonEmptyList.t(string));
-
-  let map3:
-    (
-      ('a, 'b, 'c) => 'd,
-      'e => Belt.Result.t('a, NonEmptyList.t(string)),
-      'e => Belt.Result.t('b, NonEmptyList.t(string)),
-      'e => Belt.Result.t('c, NonEmptyList.t(string)),
-      'e
-    ) =>
-    Belt.Result.t('d, NonEmptyList.t(string));
-
-  let map4:
-    (
-      ('a, 'b, 'c, 'd) => 'e,
-      'f => Belt.Result.t('a, NonEmptyList.t(string)),
-      'f => Belt.Result.t('b, NonEmptyList.t(string)),
-      'f => Belt.Result.t('c, NonEmptyList.t(string)),
-      'f => Belt.Result.t('d, NonEmptyList.t(string)),
-      'f
-    ) =>
-    Belt.Result.t('e, NonEmptyList.t(string));
-
-  let map5:
-    (
-      ('a, 'b, 'c, 'd, 'e) => 'f,
-      'g => Belt.Result.t('a, NonEmptyList.t(string)),
-      'g => Belt.Result.t('b, NonEmptyList.t(string)),
-      'g => Belt.Result.t('c, NonEmptyList.t(string)),
-      'g => Belt.Result.t('d, NonEmptyList.t(string)),
-      'g => Belt.Result.t('e, NonEmptyList.t(string)),
-      'g
-    ) =>
-    Belt.Result.t('f, NonEmptyList.t(string));
-
   let field:
     (
       Js.Dict.key,
@@ -227,7 +227,11 @@ module Pipeline: {
     Belt.Result.t('b, NonEmptyList.t(string));
 
   let hardcoded:
-    ('a, 'b => Belt.Result.t('a => 'c, NonEmptyList.t(string)), 'b) =>
+    (
+      'a,
+      Js.Json.t => Belt.Result.t('a => 'c, NonEmptyList.t(string)),
+      Js.Json.t
+    ) =>
     Belt.Result.t('c, NonEmptyList.t(string));
 
   let run:

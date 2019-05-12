@@ -7,8 +7,10 @@ module D = Decode.AsResult.OfParseError;
 let (string, number, object_, null) =
   Js.Json.(string, number, object_, null);
 
-let (succeed, map2, field, fallback, optionalField, hardcoded, run) =
-  D.Pipeline.(succeed, map2, field, fallback, optionalField, hardcoded, run);
+let map2 = D.map2;
+
+let (succeed, field, fallback, optionalField, hardcoded, run) =
+  D.Pipeline.(succeed, field, fallback, optionalField, hardcoded, run);
 
 let map = D.ResultUtil.Functor.map;
 
