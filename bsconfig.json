@@ -3,7 +3,7 @@
   "bsc-flags": ["-bs-no-version-header", "-bs-super-errors"],
   "bs-dependencies": [
     "bs-abstract",
-    "bs-nonempty"
+    "relude"
   ],
   "bs-dev-dependencies": [
     "@glennsl/bs-jest"

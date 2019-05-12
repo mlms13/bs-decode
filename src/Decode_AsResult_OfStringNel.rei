@@ -1,3 +1,5 @@
+module NonEmptyList: Decode_NonEmptyList.Nel;
+
 module ResultUtil: {
   type r('a) = Belt.Result.t('a, NonEmptyList.t(string));
 

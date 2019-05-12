@@ -1,3 +1,5 @@
+module Nel = Relude.NonEmpty.List;
+
 type failure = [
   | `ExpectedBoolean
   | `ExpectedString
@@ -197,9 +199,9 @@ module DecodeBase =
 
   let rec oneOf = (decoders, json) =>
     switch (decoders) {
-    | NonEmptyList.NonEmpty(decode, []) => decode(json)
-    | NonEmptyList.NonEmpty(decode, [y, ...ys]) =>
-      T.lazyAlt(decode(json), () => oneOf(NonEmptyList.make(y, ys), json))
+    | Nel.NonEmpty(decode, []) => decode(json)
+    | Nel.NonEmpty(decode, [y, ...ys]) =>
+      T.lazyAlt(decode(json), () => oneOf(Nel.make(y, ys), json))
     };
 
   module Pipeline = {

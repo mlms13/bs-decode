@@ -14,6 +14,9 @@
       "decoding-simple-values": {
         "title": "Simple Values"
       },
+      "decoding-variants": {
+        "title": "Decoding Variants"
+      },
       "handling-errors": {
         "title": "Handling Errors"
       },

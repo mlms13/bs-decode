@@ -1,3 +1,5 @@
+module NonEmptyList = Relude.NonEmpty.List;
+
 module ResultUtil =
   Decode_ParseError.ResultOf({
     type t = DecodeBase.failure;

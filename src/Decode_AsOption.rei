@@ -40,7 +40,7 @@ let fallback:
   (Js.Dict.key, Js.Json.t => option('a), 'a, Js.Json.t) => option('a);
 
 let oneOf:
-  (NonEmptyList.t(Js.Json.t => option('a)), Js.Json.t) => option('a);
+  (Relude.NonEmptyList.t(Js.Json.t => option('a)), Js.Json.t) => option('a);
 
 module Pipeline: {
   let succeed: ('a, 'b) => option('a);
