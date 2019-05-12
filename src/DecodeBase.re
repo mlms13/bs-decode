@@ -40,14 +40,34 @@ module DecodeBase =
          M: BsAbstract.Interface.MONAD with type t('a) = T.t('a),
          Alt: BsAbstract.Interface.ALT with type t('a) = T.t('a),
        ) => {
-  module InfixMonad = BsAbstract.Infix.Monad(M);
+  module InnerExtras = Relude.Extensions.Monad.MonadExtensions(M);
 
-  let ((<$>), (<*>)) = InfixMonad.((<$>), (<*>));
+  module Monad:
+    BsAbstract.Interface.MONAD with type t('a) = Js.Json.t => M.t('a) = {
+    type t('a) = Js.Json.t => M.t('a);
+    let map = (f, decode) => decode >> M.map(f);
+    let apply = (f, decode, json) =>
+      M.flat_map(f(json), fn => decode(json) |> M.map(fn));
 
-  let map2 = (f, a, b) => f <$> a <*> b;
+    let pure = (v, _) => M.pure(v);
+
+    let flat_map = (decode, f, json) =>
+      decode(json) |> M.flat_map(_, a => f(a, json));
+  };
+
+  module MonadFunctions = Relude_Extensions_Monad.MonadExtensions(Monad);
+
+  let map = MonadFunctions.map;
+  let apply = MonadFunctions.apply;
+  let map2 = MonadFunctions.lift2;
+  let map3 = MonadFunctions.lift3;
+  let map4 = MonadFunctions.lift4;
+  let map5 = MonadFunctions.lift5;
+  let pure = MonadFunctions.pure;
+  let flatMap = MonadFunctions.flatMap;
 
   let value = (decode, failure, json) =>
-    decode(json) |> Option.fold(T.valErr(failure, json), M.pure);
+    decode(json) |> Option.foldLazy(() => T.valErr(failure, json), M.pure);
 
   let boolean = value(Js.Json.decodeBoolean, `ExpectedBoolean);
 
@@ -108,7 +128,7 @@ module DecodeBase =
       Array.foldLeft(
         ((pos, acc), curr) => {
           let decoded = T.arrErr(pos, decode(curr));
-          let result = map2(flip(Array.append), acc, decoded);
+          let result = InnerExtras.lift2(flip(Array.append), acc, decoded);
           (pos + 1, result);
         },
         (0, M.pure([||])),
@@ -126,7 +146,7 @@ module DecodeBase =
       fun
       | [] => M.pure([])
       | [(key, value), ...xs] =>
-        map2(
+        InnerExtras.lift2(
           (decodedValue, rest) => [(key, decodedValue), ...rest],
           T.objErr(key, decode(value)),
           decodeEntries(xs),
@@ -164,7 +184,7 @@ module DecodeBase =
     Alt.alt(field(name, decode, json), M.pure(alt));
 
   let tuple = ((fieldA, decodeA), (fieldB, decodeB), json) =>
-    map2(
+    InnerExtras.lift2(
       (a, b) => (a, b),
       field(fieldA, decodeA, json),
       field(fieldB, decodeB, json),
@@ -183,16 +203,6 @@ module DecodeBase =
      * argument and always returns `Ok`
      */
     let succeed = (v, _) => M.pure(v);
-
-    let map2 = (f, a, b, json) => f <$> a(json) <*> b(json);
-
-    let map3 = (f, a, b, c, json) => f <$> a(json) <*> b(json) <*> c(json);
-
-    let map4 = (f, a, b, c, d, json) =>
-      f <$> a(json) <*> b(json) <*> c(json) <*> d(json);
-
-    let map5 = (f, a, b, c, d, e, json) =>
-      f <$> a(json) <*> b(json) <*> c(json) <*> d(json) <*> e(json);
 
     let pipe = (a, b, json) => map2((|>), a, b, json);
 
