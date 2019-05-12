@@ -140,7 +140,8 @@ let fallback:
 
 let oneOf:
   (
-    NonEmptyList.t(Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure)),
+    Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure),
+    list(Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure)),
     Js.Json.t
   ) =>
   Belt.Result.t('a, Decode_ParseError.failure);

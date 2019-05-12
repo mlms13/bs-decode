@@ -1,5 +1,3 @@
-module Nel = Relude.NonEmpty.List;
-
 type failure = [
   | `ExpectedBoolean
   | `ExpectedString
@@ -93,8 +91,8 @@ module DecodeBase =
         result
         ->Js.Date.toJSONUnsafe
         ->Js.Nullable.return
-        ->Js.Nullable.isNullable ?
-          T.valErr(`ExpectedValidDate, json) : result->ok
+        ->Js.Nullable.isNullable
+          ? T.valErr(`ExpectedValidDate, json) : result->ok
     );
 
   let variantFromJson = (jsonToJs, jsToVariant, json) =>
@@ -197,12 +195,12 @@ module DecodeBase =
       field(fieldB, decodeB, json),
     );
 
-  let rec oneOf = (decoders, json) =>
-    switch (decoders) {
-    | Nel.NonEmpty(decode, []) => decode(json)
-    | Nel.NonEmpty(decode, [y, ...ys]) =>
-      T.lazyAlt(decode(json), () => oneOf(Nel.make(y, ys), json))
-    };
+  let oneOf = (decode, rest, json) =>
+    Relude.List.foldLeft(
+      (a, b) => T.lazyAlt(a, () => b(json)),
+      decode(json),
+      rest,
+    );
 
   module Pipeline = {
     /**
