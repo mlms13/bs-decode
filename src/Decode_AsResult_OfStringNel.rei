@@ -140,7 +140,8 @@ let fallback:
 
 let oneOf:
   (
-    NonEmptyList.t(Js.Json.t => Belt.Result.t('a, NonEmptyList.t(string))),
+    Js.Json.t => Belt.Result.t('a, NonEmptyList.t(string)),
+    list(Js.Json.t => Belt.Result.t('a, NonEmptyList.t(string))),
     Js.Json.t
   ) =>
   Belt.Result.t('a, NonEmptyList.t(string));

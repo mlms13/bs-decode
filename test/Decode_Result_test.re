@@ -395,24 +395,17 @@ describe("Test oneOf, trying multiple decoders", () => {
 
   let decoders =
     D.oneOf(
-      Nel.make(
-        json => makeS <$> D.string(json),
-        [
-          json => makeN <$> D.optional(D.floatFromNumber, json),
-          json => makeB <$> D.boolean(json),
-        ],
-      ),
+      json => makeS <$> D.string(json),
+      [
+        json => makeN <$> D.optional(D.floatFromNumber, json),
+        json => makeB <$> D.boolean(json),
+      ],
     );
 
   let badDecoders =
     D.oneOf(
-      Nel.make(
-        json => makeS <$> D.string(json),
-        [
-          json => makeS <$> D.string(json),
-          json => makeS <$> D.string(json),
-        ],
-      ),
+      json => makeS <$> D.string(json),
+      [json => makeS <$> D.string(json), json => makeS <$> D.string(json)],
     );
 
   test("First in oneOf list succeeds", () =>
