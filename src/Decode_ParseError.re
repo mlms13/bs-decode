@@ -1,3 +1,4 @@
+open Relude.Globals;
 module Nel = Relude.NonEmpty.List;
 
 type t('a) =
@@ -51,7 +52,7 @@ let combine = (a, b) =>
  *             At position 0: Expected int but found []
  */
 let rec toDebugString = (~level=0, ~pre="", innerToString, v) => {
-  let spaces = indent => String.make(indent * 4, ' ');
+  let spaces = indent => String.repeat(indent * 4, " ");
 
   let msg =
     switch (v) {
@@ -68,8 +69,7 @@ let rec toDebugString = (~level=0, ~pre="", innerToString, v) => {
              )
            )
         |> Nel.toSequence
-        |> Array.of_list
-        |> Js.Array.joinWith("\n");
+        |> List.String.joinWith("\n");
 
       "Failed to decode array:\n" ++ childMessages;
 
@@ -94,8 +94,7 @@ let rec toDebugString = (~level=0, ~pre="", innerToString, v) => {
              };
            })
         |> Nel.toSequence
-        |> Array.of_list
-        |> Js.Array.joinWith("\n");
+        |> List.String.joinWith("\n");
 
       "Failed to decode object:\n" ++ childMessages;
     };
@@ -112,47 +111,42 @@ module type ValError = {
 };
 
 module ResultOf = (T: ValError) => {
-  module Result = Belt.Result;
   open BsAbstract.Interface;
 
   type r('a) = Result.t('a, t(T.t));
-  let result = BsAbstract.Result.result;
-  let mapErr = (v, fn) =>
-    BsAbstract.Result.Bifunctor.bimap(BsAbstract.Functions.id, v, fn);
-
+  let mapErr = (v, fn) => Result.bimap(id, v, fn);
   let fromFailure = err => map(T.handle, err);
   let fromFailureResult = err => mapErr(fromFailure, err);
 
   module Functor: FUNCTOR with type t('a) = r('a) = {
     type t('a) = r('a);
-    let map = (f, v) => Result.map(v, f);
+    let map = Result.map;
   };
 
   module Apply: APPLY with type t('a) = Functor.t('a) = {
     include Functor;
     let apply = (f, v) =>
       switch (f, v) {
-      | (Result.Ok(fn), Result.Ok(a)) => Result.Ok(fn(a))
-      | (Result.Ok(_), Result.Error(x)) => Result.Error(x)
-      | (Result.Error(x), Result.Ok(_)) => Result.Error(x)
-      | (Result.Error(fnx), Result.Error(ax)) =>
-        Result.Error(combine(fnx, ax))
+      | (Belt.Result.Ok(fn), Belt.Result.Ok(a)) => Result.ok(fn(a))
+      | (Ok(_), Error(x)) => Result.error(x)
+      | (Error(x), Ok(_)) => Result.error(x)
+      | (Error(fnx), Error(ax)) => Result.error(combine(fnx, ax))
       };
   };
 
   module Applicative: APPLICATIVE with type t('a) = Functor.t('a) = {
     include Apply;
-    let pure = v => Result.Ok(v);
+    let pure = Result.pure;
   };
 
   module Monad: MONAD with type t('a) = Functor.t('a) = {
     include Applicative;
-    let flat_map = Result.flatMap;
+    let flat_map = Result.bind;
   };
 
   module Alt: ALT with type t('a) = Functor.t('a) = {
     include Functor;
-    let alt = (a, b) => result(_ => a, _ => b, a);
+    let alt = Result.alt;
   };
 
   module Infix = {
@@ -162,11 +156,11 @@ module ResultOf = (T: ValError) => {
 
   module TransformError: DecodeBase.TransformError with type t('a) = r('a) = {
     type t('a) = r('a);
-    let err = x => Result.Error(x);
 
-    let valErr = (v, json) => err(Val(T.handle(v), json));
+    let valErr = (v, json) => Result.error(Val(T.handle(v), json));
     let arrErr = pos => mapErr(x => arrPure(pos, x));
-    let missingFieldErr = field => err(objPure(field, MissingField));
+    let missingFieldErr = field =>
+      Result.error(objPure(field, MissingField));
     let objErr = field => mapErr(x => objPure(field, InvalidField(x)));
     let lazyAlt = (res, fn) =>
       switch (res) {
@@ -174,12 +168,6 @@ module ResultOf = (T: ValError) => {
       | Belt.Result.Error(_) => fn()
       };
   };
-
-  let note = failure =>
-    BsAbstract.Option.maybe(
-      ~f=a => Result.Ok(a),
-      ~default=Result.Error(failure),
-    );
 
   let recoverWith = a => Alt.alt(_, Applicative.pure(a));
 };

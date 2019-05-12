@@ -46,11 +46,8 @@ module DecodeBase =
     BsAbstract.Interface.MONAD with type t('a) = Js.Json.t => M.t('a) = {
     type t('a) = Js.Json.t => M.t('a);
     let map = (f, decode) => decode >> M.map(f);
-    let apply = (f, decode, json) =>
-      M.flat_map(f(json), fn => decode(json) |> M.map(fn));
-
+    let apply = (f, decode, json) => M.apply(f(json), decode(json));
     let pure = (v, _) => M.pure(v);
-
     let flat_map = (decode, f, json) =>
       decode(json) |> M.flat_map(_, a => f(a, json));
   };
