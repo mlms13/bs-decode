@@ -55,8 +55,6 @@ module ResultUtil: {
     Belt.Result.t('a, NonEmptyList.t(string));
 };
 
-let ok: 'a => Belt.Result.t('a, NonEmptyList.t(string));
-
 let boolean: Js.Json.t => Belt.Result.t(bool, NonEmptyList.t(string));
 let string: Js.Json.t => Belt.Result.t(string, NonEmptyList.t(string));
 [@ocaml.deprecated "Use floatFromNumber instead."]

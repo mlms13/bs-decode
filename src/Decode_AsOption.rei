@@ -1,5 +1,3 @@
-let ok: 'a => option('a);
-
 let boolean: Js.Json.t => option(bool);
 let string: Js.Json.t => option(Js.String.t);
 [@ocaml.deprecated "Use floatFromNumber instead."]

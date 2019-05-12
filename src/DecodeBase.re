@@ -1,3 +1,5 @@
+open Relude.Globals;
+
 type failure = [
   | `ExpectedBoolean
   | `ExpectedString
@@ -9,21 +11,19 @@ type failure = [
   | `ExpectedValidOption
 ];
 
+let failureToPartialString =
+  fun
+  | `ExpectedBoolean => "Expected boolean"
+  | `ExpectedString => "Expected string"
+  | `ExpectedNumber => "Expected number"
+  | `ExpectedInt => "Expected int"
+  | `ExpectedArray => "Expected array"
+  | `ExpectedObject => "Expected object"
+  | `ExpectedValidDate => "Expected a valid date"
+  | `ExpectedValidOption => "Expected a valid option";
+
 let failureToString = (v, json) =>
-  (
-    switch (v) {
-    | `ExpectedBoolean => "Expected boolean"
-    | `ExpectedString => "Expected string"
-    | `ExpectedNumber => "Expected number"
-    | `ExpectedInt => "Expected int"
-    | `ExpectedArray => "Expected array"
-    | `ExpectedObject => "Expected object"
-    | `ExpectedValidDate => "Expected a valid date"
-    | `ExpectedValidOption => "Expected a valid option"
-    }
-  )
-  ++ " but found "
-  ++ Js.Json.stringify(json);
+  failureToPartialString(v) ++ " but found " ++ Js.Json.stringify(json);
 
 module type TransformError = {
   type t('a);
@@ -41,19 +41,13 @@ module DecodeBase =
          Alt: BsAbstract.Interface.ALT with type t('a) = T.t('a),
        ) => {
   module InfixMonad = BsAbstract.Infix.Monad(M);
-  module InfixAlt = BsAbstract.Infix.Alt(Alt);
 
-  let ((<$>), (<*>), (>>=)) = InfixMonad.((<$>), (<*>), (>>=));
-  let ((<|>), (<#>)) = InfixAlt.((<|>), (<#>));
-  let (>.) = BsAbstract.Function.Infix.(>.);
+  let ((<$>), (<*>)) = InfixMonad.((<$>), (<*>));
 
-  let ok = v => M.pure(v);
   let map2 = (f, a, b) => f <$> a <*> b;
-  let fromOpt = (fn, default, opt) =>
-    BsAbstract.Option.maybe(~f=fn, ~default, opt);
 
   let value = (decode, failure, json) =>
-    decode(json) |> fromOpt(ok, T.valErr(failure, json));
+    decode(json) |> Option.fold(T.valErr(failure, json), M.pure);
 
   let boolean = value(Js.Json.decodeBoolean, `ExpectedBoolean);
 
@@ -66,45 +60,36 @@ module DecodeBase =
   let float = floatFromNumber;
 
   let intFromNumber = json => {
-    let isInt = v => v == 0. || mod_float(v, floor(v)) == 0.;
+    let isInt = v => v == 0.0 || mod_float(v, floor(v)) == 0.0;
     floatFromNumber(json)
-    ->(
-        M.flat_map(v =>
-          if (isInt(v)) {
-            ok(int_of_float(v));
-          } else {
-            T.valErr(`ExpectedInt, json);
-          }
-        )
-      );
+    |> M.flat_map(_, v =>
+         isInt(v) ? M.pure(int_of_float(v)) : T.valErr(`ExpectedInt, json)
+       );
   };
 
   [@ocaml.deprecated "Use intFromNumber instead."]
   let int = intFromNumber;
 
   let date = json =>
-    json->floatFromNumber
-    <#> Js.Date.fromFloat
-    <|> (json->string <#> Js.Date.fromString)
-    >>= (
-      result =>
-        result
-        ->Js.Date.toJSONUnsafe
-        ->Js.Nullable.return
-        ->Js.Nullable.isNullable
-          ? T.valErr(`ExpectedValidDate, json) : result->ok
-    );
+    json
+    |> floatFromNumber
+    |> M.map(Js.Date.fromFloat)
+    |> Alt.alt(_, M.map(Js.Date.fromString, string(json)))
+    |> M.flat_map(_, result =>
+         result
+         |> Js.Date.toJSONUnsafe
+         |> Js.Nullable.return
+         |> Js.Nullable.isNullable
+           ? T.valErr(`ExpectedValidDate, json) : M.pure(result)
+       );
 
   let variantFromJson = (jsonToJs, jsToVariant, json) =>
-    json->jsonToJs
-    <#> jsToVariant
-    >>= (
-      maybeVariant =>
-        switch (maybeVariant) {
-        | Some(variant) => variant->ok
-        | None => T.valErr(`ExpectedValidOption, json)
-        }
-    );
+    jsonToJs(json)
+    |> M.map(jsToVariant)
+    |> M.flat_map(
+         _,
+         Option.foldLazy(() => T.valErr(`ExpectedValidOption, json), M.pure),
+       );
 
   let variantFromString = (stringToVariant, json) =>
     variantFromJson(string, stringToVariant, json);
@@ -114,79 +99,69 @@ module DecodeBase =
 
   let optional = (decode, json) =>
     switch (Js.Json.decodeNull(json)) {
-    | Some(_) => ok(None)
+    | Some(_) => M.pure(None)
     | None => decode(json) |> M.map(v => Some(v))
     };
 
   let array = (decode, json) => {
     let decodeEach = arr =>
-      BsAbstract.Array.Foldable.fold_left(
+      Array.foldLeft(
         ((pos, acc), curr) => {
           let decoded = T.arrErr(pos, decode(curr));
-          let result =
-            map2((arr, v) => Array.append(arr, [|v|]), acc, decoded);
+          let result = map2(flip(Array.append), acc, decoded);
           (pos + 1, result);
         },
-        (0, ok([||])),
+        (0, M.pure([||])),
         arr,
-      )
-      |> snd;
+      );
 
     value(Js.Json.decodeArray, `ExpectedArray, json)
-    ->(M.flat_map(decodeEach));
+    |> M.flat_map(_, decodeEach >> snd);
   };
 
-  let list = (decode, json) => array(decode, json) |> M.map(Array.to_list);
+  let list = (decode, json) => array(decode, json) |> M.map(Array.toList);
 
   let dict = (decode, json) => {
-    let rec decodeEntries = entries =>
-      switch (entries) {
-      | [] => []->ok
+    let rec decodeEntries =
+      fun
+      | [] => M.pure([])
       | [(key, value), ...xs] =>
         map2(
           (decodedValue, rest) => [(key, decodedValue), ...rest],
-          T.objErr(key, value->decode),
-          xs->decodeEntries,
-        )
-      };
+          T.objErr(key, decode(value)),
+          decodeEntries(xs),
+        );
 
     value(Js.Json.decodeObject, `ExpectedObject, json)
-    <#> Js.Dict.entries
-    <#> Belt.List.fromArray
-    >>= decodeEntries
-    <#> Js.Dict.fromList;
+    |> M.map(Js.Dict.entries >> Array.toList)
+    |> M.flat_map(_, decodeEntries)
+    |> M.map(Js.Dict.fromList);
   };
 
   let rec at = (fields, decode, json) =>
     switch (fields) {
     | [] => decode(json)
     | [x, ...xs] =>
-      (
-        value(Js.Json.decodeObject, `ExpectedObject, json)
-        |> M.map(Js.Dict.get(_, x))
-      )
-      ->(M.flat_map(fromOpt(ok, T.missingFieldErr(x))))
-      ->(M.flat_map(v => T.objErr(x, at(xs, decode, v))))
+      value(Js.Json.decodeObject, `ExpectedObject, json)
+      |> M.map(Js.Dict.get(_, x))
+      |> M.flat_map(_, Option.fold(T.missingFieldErr(x), M.pure))
+      |> M.flat_map(_, v => T.objErr(x, at(xs, decode, v)))
     };
 
   let field = (name, decode, json) => at([name], decode, json);
 
   let optionalField = (name, decode, json) =>
-    (
-      value(Js.Json.decodeObject, `ExpectedObject, json)
-      |> M.map(Js.Dict.get(_, name))
-    )
-    ->(
-        M.flat_map(opt =>
-          switch (opt) {
-          | None => ok(None)
-          | Some(v) => optional(decode, v)
-          }
-        )
-      );
+    value(Js.Json.decodeObject, `ExpectedObject, json)
+    |> M.map(Js.Dict.get(_, name))
+    |> M.flat_map(_, opt =>
+         switch (opt) {
+         | None => M.pure(None)
+         | Some(v) => optional(decode, v)
+         }
+       );
 
   let fallback = (name, decode, alt, json) =>
-    field(name, decode, json) <|> M.pure(alt);
+    Alt.alt(field(name, decode, json), M.pure(alt));
 
   let tuple = ((fieldA, decodeA), (fieldB, decodeB), json) =>
     map2(
@@ -196,7 +171,7 @@ module DecodeBase =
     );
 
   let oneOf = (decode, rest, json) =>
-    Relude.List.foldLeft(
+    List.foldLeft(
       (a, b) => T.lazyAlt(a, () => b(json)),
       decode(json),
       rest,
@@ -207,7 +182,7 @@ module DecodeBase =
      * `succeed` returns a `json => Result` decode function that ignores the `json`
      * argument and always returns `Ok`
      */
-    let succeed = (v, _) => ok(v);
+    let succeed = (v, _) => M.pure(v);
 
     let map2 = (f, a, b, json) => f <$> a(json) <*> b(json);
 
