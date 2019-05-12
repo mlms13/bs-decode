@@ -55,8 +55,6 @@ module ResultUtil: {
     Belt.Result.t('a, Decode_ParseError.failure);
 };
 
-let ok: 'a => Belt.Result.t('a, Decode_ParseError.failure);
-
 let boolean: Js.Json.t => Belt.Result.t(bool, Decode_ParseError.failure);
 let string: Js.Json.t => Belt.Result.t(string, Decode_ParseError.failure);
 [@ocaml.deprecated "Use floatFromNumber instead."]
