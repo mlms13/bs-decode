@@ -1,5 +1,7 @@
 # bs-decode
 
+[Read the Documentation](https://mlms13.github.io/bs-decode/docs/)
+
 Decode JSON values into structured ReasonML and OCaml types. Inspired by Elm's [Json.Decode](https://package.elm-lang.org/packages/elm-lang/core/5.1.1/Json-Decode) and the [Decode Pipeline](https://package.elm-lang.org/packages/NoRedInk/elm-decode-pipeline/3.0.1/Json-Decode-Pipeline), `bs-decode` is an alternative to [bs-json](https://github.com/glennsl/bs-json) that focuses on structured, type-safe error handling, rather than exceptions. Additionally, `bs-decode` collects up _everything_ that went wrong while parsing the JSON, rather than failing on the first error.
 
 ## Installation
@@ -19,7 +21,7 @@ Decode JSON values into structured ReasonML and OCaml types. Inspired by Elm's [
 
 ## Usage
 
-The following is available to give you an idea of how the library works, but [the complete documentation](https://mlms13.github.io/bs-decode/docs/what-and-why) will probably be more useful if you want to write your own decoders.
+The following is available to give you an idea of how the library works, but [the complete documentation](https://mlms13.github.io/bs-decode/docs/simple-example) will probably be more useful if you want to write your own decoders.
 
 ```reason
 /* imagine you have a `user` type and `make` function to construct one */

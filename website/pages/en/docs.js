@@ -1,3 +1,4 @@
+
 /**
  * Copyright (c) 2017-present, Facebook, Inc.
  *
@@ -10,15 +11,15 @@ const Redirect = require("../../core/Redirect.js");
 
 const siteConfig = require(process.cwd() + "/siteConfig.js");
 
-class Index extends React.Component {
+class Docs extends React.Component {
   render() {
     return (
       <Redirect
-        redirect={siteConfig.baseUrl + "docs"}
+        redirect={siteConfig.baseUrl + "docs/what-and-why"}
         config={siteConfig}
       />
     );
   }
 }
 
-module.exports = Index;
+module.exports = Docs;

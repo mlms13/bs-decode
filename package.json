@@ -11,6 +11,7 @@
     "build": "bsb -make-world",
     "test": "npm run clean && npm run build && jest --testMatch '**/test/*.js'"
   },
+  "homepage": "https://mlms13.github.io/bs-decode/docs",
   "repository": {
     "type": "git",
     "url": "github.com/mlms13/bs-decode"

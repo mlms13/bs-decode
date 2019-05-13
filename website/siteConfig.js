@@ -1,3 +1,5 @@
+const reasonHighlightJs = require("reason-highlightjs");
+
 const siteConfig = {
   title: 'bs-decode',
   tagline: 'Type-safe JSON decoding for ReasonML and OCaml',
@@ -36,7 +38,11 @@ const siteConfig = {
   copyright: `Copyright © ${new Date().getFullYear()} Michael Martin-Smucker`,
 
   highlight: {
-    theme: 'default',
+
+    theme: "atom-one-light",
+    hljs: function (hljs) {
+      hljs.registerLanguage("reason", reasonHighlightJs);
+    }
   },
 
   scripts: [],
