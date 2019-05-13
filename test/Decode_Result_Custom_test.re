@@ -19,8 +19,7 @@ module R =
   });
 
 module D = DecodeBase.DecodeBase(R.TransformError, R.Monad, R.Alt);
-
-let ((<$>), (>>=), (<|>)) = R.(Monad.map, Monad.flat_map, Alt.alt);
+let (<|>) = R.Alt.alt;
 
 module Color = {
   type t =
@@ -36,7 +35,7 @@ module Color = {
     | _ => Result.error(Val(`InvalidColor, Js.Json.string(str)))
     };
 
-  let decode = json => D.string(json) >>= fromString;
+  let decode = D.flatMap((str, _) => fromString(str), D.string);
 };
 
 describe("Test decoding enum from string", () => {
@@ -99,10 +98,9 @@ module Shape = {
 
   /* e.g. { "circle": { "radius": 1.4 }} */
   let decode = json =>
-    circle
-    <$> D.at(["circle", "radius"], D.floatFromNumber, json)
-    <|> (square <$> D.at(["square", "length"], D.floatFromNumber, json))
-    <|> (rect <$> D.field("rectangle", decodeWH, json))
+    D.map(circle, D.at(["circle", "radius"], D.floatFromNumber), json)
+    <|> D.map(square, D.at(["square", "length"], D.floatFromNumber), json)
+    <|> D.map(rect, D.field("rectangle", decodeWH), json)
     |> R.mapErr(_ => `InvalidShape(json));
 };
 
@@ -158,15 +156,15 @@ describe("Test decoding complex ADT from object", () => {
 });
 
 describe("Test decoding complex ADT with constructor as JSON value", () => {
-  let shapeFromKeyJson = (key, json) =>
-    switch (key) {
+  let shapeFromKeyJson =
+    fun
     | "circle" =>
-      Shape.circle <$> D.at(["value", "radius"], D.floatFromNumber, json)
+      D.at(["value", "radius"], D.floatFromNumber) |> D.map(Shape.circle)
     | "square" =>
-      Shape.square <$> D.at(["value", "length"], D.floatFromNumber, json)
-    | "rectangle" => Shape.rect <$> D.field("value", Shape.decodeWH, json)
-    | other => Error(Val(`InvalidShape, Js.Json.string(other)))
-    };
+      D.at(["value", "length"], D.floatFromNumber) |> D.map(Shape.square)
+    | "rectangle" => D.field("value", Shape.decodeWH) |> D.map(Shape.rect)
+    | other =>
+      const(Result.error(Val(`InvalidShape, Js.Json.string(other))));
 
   /**
    * Now imagine we encode our Shape into JSON like this:

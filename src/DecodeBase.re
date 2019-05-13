@@ -218,5 +218,32 @@ module DecodeBase =
      * decoder. The result is that your decoder is run with the provided json
      */
     let run = (json, decode) => decode(json);
+
+    /**
+     * Alias many functions from outside the Pipeline for easy local opens
+     */
+    let map = map;
+    let apply = apply;
+    let map2 = map2;
+    let map3 = map3;
+    let map4 = map4;
+    let map5 = map5;
+    let pure = pure;
+    let flatMap = flatMap;
+    let boolean = boolean;
+    let string = string;
+    let floatFromNumber = floatFromNumber;
+    let intFromNumber = intFromNumber;
+    let intFromNumber = intFromNumber;
+    let date = date;
+    let variantFromJson = variantFromJson;
+    let variantFromString = variantFromString;
+    let variantFromInt = variantFromInt;
+    let optional = optional;
+    let array = array;
+    let list = list;
+    let tuple = tuple;
+    let dict = dict;
+    let oneOf = oneOf;
   };
 };
