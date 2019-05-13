@@ -118,13 +118,9 @@ module ResultOf = (T: ValError) => {
   let fromFailure = err => map(T.handle, err);
   let fromFailureResult = err => mapErr(fromFailure, err);
 
-  module Functor: FUNCTOR with type t('a) = r('a) = {
+  module Monad: MONAD with type t('a) = r('a) = {
     type t('a) = r('a);
     let map = Result.map;
-  };
-
-  module Apply: APPLY with type t('a) = Functor.t('a) = {
-    include Functor;
     let apply = (f, v) =>
       switch (f, v) {
       | (Belt.Result.Ok(fn), Belt.Result.Ok(a)) => Result.ok(fn(a))
@@ -132,26 +128,13 @@ module ResultOf = (T: ValError) => {
       | (Error(x), Ok(_)) => Result.error(x)
       | (Error(fnx), Error(ax)) => Result.error(combine(fnx, ax))
       };
-  };
-
-  module Applicative: APPLICATIVE with type t('a) = Functor.t('a) = {
-    include Apply;
     let pure = Result.pure;
-  };
-
-  module Monad: MONAD with type t('a) = Functor.t('a) = {
-    include Applicative;
     let flat_map = Result.bind;
   };
 
-  module Alt: ALT with type t('a) = Functor.t('a) = {
-    include Functor;
+  module Alt: ALT with type t('a) = r('a) = {
+    include Monad;
     let alt = Result.alt;
-  };
-
-  module Infix = {
-    include BsAbstract.Infix.Monad(Monad);
-    include BsAbstract.Infix.Alt(Alt);
   };
 
   module TransformError: DecodeBase.TransformError with type t('a) = r('a) = {
@@ -168,6 +151,4 @@ module ResultOf = (T: ValError) => {
       | Belt.Result.Error(_) => fn()
       };
   };
-
-  let recoverWith = a => Alt.alt(_, Applicative.pure(a));
 };

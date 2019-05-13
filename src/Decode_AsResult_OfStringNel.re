@@ -10,10 +10,6 @@ module ResultUtil = {
 
   type r('a) = Belt.Result.t('a, NelStr.t);
 
-  let result = Result.result;
-  let mapErr = (v, fn) =>
-    Result.Bifunctor.bimap(BsAbstract.Functions.id, v, fn);
-
   module Functor: FUNCTOR with type t('a) = r('a) = Result.Functor(NelStr);
 
   module Apply: APPLY with type t('a) = r('a) = Result.Apply(NelStr);
@@ -24,11 +20,6 @@ module ResultUtil = {
   module Monad: MONAD with type t('a) = r('a) = Result.Monad(NelStr);
 
   module Alt: ALT with type t('a) = r('a) = Result.Alt(NelStr);
-
-  module Infix = {
-    include BsAbstract.Infix.Monad(Monad);
-    include BsAbstract.Infix.Alt(Alt);
-  };
 
   module Transform: DecodeBase.TransformError with type t('a) = r('a) = {
     type nonrec t('a) = r('a);
@@ -64,14 +55,6 @@ module ResultUtil = {
       | Belt.Result.Error(_) => fn()
       };
   };
-
-  let note = failure =>
-    BsAbstract.Option.maybe(
-      ~f=a => Belt.Result.Ok(a),
-      ~default=Belt.Result.Error(failure),
-    );
-
-  let recoverWith = a => Alt.alt(_, Applicative.pure(a));
 };
 
 module D =
