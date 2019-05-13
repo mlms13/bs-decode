@@ -20,7 +20,7 @@ module R =
 
 module D = DecodeBase.DecodeBase(R.TransformError, R.Monad, R.Alt);
 
-let ((<$>), (>>=), (<|>)) = R.Infix.((<$>), (>>=), (<|>));
+let ((<$>), (>>=), (<|>)) = R.(Monad.map, Monad.flat_map, Alt.alt);
 
 module Color = {
   type t =
