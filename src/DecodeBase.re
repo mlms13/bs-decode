@@ -40,7 +40,7 @@ module DecodeBase =
          M: BsAbstract.Interface.MONAD with type t('a) = T.t('a),
          Alt: BsAbstract.Interface.ALT with type t('a) = T.t('a),
        ) => {
-  module InnerExtras = Relude.Extensions.Monad.MonadExtensions(M);
+  module InnerApply = Relude.Extensions.Apply.ApplyExtensions(M);
 
   module Monad:
     BsAbstract.Interface.MONAD with type t('a) = Js.Json.t => M.t('a) = {
@@ -52,16 +52,9 @@ module DecodeBase =
       decode(json) |> M.flat_map(_, a => f(a, json));
   };
 
-  module MonadFunctions = Relude_Extensions_Monad.MonadExtensions(Monad);
-
-  let map = MonadFunctions.map;
-  let apply = MonadFunctions.apply;
-  let map2 = MonadFunctions.lift2;
-  let map3 = MonadFunctions.lift3;
-  let map4 = MonadFunctions.lift4;
-  let map5 = MonadFunctions.lift5;
-  let pure = MonadFunctions.pure;
-  let flatMap = MonadFunctions.flatMap;
+  include Relude.Extensions.Apply.ApplyExtensions(Monad);
+  include Monad;
+  let flatMap = (f, ma) => Monad.flat_map(ma, f);
 
   let value = (decode, failure, json) =>
     decode(json) |> Option.foldLazy(() => T.valErr(failure, json), M.pure);
@@ -125,7 +118,7 @@ module DecodeBase =
       Array.foldLeft(
         ((pos, acc), curr) => {
           let decoded = T.arrErr(pos, decode(curr));
-          let result = InnerExtras.lift2(flip(Array.append), acc, decoded);
+          let result = InnerApply.map2(flip(Array.append), acc, decoded);
           (pos + 1, result);
         },
         (0, M.pure([||])),
@@ -143,7 +136,7 @@ module DecodeBase =
       fun
       | [] => M.pure([])
       | [(key, value), ...xs] =>
-        InnerExtras.lift2(
+        InnerApply.map2(
           (decodedValue, rest) => [(key, decodedValue), ...rest],
           T.objErr(key, decode(value)),
           decodeEntries(xs),
@@ -181,7 +174,7 @@ module DecodeBase =
     Alt.alt(field(name, decode, json), M.pure(alt));
 
   let tuple = ((fieldA, decodeA), (fieldB, decodeB), json) =>
-    InnerExtras.lift2(
+    InnerApply.map2(
       (a, b) => (a, b),
       field(fieldA, decodeA, json),
       field(fieldB, decodeB, json),
