@@ -7,9 +7,11 @@
     "test": "test"
   },
   "scripts": {
-    "clean": "bsb -clean-world",
     "build": "bsb -make-world",
-    "test": "npm run clean && npm run build && jest --testMatch '**/test/*.js'"
+    "clean": "bsb -clean-world",
+    "cleanbuild": "npm run clean && npm run build",
+    "test": "npm run clean && npm run build && jest --testMatch '**/test/*.js'",
+    "coverage": "jest --testMatch '**/test/*.js' --coverage --coverageReporters=text-lcov | coveralls"
   },
   "homepage": "https://mlms13.github.io/bs-decode/docs",
   "repository": {
@@ -34,6 +36,7 @@
   "devDependencies": {
     "@glennsl/bs-jest": "^0.4.8",
     "bs-platform": "^5.0.3",
+    "coveralls": "^3.0.3",
     "jest": "^24.8.0"
   }
 }
