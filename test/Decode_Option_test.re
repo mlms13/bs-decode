@@ -127,4 +127,18 @@ describe("Nested decoders", () => {
     expect(Decode.(list(string, Sample.jsonArrayEmpty)))
     |> toEqual(Some(Sample.valListEmpty))
   );
+
+  test("Decode dict (succeeds)", () =>
+    expect(Decode.(dict(floatFromNumber, Sample.jsonDictFloat)))
+    |> toEqual(Some(Sample.valDictFloat))
+  );
+
+  test("Decode dict (succeeds on empty)", () =>
+    expect(Decode.(dict(string, Sample.jsonDictEmpty)))
+    |> toEqual(Some(Sample.valDictEmpty))
+  );
+
+  test("Decode dict (fails on record)", () =>
+    expect(Decode.(dict(string, Sample.jsonPersonBill))) |> toEqual(None)
+  );
 });
