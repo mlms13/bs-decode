@@ -1,3 +1,4 @@
+// Simple JSON values
 let jsonNull: Js.Json.t = [%raw {| null |}];
 let jsonBool: Js.Json.t = [%raw {| true |}];
 let jsonString: Js.Json.t = [%raw {| "string" |}];
@@ -8,6 +9,7 @@ let jsonIntZero: Js.Json.t = [%raw {| 0 |}];
 let jsonDateNumber: Js.Json.t = [%raw {| 1542433304450.0 |}];
 let jsonDateString: Js.Json.t = [%raw {| "2018-11-17T05:40:35.869Z" |}];
 
+// Simple typed values
 let valBool = true;
 let valString = "string";
 let valFloat = 3.14;
@@ -15,3 +17,13 @@ let valInt = 1;
 let valIntZero = 0;
 let valDateNumber = Js.Date.fromFloat(1542433304450.0);
 let valDateString = Js.Date.fromString("2018-11-17T05:40:35.869Z");
+
+// Nested JSON values
+let jsonArrayEmpty: Js.Json.t = [%raw {| [] |}];
+let jsonArrayString: Js.Json.t = [%raw {| ["A", "B", "C"] |}];
+
+// Nested typed values
+let valArrayEmpty = [||];
+let valArrayString = [|"A", "B", "C"|];
+let valListEmpty = [];
+let valListString = ["A", "B", "C"];

@@ -45,7 +45,7 @@ describe("Simple decoders", () => {
     |> toEqual(Some(Sample.valInt))
   );
 
-  test("Decode int (success on zero)", () =>
+  test("Decode int (succeeds on zero)", () =>
     expect(Decode.intFromNumber(Sample.jsonIntZero))
     |> toEqual(Some(Sample.valIntZero))
   );
@@ -78,5 +78,53 @@ describe("Simple decoders", () => {
 
   test("Decode date (fails on null)", () =>
     expect(Decode.date(Sample.jsonNull)) |> toEqual(None)
+  );
+  // TODO: variantFrom[Json|String|Int]
+});
+
+describe("Nested decoders", () => {
+  test("Decode optional float (succeeds on null)", () =>
+    expect(Decode.(optional(floatFromNumber, Sample.jsonNull)))
+    |> toEqual(Some(None))
+  );
+
+  test("Decode optional float (succeeds on float)", () =>
+    expect(Decode.(optional(floatFromNumber, Sample.jsonFloat)))
+    |> toEqual(Some(Some(Sample.valFloat)))
+  );
+
+  test("Decode optional float (fails on bool)", () =>
+    expect(Decode.(optional(floatFromNumber, Sample.jsonBool)))
+    |> toEqual(None)
+  );
+
+  // TODO: test `fallback` here when it stops being field-specific
+
+  test("Decode array (succeeds)", () =>
+    expect(Decode.(array(string, Sample.jsonArrayString)))
+    |> toEqual(Some(Sample.valArrayString))
+  );
+
+  test("Decode array (succeeds on empty)", () =>
+    expect(Decode.(array(string, Sample.jsonArrayEmpty)))
+    |> toEqual(Some(Sample.valArrayEmpty))
+  );
+
+  test("Decode array (fails on non-array)", () =>
+    expect(Decode.(array(string, Sample.jsonString))) |> toEqual(None)
+  );
+
+  test("Decode array (fails on invalid inner data)", () =>
+    expect(Decode.(array(boolean, Sample.jsonArrayString))) |> toEqual(None)
+  );
+
+  test("Decode list (succeeds)", () =>
+    expect(Decode.(list(string, Sample.jsonArrayString)))
+    |> toEqual(Some(Sample.valListString))
+  );
+
+  test("Decode list (succeeds on empty)", () =>
+    expect(Decode.(list(string, Sample.jsonArrayEmpty)))
+    |> toEqual(Some(Sample.valListEmpty))
   );
 });

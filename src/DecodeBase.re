@@ -42,19 +42,27 @@ module DecodeBase =
        ) => {
   module InnerApply = Relude.Extensions.Apply.ApplyExtensions(M);
 
+  let map = (f, decode) => decode >> M.map(f);
+  let apply = (f, decode, json) => M.apply(f(json), decode(json));
+  let pure = (v, _) => M.pure(v);
+  let flatMap = (f, decode, json) =>
+    decode(json) |> M.flat_map(_, a => f(a, json));
+
+  module Functor:
+    BsAbstract.Interface.FUNCTOR with type t('a) = Js.Json.t => M.t('a) = {
+    type t('a) = Js.Json.t => M.t('a);
+    let map = map;
+  };
+
   module Monad:
     BsAbstract.Interface.MONAD with type t('a) = Js.Json.t => M.t('a) = {
-    type t('a) = Js.Json.t => M.t('a);
-    let map = (f, decode) => decode >> M.map(f);
-    let apply = (f, decode, json) => M.apply(f(json), decode(json));
-    let pure = (v, _) => M.pure(v);
-    let flat_map = (decode, f, json) =>
-      decode(json) |> M.flat_map(_, a => f(a, json));
+    include Functor;
+    let apply = apply;
+    let pure = pure;
+    let flat_map = (ma, f) => flatMap(f, ma);
   };
 
   include Relude.Extensions.Apply.ApplyExtensions(Monad);
-  include Monad;
-  let flatMap = (f, ma) => Monad.flat_map(ma, f);
 
   let value = (decode, failure, json) =>
     decode(json) |> Option.foldLazy(() => T.valErr(failure, json), M.pure);
