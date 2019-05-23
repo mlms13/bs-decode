@@ -106,8 +106,8 @@ let list:
 
 let tuple:
   (
-    (Js.Dict.key, Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure)),
-    (Js.Dict.key, Js.Json.t => Belt.Result.t('b, Decode_ParseError.failure)),
+    (string, Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure)),
+    (string, Js.Json.t => Belt.Result.t('b, Decode_ParseError.failure)),
     Js.Json.t
   ) =>
   Belt.Result.t(('a, 'b), Decode_ParseError.failure);
@@ -118,7 +118,7 @@ let dict:
 
 let at:
   (
-    list(Js.Dict.key),
+    list(string),
     Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure),
     Js.Json.t
   ) =>
@@ -126,7 +126,7 @@ let at:
 
 let field:
   (
-    Js.Dict.key,
+    string,
     Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure),
     Js.Json.t
   ) =>
@@ -134,7 +134,7 @@ let field:
 
 let optionalField:
   (
-    Js.Dict.key,
+    string,
     Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure),
     Js.Json.t
   ) =>
@@ -142,7 +142,7 @@ let optionalField:
 
 let fallback:
   (
-    Js.Dict.key,
+    string,
     Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure),
     'a,
     Js.Json.t
@@ -162,7 +162,7 @@ module Pipeline: {
 
   let field:
     (
-      Js.Dict.key,
+      string,
       Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure),
       Js.Json.t => Belt.Result.t('a => 'b, Decode_ParseError.failure),
       Js.Json.t
@@ -171,7 +171,7 @@ module Pipeline: {
 
   let at:
     (
-      list(Js.Dict.key),
+      list(string),
       Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure),
       Js.Json.t => Belt.Result.t('a => 'b, Decode_ParseError.failure),
       Js.Json.t
@@ -180,7 +180,7 @@ module Pipeline: {
 
   let optionalField:
     (
-      Js.Dict.key,
+      string,
       Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure),
       Js.Json.t => Belt.Result.t(option('a) => 'b, Decode_ParseError.failure),
       Js.Json.t
@@ -189,7 +189,7 @@ module Pipeline: {
 
   let fallback:
     (
-      Js.Dict.key,
+      string,
       Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure),
       'a,
       Js.Json.t => Belt.Result.t('a => 'b, Decode_ParseError.failure),
@@ -312,14 +312,8 @@ module Pipeline: {
 
   let tuple:
     (
-      (
-        Js.Dict.key,
-        Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure),
-      ),
-      (
-        Js.Dict.key,
-        Js.Json.t => Belt.Result.t('b, Decode_ParseError.failure),
-      ),
+      (string, Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure)),
+      (string, Js.Json.t => Belt.Result.t('b, Decode_ParseError.failure)),
       Js.Json.t
     ) =>
     Belt.Result.t(('a, 'b), Decode_ParseError.failure);
