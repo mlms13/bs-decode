@@ -1,5 +1,10 @@
 # bs-decode
 
+[![build status](https://img.shields.io/circleci/build/github/mlms13/bs-decode.svg?style=flat-square)](https://circleci.com/gh/mlms13/bs-decode)
+[![test coverage](https://img.shields.io/coveralls/github/mlms13/bs-decode.svg?style=flat-square)](https://coveralls.io/github/mlms13/bs-decode)
+[![npm version](https://img.shields.io/npm/v/bs-decode.svg?style=flat-square)](https://www.npmjs.com/package/bs-decode)
+[![license](https://img.shields.io/github/license/mlms13/bs-decode.svg?style=flat-square)](https://github.com/mlms13/bs-decode/blob/master/LICENSE)
+
 [Read the Documentation](https://mlms13.github.io/bs-decode/docs/)
 
 Decode JSON values into structured ReasonML and OCaml types. Inspired by Elm's [Json.Decode](https://package.elm-lang.org/packages/elm-lang/core/5.1.1/Json-Decode) and the [Decode Pipeline](https://package.elm-lang.org/packages/NoRedInk/elm-decode-pipeline/3.0.1/Json-Decode-Pipeline), `bs-decode` is an alternative to [bs-json](https://github.com/glennsl/bs-json) that focuses on structured, type-safe error handling, rather than exceptions. Additionally, `bs-decode` collects up _everything_ that went wrong while parsing the JSON, rather than failing on the first error.
@@ -41,15 +46,15 @@ let make = (name, age, isAdmin, lastLogin) =>
  *
  * you can write a function to convert this JSON into a value of type `user`
  */
-module D = Decode.AsResult.OfParseError; /* module alias for brevity */
+module Decode = Decode.AsResult.OfParseError; // module alias for brevity
 
 let decode = json =>
-  D.Pipeline.(
+  Decode.Pipeline.(
     succeed(make)
-    |> field("name", D.string)
-    |> field("age", D.intFromNumber)
-    |> field("isAdmin", D.boolean)
-    |> optionalField("lastLogin", D.date)
+    |> field("name", string)
+    |> field("age", intFromNumber)
+    |> field("isAdmin", boolean)
+    |> optionalField("lastLogin", date)
     |> run(json)
   );
 
