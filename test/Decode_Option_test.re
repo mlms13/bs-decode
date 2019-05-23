@@ -329,7 +329,7 @@ describe("Decode records", () => {
     <*> Decode.pure(None);
   };
 
-  let rec decodeJobPipeline = json => {
+  let rec decodeJobPipeline = json =>
     Decode.Pipeline.(
       succeed(Sample.makeJob)
       |> field("title", string)
@@ -337,9 +337,8 @@ describe("Decode records", () => {
       |> field("startDate", date)
       |> optionalField("manager", decodeEmployeePipeline)
       |> run(json)
-    );
-  }
-  and decodeEmployeePipeline = json => {
+    )
+  and decodeEmployeePipeline = json =>
     Decode.Pipeline.(
       succeed(Sample.makeEmployee)
       |> field("name", string)
@@ -347,7 +346,15 @@ describe("Decode records", () => {
       |> field("job", decodeJobPipeline)
       |> run(json)
     );
-  };
+
+  let decodeJobPipelineRecovery =
+    Decode.Pipeline.(
+      succeed(Sample.makeJob)
+      |> hardcoded("Title")
+      |> fallback("x", string, "Company")
+      |> at(["job", "manager", "job", "startDate"], date)
+      |> hardcoded(None)
+    );
 
   test("map3", () =>
     expect(decodeJobMap3(Sample.jsonJobCeo))
@@ -362,5 +369,14 @@ describe("Decode records", () => {
   test("pipeline", () =>
     expect(decodeEmployeePipeline(Sample.jsonPersonBill))
     |> toEqual(Some(Sample.employeeBill))
+  );
+
+  test("pipeline hardcoded/fallback", () =>
+    expect(decodeJobPipelineRecovery(Sample.jsonPersonBill))
+    |> toEqual(
+         Some(
+           Sample.makeJob("Title", "Company", Sample.jobCeo.startDate, None),
+         ),
+       )
   );
 });
