@@ -40,6 +40,17 @@ let jsonDictFloat: Js.Json.t = [%raw
 |}
 ];
 
+let jsonJobCeo: Js.Json.t = [%raw
+  {|
+  {
+    "title": "CEO",
+    "companyName": "My Company",
+    "startDate": "2016-04-01T00:00:00.0Z",
+    "manager": null
+  }
+|}
+];
+
 let jsonPersonBill: Js.Json.t = [%raw
   {|
   {
@@ -97,9 +108,9 @@ let jobCeo =
     None,
   );
 
-let personJane = makeEmployee("Jane", 38, jobCeo);
+let employeeJane = makeEmployee("Jane", 38, jobCeo);
 
 let jobDesigner =
-  makeJob("Designer", "My Company", valDateString, Some(personJane));
+  makeJob("Designer", "My Company", valDateString, Some(employeeJane));
 
-let personBill = makeEmployee("Bill", 27, jobDesigner);
+let employeeBill = makeEmployee("Bill", 27, jobDesigner);

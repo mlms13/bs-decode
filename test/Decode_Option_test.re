@@ -141,4 +141,53 @@ describe("Nested decoders", () => {
   test("Decode dict (fails on record)", () =>
     expect(Decode.(dict(string, Sample.jsonPersonBill))) |> toEqual(None)
   );
+
+  test("at (succeeds on nested field)", () =>
+    expect(
+      Decode.(
+        at(["job", "manager", "job", "title"], string, Sample.jsonPersonBill)
+      ),
+    )
+    |> toEqual(Some("CEO"))
+  );
+
+  test("at (succeeds on inner decode with no fields)", () =>
+    expect(Decode.(at([], string, Sample.jsonString)))
+    |> toEqual(Some(Sample.valString))
+  );
+
+  test("at (fails on missing field)", () =>
+    expect(Decode.(at(["manager", "name"], string, Sample.jsonJobCeo)))
+    |> toEqual(None)
+  );
+
+  test("at (fails on invalid inner data)", () =>
+    expect(Decode.(at(["age"], string, Sample.jsonPersonBill)))
+    |> toEqual(None)
+  );
+
+  test("field (succeeds)", () =>
+    expect(Decode.(field("title", string, Sample.jsonJobCeo)))
+    |> toEqual(Some("CEO"))
+  );
+
+  test("field (fails on missing)", () =>
+    expect(Decode.(field("missing", string, Sample.jsonDictEmpty)))
+    |> toEqual(None)
+  );
+
+  test("optionalField (succeeds)", () =>
+    expect(Decode.(optionalField("name", string, Sample.jsonPersonBill)))
+    |> toEqual(Some(Some("Bill")))
+  );
+
+  test("optionalField (succeeds on empty)", () =>
+    expect(Decode.(optionalField("missing", boolean, Sample.jsonDictEmpty)))
+    |> toEqual(Some(None))
+  );
+
+  test("optionalField (fails on non-object)", () =>
+    expect(Decode.(optionalField("field", string, Sample.jsonString)))
+    |> toEqual(None)
+  );
 });
