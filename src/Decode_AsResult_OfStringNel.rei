@@ -80,8 +80,8 @@ let list:
 
 let tuple:
   (
-    (Js.Dict.key, Js.Json.t => Belt.Result.t('a, NonEmptyList.t(string))),
-    (Js.Dict.key, Js.Json.t => Belt.Result.t('b, NonEmptyList.t(string))),
+    (string, Js.Json.t => Belt.Result.t('a, NonEmptyList.t(string))),
+    (string, Js.Json.t => Belt.Result.t('b, NonEmptyList.t(string))),
     Js.Json.t
   ) =>
   Belt.Result.t(('a, 'b), NonEmptyList.t(string));
@@ -92,7 +92,7 @@ let dict:
 
 let at:
   (
-    list(Js.Dict.key),
+    list(string),
     Js.Json.t => Belt.Result.t('a, NonEmptyList.t(string)),
     Js.Json.t
   ) =>
@@ -100,7 +100,7 @@ let at:
 
 let field:
   (
-    Js.Dict.key,
+    string,
     Js.Json.t => Belt.Result.t('a, NonEmptyList.t(string)),
     Js.Json.t
   ) =>
@@ -108,7 +108,7 @@ let field:
 
 let optionalField:
   (
-    Js.Dict.key,
+    string,
     Js.Json.t => Belt.Result.t('a, NonEmptyList.t(string)),
     Js.Json.t
   ) =>
@@ -116,7 +116,7 @@ let optionalField:
 
 let fallback:
   (
-    Js.Dict.key,
+    string,
     Js.Json.t => Belt.Result.t('a, NonEmptyList.t(string)),
     'a,
     Js.Json.t
@@ -136,7 +136,7 @@ module Pipeline: {
 
   let field:
     (
-      Js.Dict.key,
+      string,
       Js.Json.t => Belt.Result.t('a, NonEmptyList.t(string)),
       Js.Json.t => Belt.Result.t('a => 'b, NonEmptyList.t(string)),
       Js.Json.t
@@ -145,7 +145,7 @@ module Pipeline: {
 
   let at:
     (
-      list(Js.Dict.key),
+      list(string),
       Js.Json.t => Belt.Result.t('a, NonEmptyList.t(string)),
       Js.Json.t => Belt.Result.t('a => 'b, NonEmptyList.t(string)),
       Js.Json.t
@@ -154,7 +154,7 @@ module Pipeline: {
 
   let optionalField:
     (
-      Js.Dict.key,
+      string,
       Js.Json.t => Belt.Result.t('a, NonEmptyList.t(string)),
       Js.Json.t => Belt.Result.t(option('a) => 'b, NonEmptyList.t(string)),
       Js.Json.t
@@ -163,7 +163,7 @@ module Pipeline: {
 
   let fallback:
     (
-      Js.Dict.key,
+      string,
       Js.Json.t => Belt.Result.t('a, NonEmptyList.t(string)),
       'a,
       Js.Json.t => Belt.Result.t('a => 'b, NonEmptyList.t(string)),
@@ -285,8 +285,8 @@ module Pipeline: {
 
   let tuple:
     (
-      (Js.Dict.key, Js.Json.t => Belt.Result.t('a, NonEmptyList.t(string))),
-      (Js.Dict.key, Js.Json.t => Belt.Result.t('b, NonEmptyList.t(string))),
+      (string, Js.Json.t => Belt.Result.t('a, NonEmptyList.t(string))),
+      (string, Js.Json.t => Belt.Result.t('b, NonEmptyList.t(string))),
       Js.Json.t
     ) =>
     Belt.Result.t(('a, 'b), NonEmptyList.t(string));

@@ -71,24 +71,22 @@ let array: (Js.Json.t => option('a), Js.Json.t) => option(array('a));
 let list: (Js.Json.t => option('a), Js.Json.t) => option(list('a));
 let tuple:
   (
-    (Js.Dict.key, Js.Json.t => option('a)),
-    (Js.Dict.key, Js.Json.t => option('b)),
+    (string, Js.Json.t => option('a)),
+    (string, Js.Json.t => option('b)),
     Js.Json.t
   ) =>
   option(('a, 'b));
 
 let dict: (Js.Json.t => option('a), Js.Json.t) => option(Js.Dict.t('a));
 
-let at:
-  (list(Js.Dict.key), Js.Json.t => option('a), Js.Json.t) => option('a);
+let at: (list(string), Js.Json.t => option('a), Js.Json.t) => option('a);
 
-let field: (Js.Dict.key, Js.Json.t => option('a), Js.Json.t) => option('a);
+let field: (string, Js.Json.t => option('a), Js.Json.t) => option('a);
 
 let optionalField:
-  (Js.Dict.key, Js.Json.t => option('a), Js.Json.t) => option(option('a));
+  (string, Js.Json.t => option('a), Js.Json.t) => option(option('a));
 
-let fallback:
-  (Js.Dict.key, Js.Json.t => option('a), 'a, Js.Json.t) => option('a);
+let fallback: (string, Js.Json.t => option('a), 'a, Js.Json.t) => option('a);
 
 let oneOf:
   (Js.Json.t => option('a), list(Js.Json.t => option('a)), Js.Json.t) =>
@@ -99,7 +97,7 @@ module Pipeline: {
 
   let field:
     (
-      Js.Dict.key,
+      string,
       Js.Json.t => option('a),
       Js.Json.t => option('a => 'b),
       Js.Json.t
@@ -108,7 +106,7 @@ module Pipeline: {
 
   let at:
     (
-      list(Js.Dict.key),
+      list(string),
       Js.Json.t => option('a),
       Js.Json.t => option('a => 'b),
       Js.Json.t
@@ -117,7 +115,7 @@ module Pipeline: {
 
   let optionalField:
     (
-      Js.Dict.key,
+      string,
       Js.Json.t => option('a),
       Js.Json.t => option(option('a) => 'b),
       Js.Json.t
@@ -126,7 +124,7 @@ module Pipeline: {
 
   let fallback:
     (
-      Js.Dict.key,
+      string,
       Js.Json.t => option('a),
       'a,
       Js.Json.t => option('a => 'b),
@@ -208,8 +206,8 @@ module Pipeline: {
   let list: (Js.Json.t => option('a), Js.Json.t) => option(list('a));
   let tuple:
     (
-      (Js.Dict.key, Js.Json.t => option('a)),
-      (Js.Dict.key, Js.Json.t => option('b)),
+      (string, Js.Json.t => option('a)),
+      (string, Js.Json.t => option('b)),
       Js.Json.t
     ) =>
     option(('a, 'b));
