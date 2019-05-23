@@ -304,3 +304,63 @@ describe("Decode map, apply, pure, flatMap, etc", () => {
     |> toEqual(None)
   );
 });
+
+describe("Decode records", () => {
+  let noManager = (title, company, start) =>
+    Sample.makeJob(title, company, start, None);
+
+  let decodeJobMap3 =
+    Decode.(
+      map3(
+        noManager,
+        field("title", string),
+        field("companyName", string),
+        field("startDate", date),
+      )
+    );
+
+  let decodeJobInfix = {
+    let ((<$>), (<*>)) = Decode.(map, apply);
+
+    Sample.makeJob
+    <$> Decode.(field("title", string))
+    <*> Decode.(field("companyName", string))
+    <*> Decode.(field("startDate", date))
+    <*> Decode.pure(None);
+  };
+
+  let rec decodeJobPipeline = json => {
+    Decode.Pipeline.(
+      succeed(Sample.makeJob)
+      |> field("title", string)
+      |> field("companyName", string)
+      |> field("startDate", date)
+      |> optionalField("manager", decodeEmployeePipeline)
+      |> run(json)
+    );
+  }
+  and decodeEmployeePipeline = json => {
+    Decode.Pipeline.(
+      succeed(Sample.makeEmployee)
+      |> field("name", string)
+      |> field("age", intFromNumber)
+      |> field("job", decodeJobPipeline)
+      |> run(json)
+    );
+  };
+
+  test("map3", () =>
+    expect(decodeJobMap3(Sample.jsonJobCeo))
+    |> toEqual(Some(Sample.jobCeo))
+  );
+
+  test("lazy infix", () =>
+    expect(decodeJobInfix(Sample.jsonJobCeo))
+    |> toEqual(Some(Sample.jobCeo))
+  );
+
+  test("pipeline", () =>
+    expect(decodeEmployeePipeline(Sample.jsonPersonBill))
+    |> toEqual(Some(Sample.employeeBill))
+  );
+});
