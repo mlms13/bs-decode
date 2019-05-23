@@ -1,5 +1,6 @@
 open Jest;
 open Expect;
+open Relude.Globals;
 
 module Decode = Decode.AsOption;
 module Sample = Decode_TestSampleData;
@@ -188,6 +189,63 @@ describe("Nested decoders", () => {
 
   test("optionalField (fails on non-object)", () =>
     expect(Decode.(optionalField("field", string, Sample.jsonString)))
+    |> toEqual(None)
+  );
+});
+
+describe("Decode map, apply, pure, flatMap, etc", () => {
+  test("map (success)", () =>
+    expect(
+      Decode.(
+        map(List.String.contains("A"), list(string), Sample.jsonArrayString)
+      ),
+    )
+    |> toEqual(Some(true))
+  );
+
+  test("map (failure)", () =>
+    expect(Decode.(map(v => v == true, boolean, Sample.jsonNull)))
+    |> toEqual(None)
+  );
+
+  test("apply", () =>
+    expect(
+      Decode.apply(
+        _ => Some(v => List.length(v) == 3),
+        Decode.(list(string)),
+        Sample.jsonArrayString,
+      ),
+    )
+    |> toEqual(Some(true))
+  );
+
+  test("pure", () => {
+    let decode = Decode.pure(3);
+    expect(decode(Sample.jsonNull)) |> toEqual(Some(3));
+  });
+
+  test("flatMap (success)", () =>
+    expect(
+      Decode.(
+        Sample.jsonArrayString |> flatMap(List.head >> const, list(string))
+      ),
+    )
+    |> toEqual(Some("A"))
+  );
+
+  test("flatMap (failure on inner failure)", () =>
+    expect(
+      Decode.(
+        Sample.jsonArrayEmpty |> flatMap(List.head >> const, list(string))
+      ),
+    )
+    |> toEqual(None)
+  );
+
+  test("flatMap (failure on outer failure)", () =>
+    expect(
+      Decode.(Sample.jsonNull |> flatMap(List.head >> const, list(string))),
+    )
     |> toEqual(None)
   );
 });
