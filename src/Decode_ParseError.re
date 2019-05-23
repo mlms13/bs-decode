@@ -1,10 +1,9 @@
 open Relude.Globals;
-module Nel = Relude.NonEmpty.List;
 
 type t('a) =
   | Val('a, Js.Json.t)
-  | Arr(Nel.t((int, t('a))))
-  | Obj(Nel.t((string, objError('a))))
+  | Arr(NonEmpty.List.t((int, t('a))))
+  | Obj(NonEmpty.List.t((string, objError('a))))
 and objError('a) =
   | MissingField
   | InvalidField(t('a));
@@ -14,8 +13,9 @@ type failure = t(DecodeBase.failure);
 let rec map = (fn, v) =>
   switch (v) {
   | Val(a, json) => Val(fn(a), json)
-  | Arr(nel) => Arr(Nel.map(((i, a)) => (i, map(fn, a)), nel))
-  | Obj(nel) => Obj(Nel.map(((f, o)) => (f, mapObj(fn, o)), nel))
+  | Arr(nel) => Arr(NonEmpty.List.map(((i, a)) => (i, map(fn, a)), nel))
+  | Obj(nel) =>
+    Obj(NonEmpty.List.map(((f, o)) => (f, mapObj(fn, o)), nel))
   }
 and mapObj = (fn, obj) =>
   switch (obj) {
@@ -23,8 +23,8 @@ and mapObj = (fn, obj) =>
   | InvalidField(a) => InvalidField(map(fn, a))
   };
 
-let arrPure = (pos, err) => Arr(Nel.pure((pos, err)));
-let objPure = (field, err) => Obj(Nel.pure((field, err)));
+let arrPure = (pos, err) => Arr(NonEmpty.List.pure((pos, err)));
+let objPure = (field, err) => Obj(NonEmpty.List.pure((field, err)));
 
 /*
  * This is almost like Semigroup's `append`, but associativity only holds when
@@ -33,10 +33,12 @@ let objPure = (field, err) => Obj(Nel.pure((field, err)));
  */
 let combine = (a, b) =>
   switch (a, b) {
-  | (Arr(nela), Arr(nelb)) => Arr(Nel.concat(nela, nelb))
-  | (Obj(nela), Obj(nelb)) => Obj(Nel.concat(nela, nelb))
+  | (Arr(nela), Arr(nelb)) => Arr(NonEmpty.List.concat(nela, nelb))
+  | (Obj(nela), Obj(nelb)) => Obj(NonEmpty.List.concat(nela, nelb))
   /* | (Val(a, jsona), Val(b, jsonb)) => f((a, jsona), (b, jsonb)) */
-  | _ => a
+  | (Val(_), _)
+  | (Arr(_), _)
+  | (Obj(_), _) => a
   };
 
 /**
@@ -60,7 +62,7 @@ let rec toDebugString = (~level=0, ~pre="", innerToString, v) => {
     | Arr(nel) =>
       let childMessages =
         nel
-        |> Nel.map(((i, err)) =>
+        |> NonEmpty.List.map(((i, err)) =>
              toDebugString(
                ~level=level + 1,
                ~pre="At position " ++ string_of_int(i) ++ ": ",
@@ -68,7 +70,7 @@ let rec toDebugString = (~level=0, ~pre="", innerToString, v) => {
                err,
              )
            )
-        |> Nel.toSequence
+        |> NonEmpty.List.toSequence
         |> List.String.joinWith("\n");
 
       "Failed to decode array:\n" ++ childMessages;
@@ -76,7 +78,7 @@ let rec toDebugString = (~level=0, ~pre="", innerToString, v) => {
     | Obj(nel) =>
       let childMessages =
         nel
-        |> Nel.map(((field, err)) => {
+        |> NonEmpty.List.map(((field, err)) => {
              let fieldStr = "\"" ++ field ++ "\"";
              switch (err) {
              | MissingField =>
@@ -93,7 +95,7 @@ let rec toDebugString = (~level=0, ~pre="", innerToString, v) => {
                )
              };
            })
-        |> Nel.toSequence
+        |> NonEmpty.List.toSequence
         |> List.String.joinWith("\n");
 
       "Failed to decode object:\n" ++ childMessages;
