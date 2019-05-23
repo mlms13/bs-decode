@@ -114,3 +114,13 @@ let jobDesigner =
   makeJob("Designer", "My Company", valDateString, Some(employeeJane));
 
 let employeeBill = makeEmployee("Bill", 27, jobDesigner);
+
+// Typed union for oneOf
+type union =
+  | S(string)
+  | N(option(float  ))
+  | B(bool);
+
+let unionS = v => S(v);
+let unionN = v => N(v);
+let unionB = v => B(v);
