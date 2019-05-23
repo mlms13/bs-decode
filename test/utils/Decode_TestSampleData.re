@@ -27,3 +27,79 @@ let valArrayEmpty = [||];
 let valArrayString = [|"A", "B", "C"|];
 let valListEmpty = [];
 let valListString = ["A", "B", "C"];
+
+// JSON object values
+let jsonDictEmpty: Js.Json.t = [%raw {| {} |}];
+let jsonDictFloat: Js.Json.t = [%raw
+  {|
+  {
+    "key1": 3.14,
+    "key2": 2.22,
+    "key3": 100.0
+  }
+|}
+];
+
+let jsonPersonBill: Js.Json.t = [%raw
+  {|
+  {
+    "name": "Bill",
+    "age": 27,
+    "job": {
+      "title": "Designer",
+      "companyName": "My Company",
+      "startDate": "2018-11-17T05:40:35.869Z",
+      "manager": {
+        "name": "Jane",
+        "age": 38,
+        "job": {
+          "title": "CEO",
+          "companyName": "My Company",
+          "startDate": "2016-04-01T00:00:00.0Z",
+        }
+      }
+    }
+  }
+|}
+];
+
+// Typed dicts and records
+let valDictEmpty: Js.Dict.t(string) = Js.Dict.empty();
+let valDictFloat =
+  Js.Dict.fromArray([|("key1", 3.14), ("key2", 2.22), ("key3", 100.0)|]);
+
+type job = {
+  title: string,
+  companyName: string,
+  startDate: Js.Date.t,
+  manager: option(employee),
+}
+and employee = {
+  name: string,
+  age: int,
+  job,
+};
+
+let makeJob = (title, companyName, startDate, manager) => {
+  title,
+  companyName,
+  startDate,
+  manager,
+};
+
+let makeEmployee = (name, age, job) => {name, age, job};
+
+let jobCeo =
+  makeJob(
+    "CEO",
+    "My Company",
+    Js.Date.fromString("2016-04-01T00:00:00.0Z"),
+    None,
+  );
+
+let personJane = makeEmployee("Jane", 38, jobCeo);
+
+let jobDesigner =
+  makeJob("Designer", "My Company", valDateString, Some(personJane));
+
+let personBill = makeEmployee("Bill", 27, jobDesigner);
