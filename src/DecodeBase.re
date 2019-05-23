@@ -1,4 +1,5 @@
 open Relude.Globals;
+open BsAbstract.Interface;
 
 type failure = [
   | `ExpectedBoolean
@@ -37,32 +38,37 @@ module type TransformError = {
 module DecodeBase =
        (
          T: TransformError,
-         M: BsAbstract.Interface.MONAD with type t('a) = T.t('a),
-         Alt: BsAbstract.Interface.ALT with type t('a) = T.t('a),
+         M: MONAD with type t('a) = T.t('a),
+         Alt: ALT with type t('a) = T.t('a),
        ) => {
   module InnerApply = Relude.Extensions.Apply.ApplyExtensions(M);
 
-  let map = (f, decode) => decode >> M.map(f);
-  let apply = (f, decode, json) => M.apply(f(json), decode(json));
-  let pure = (v, _) => M.pure(v);
-  let flatMap = (f, decode, json) =>
-    decode(json) |> M.flat_map(_, a => f(a, json));
-
-  module Functor:
-    BsAbstract.Interface.FUNCTOR with type t('a) = Js.Json.t => M.t('a) = {
+  module Functor: FUNCTOR with type t('a) = Js.Json.t => M.t('a) = {
     type t('a) = Js.Json.t => M.t('a);
-    let map = map;
+    let map = (f, decode) => decode >> M.map(f);
   };
 
-  module Monad:
-    BsAbstract.Interface.MONAD with type t('a) = Js.Json.t => M.t('a) = {
+  module Apply: APPLY with type t('a) = Js.Json.t => M.t('a) = {
     include Functor;
-    let apply = apply;
-    let pure = pure;
-    let flat_map = (ma, f) => flatMap(f, ma);
+    let apply = (f, decode, json) => M.apply(f(json), decode(json));
   };
 
-  include Relude.Extensions.Apply.ApplyExtensions(Monad);
+  module Applicative: APPLICATIVE with type t('a) = Js.Json.t => M.t('a) = {
+    include Apply;
+    let pure = (v, _) => M.pure(v);
+  };
+
+  module Monad: MONAD with type t('a) = Js.Json.t => M.t('a) = {
+    include Applicative;
+    let flat_map = (decode, f, json) =>
+      M.flat_map(decode(json), f(_, json));
+  };
+
+  let map = Functor.map;
+  let apply = Apply.apply;
+  let pure = Applicative.pure;
+  let flatMap = (f, decode) => Monad.flat_map(decode, f);
+  include Relude.Extensions.Apply.ApplyExtensions(Apply);
 
   let value = (decode, failure, json) =>
     decode(json) |> Option.foldLazy(() => T.valErr(failure, json), M.pure);

@@ -23,6 +23,7 @@
   "refmt": 3,
   "suffix": ".bs.js",
   "warnings": {
+    "number": "+A-40-42",
     "error": "+8+11"
   }
 }
