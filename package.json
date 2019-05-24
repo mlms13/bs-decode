@@ -10,8 +10,8 @@
     "build": "bsb -make-world",
     "clean": "bsb -clean-world",
     "cleanbuild": "npm run clean && npm run build",
-    "test": "npm run clean && npm run build && jest --coverage --testMatch '**/test/*.js'",
-    "coverage": "jest --testMatch '**/test/*.js' --coverage --coverageReporters=text-lcov | coveralls"
+    "test": "npm run clean && npm run build && jest --coverage",
+    "coverage": "jest --coverage --coverageReporters=text-lcov | coveralls"
   },
   "homepage": "https://mlms13.github.io/bs-decode/docs",
   "repository": {
@@ -40,6 +40,11 @@
     "jest": "^24.8.0"
   },
   "jest": {
-    "coveragePathIgnorePatterns": ["./test"]
+    "coveragePathIgnorePatterns": [
+      "./test"
+    ],
+    "testMatch": [
+      "**/test/*.js"
+    ]
   }
 }
