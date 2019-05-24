@@ -80,7 +80,32 @@ describe("Simple decoders", () => {
   test("Decode date (fails on null)", () =>
     expect(Decode.date(Sample.jsonNull)) |> toEqual(None)
   );
-  // TODO: variantFrom[Json|String|Int]
+});
+
+describe("Variant decoders", () => {
+  test("variantFromString (success)", () =>
+    expect(
+      Decode.variantFromString(Sample.colorFromJs, Sample.jsonStringBlue),
+    )
+    |> toEqual(Some(`blue))
+  );
+
+  test("variantFromString (failure)", () =>
+    expect(
+      Decode.variantFromString(Sample.colorFromJs, Sample.jsonStringYellow),
+    )
+    |> toEqual(None)
+  );
+
+  test("variantFromInt (success)", () =>
+    expect(Decode.variantFromInt(Sample.numbersFromJs, Sample.jsonIntZero))
+    |> toEqual(Some(Sample.Zero))
+  );
+
+  test("variantFromInt (failure)", () =>
+    expect(Decode.variantFromInt(Sample.numbersFromJs, Sample.jsonIntFive))
+    |> toEqual(None)
+  );
 });
 
 describe("Nested decoders", () => {

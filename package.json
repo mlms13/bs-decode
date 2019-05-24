@@ -38,5 +38,8 @@
     "bs-platform": "^5.0.3",
     "coveralls": "^3.0.3",
     "jest": "^24.8.0"
+  },
+  "jest": {
+    "coveragePathIgnorePatterns": ["./test"]
   }
 }
