@@ -28,6 +28,21 @@ let valArrayString = [|"A", "B", "C"|];
 let valListEmpty = [];
 let valListString = ["A", "B", "C"];
 
+// JSON variant values
+let jsonStringBlue: Js.Json.t = [%raw {| "blue" |}];
+let jsonStringYellow: Js.Json.t = [%raw {| "yellow" |}];
+let jsonIntFive: Js.Json.t = [%raw {| 5 |}];
+
+// typed variants and converters
+[@bs.deriving jsConverter]
+type color = [ | `blue | `red | `green];
+
+[@bs.deriving jsConverter]
+type numbers =
+  | Zero
+  | One
+  | Two;
+
 // JSON object values
 let jsonDictEmpty: Js.Json.t = [%raw {| {} |}];
 let jsonDictFloat: Js.Json.t = [%raw
@@ -118,7 +133,7 @@ let employeeBill = makeEmployee("Bill", 27, jobDesigner);
 // Typed union for oneOf
 type union =
   | S(string)
-  | N(option(float  ))
+  | N(option(float))
   | B(bool);
 
 let unionS = v => S(v);
