@@ -12,7 +12,13 @@ module ResultUtil = {
   module Monad: MONAD with type t('a) = Result.t('a, stringNel) = {
     type t('a) = Result.t('a, stringNel);
     let map = Result.map;
-    let apply = Result.apply;
+    let apply = (a, b) =>
+      switch (a, b) {
+      | (Belt.Result.Ok(f), Belt.Result.Ok(v)) => Belt.Result.Ok(f(v))
+      | (Ok(_), Error(v)) => Error(v)
+      | (Error(v), Ok(_)) => Error(v)
+      | (Error(xa), Error(xb)) => Error(NonEmpty.List.concat(xa, xb))
+      };
     let pure = Result.pure;
     let flat_map = Result.bind;
   };

@@ -1,5 +1,21 @@
 module NonEmptyList: Decode_NonEmptyList.Nel;
 
+let map:
+  (
+    'a => 'b,
+    Js.Json.t => Belt.Result.t('a, NonEmptyList.t(string)),
+    Js.Json.t
+  ) =>
+  Belt.Result.t('b, NonEmptyList.t(string));
+
+let apply:
+  (
+    Js.Json.t => Belt.Result.t('a => 'b, NonEmptyList.t(string)),
+    Js.Json.t => Belt.Result.t('a, NonEmptyList.t(string)),
+    Js.Json.t
+  ) =>
+  Belt.Result.t('b, NonEmptyList.t(string));
+
 let map2:
   (
     ('a, 'b) => 'c,
@@ -41,6 +57,16 @@ let map5:
     Js.Json.t
   ) =>
   Belt.Result.t('f, NonEmptyList.t(string));
+
+let pure: ('a, Js.Json.t) => Belt.Result.t('a, NonEmptyList.t(string));
+
+let flatMap:
+  (
+    ('a, Js.Json.t) => Belt.Result.t('b, NonEmptyList.t(string)),
+    Js.Json.t => Belt.Result.t('a, NonEmptyList.t(string)),
+    Js.Json.t
+  ) =>
+  Belt.Result.t('b, NonEmptyList.t(string));
 
 let boolean: Js.Json.t => Belt.Result.t(bool, NonEmptyList.t(string));
 let string: Js.Json.t => Belt.Result.t(string, NonEmptyList.t(string));
