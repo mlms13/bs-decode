@@ -1,41 +1,41 @@
-module NonEmptyList = Relude.NonEmpty.List;
+open Relude.Globals;
+
+// we are intentionally aliasing this module here and including the alis in the
+// rei to make it easy for users to interact with NonEmptyLists without needing
+// to use Relude directly
+module NonEmptyList = NonEmpty.List;
 
 module ResultUtil = {
-  open BsAbstract;
   open BsAbstract.Interface;
+  type stringNel = NonEmptyList.t(string);
 
-  module NelStr: TYPE with type t = NonEmptyList.t(string) = {
-    type t = NonEmptyList.t(string);
+  module Monad: MONAD with type t('a) = Result.t('a, stringNel) = {
+    type t('a) = Result.t('a, stringNel);
+    let map = Result.map;
+    let apply = Result.apply;
+    let pure = Result.pure;
+    let flat_map = Result.bind;
   };
 
-  type r('a) = Belt.Result.t('a, NelStr.t);
+  module Alt: ALT with type t('a) = Result.t('a, stringNel) = {
+    type t('a) = Result.t('a, stringNel);
+    let map = Monad.map;
+    let alt = Result.alt;
+  };
 
-  module Functor: FUNCTOR with type t('a) = r('a) = Result.Functor(NelStr);
+  module Transform:
+    DecodeBase.TransformError with type t('a) = Result.t('a, stringNel) = {
+    type t('a) = Result.t('a, stringNel);
 
-  module Apply: APPLY with type t('a) = r('a) = Result.Apply(NelStr);
-
-  module Applicative: APPLICATIVE with type t('a) = r('a) =
-    Result.Applicative(NelStr);
-
-  module Monad: MONAD with type t('a) = r('a) = Result.Monad(NelStr);
-
-  module Alt: ALT with type t('a) = r('a) = Result.Alt(NelStr);
-
-  module Transform: DecodeBase.TransformError with type t('a) = r('a) = {
-    type nonrec t('a) = r('a);
-    let pureErr = x => Belt.Result.Error(NonEmptyList.pure(x));
-    let mapErr = fn =>
-      Result.Bifunctor.bimap(BsAbstract.Functions.id, x =>
-        NonEmptyList.map(fn, x)
-      );
-
+    let pureErr = NonEmptyList.pure >> Result.error;
+    let mapErr = fn => Result.bimap(id, NonEmptyList.map(fn));
     let valErr = (v, json) => pureErr(DecodeBase.failureToString(v, json));
 
     let arrErr = (pos, v) =>
       mapErr(
         x =>
           "While decoding array, at position "
-          ++ string_of_int(pos)
+          ++ String.fromInt(pos)
           ++ ": "
           ++ x,
         v,
@@ -49,19 +49,12 @@ module ResultUtil = {
         "While decoding object, for field \"" ++ field ++ "\": " ++ x
       );
 
-    let lazyAlt = (res, fn) =>
-      switch (res) {
-      | Belt.Result.Ok(v) => Belt.Result.Ok(v)
-      | Belt.Result.Error(_) => fn()
-      };
+    let lazyAlt = (res, fn) => Result.fold(_ => fn(), Result.ok, res);
   };
 };
 
-module D =
-  DecodeBase.DecodeBase(
-    ResultUtil.Transform,
-    ResultUtil.Monad,
-    ResultUtil.Alt,
-  );
-
-include D;
+include DecodeBase.DecodeBase(
+          ResultUtil.Transform,
+          ResultUtil.Monad,
+          ResultUtil.Alt,
+        );
