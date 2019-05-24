@@ -6,11 +6,8 @@ module ResultUtil =
     let handle = t => t;
   });
 
-module D =
-  DecodeBase.DecodeBase(
-    ResultUtil.TransformError,
-    ResultUtil.Monad,
-    ResultUtil.Alt,
-  );
-
-include D;
+include DecodeBase.DecodeBase(
+          ResultUtil.TransformError,
+          ResultUtil.Monad,
+          ResultUtil.Alt,
+        );
