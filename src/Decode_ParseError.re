@@ -10,19 +10,6 @@ and objError('a) =
 
 type failure = t(DecodeBase.failure);
 
-let rec map = (fn, v) =>
-  switch (v) {
-  | Val(a, json) => Val(fn(a), json)
-  | Arr(nel) => Arr(NonEmpty.List.map(((i, a)) => (i, map(fn, a)), nel))
-  | Obj(nel) =>
-    Obj(NonEmpty.List.map(((f, o)) => (f, mapObj(fn, o)), nel))
-  }
-and mapObj = (fn, obj) =>
-  switch (obj) {
-  | MissingField => MissingField
-  | InvalidField(a) => InvalidField(map(fn, a))
-  };
-
 let arrPure = (pos, err) => Arr(NonEmpty.List.pure((pos, err)));
 let objPure = (field, err) => Obj(NonEmpty.List.pure((field, err)));
 
@@ -112,13 +99,10 @@ module type ValError = {
   let handle: DecodeBase.failure => t;
 };
 
-module ResultOf = (T: ValError) => {
+module ResultOf = (Err: ValError) => {
   open BsAbstract.Interface;
 
-  type r('a) = Result.t('a, t(T.t));
-  let mapErr = (v, fn) => Result.bimap(id, v, fn);
-  let fromFailure = err => map(T.handle, err);
-  let fromFailureResult = err => mapErr(fromFailure, err);
+  type r('a) = Result.t('a, t(Err.t));
 
   module Monad: MONAD with type t('a) = r('a) = {
     type t('a) = r('a);
@@ -126,8 +110,8 @@ module ResultOf = (T: ValError) => {
     let apply = (f, v) =>
       switch (f, v) {
       | (Belt.Result.Ok(fn), Belt.Result.Ok(a)) => Result.ok(fn(a))
-      | (Ok(_), Error(x)) => Result.error(x)
-      | (Error(x), Ok(_)) => Result.error(x)
+      | (Ok(_), Error(_) as err) => err
+      | (Error(_) as err, Ok(_)) => err
       | (Error(fnx), Error(ax)) => Result.error(combine(fnx, ax))
       };
     let pure = Result.pure;
@@ -142,15 +126,12 @@ module ResultOf = (T: ValError) => {
   module TransformError: DecodeBase.TransformError with type t('a) = r('a) = {
     type t('a) = r('a);
 
-    let valErr = (v, json) => Result.error(Val(T.handle(v), json));
-    let arrErr = pos => mapErr(x => arrPure(pos, x));
+    let valErr = (v, json) => Result.error(Val(Err.handle(v), json));
+    let arrErr = pos => Result.mapError(arrPure(pos));
     let missingFieldErr = field =>
       Result.error(objPure(field, MissingField));
-    let objErr = field => mapErr(x => objPure(field, InvalidField(x)));
-    let lazyAlt = (res, fn) =>
-      switch (res) {
-      | Belt.Result.Ok(v) => Belt.Result.Ok(v)
-      | Belt.Result.Error(_) => fn()
-      };
+    let objErr = field =>
+      Result.mapError(x => objPure(field, InvalidField(x)));
+    let lazyAlt = (res, fn) => Result.fold(_ => fn(), Result.ok, res);
   };
 };
