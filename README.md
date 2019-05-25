@@ -29,7 +29,7 @@ Decode JSON values into structured ReasonML and OCaml types. Inspired by Elm's [
 The following is available to give you an idea of how the library works, but [the complete documentation](https://mlms13.github.io/bs-decode/docs/simple-example) will probably be more useful if you want to write your own decoders.
 
 ```reason
-/* imagine you have a `user` type and `make` function to construct one */
+// imagine you have a `user` type and `make` function to construct one
 type user = {
   name: string,
   age: int,
@@ -42,7 +42,7 @@ let make = (name, age, isAdmin, lastLogin) =>
 
 /**
  * Given a JSON value that looks like:
- * { "name": "Michael", "age": 32, "isAdmin": true }
+ * { "name": "Michael", "age": 32, "roles": ["admin"] }
  *
  * you can write a function to convert this JSON into a value of type `user`
  */
@@ -53,27 +53,18 @@ let decode = json =>
     succeed(make)
     |> field("name", string)
     |> field("age", intFromNumber)
-    |> field("isAdmin", boolean)
+    |> field("roles", map(List.contains("admin"), list(string)))
     |> optionalField("lastLogin", date)
     |> run(json)
   );
 
-let myUser = decode(json); /* Belt.Result.Ok({...}) */
+let myUser = decode(json); /* Ok({ name: "Michael", ...}) */
 ```
 
 ## Contributing
 
-1. Fork and clone this repository
-2. `npm install`
-3. Add features and tests
-4. `npm run test`
-
-A note on project structure:
-
-- `DecodeBase.re` is where most of the actual functionality lives
-- `Decode_As*.re` define the actual implementations, but those are minimal
-- `Decode_ParseError.re` defines the error type useful for Results, as well as a collection of helpers to work with Results of that kind.
+All contributions are welcome! This obviously includes code changes and documentation improvements ([see CONTRIBUTING](https://github.com/mlms13/bs-decode/blob/master/CONTRIBUTING.md)), but we also appreciate any feedback you want to provide (in the form of [Github issues](https://github.com/mlms13/bs-decode/issues)) about concepts that are confusing or poorly explained in [the docs](https://mlms13.github.io/bs-decode/docs/what-and-why).
 
 ## License
 
-Released under the MIT license. See `LICENSE`.
+Released under the [MIT license](https://github.com/mlms13/bs-decode/blob/master/LICENSE).

@@ -1,0 +1,22 @@
+# keep the tests and docs out of npm
+test
+/docs
+/website
+CONTRIBUTING.md
+CHANGELOG.md
+
+# ...plus all of the stuff from gitignore
+node_modules
+*/log
+.vscode
+
+# generated
+/lib/bs
+*.bs.js
+/dist
+.merlin
+.bsb.lock
+/coverage
+
+# os files
+.DS_Store
