@@ -158,7 +158,7 @@ let oneOf:
   Belt.Result.t('a, NonEmptyList.t(string));
 
 module Pipeline: {
-  let succeed: ('a, 'b) => Belt.Result.t('a, NonEmptyList.t(string));
+  let succeed: ('a, Js.Json.t) => Belt.Result.t('a, NonEmptyList.t(string));
 
   let field:
     (

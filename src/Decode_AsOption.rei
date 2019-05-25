@@ -93,7 +93,7 @@ let oneOf:
   option('a);
 
 module Pipeline: {
-  let succeed: ('a, 'b) => option('a);
+  let succeed: ('a, Js.Json.t) => option('a);
 
   let field:
     (

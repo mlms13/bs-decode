@@ -78,18 +78,17 @@ module DecodeBase = (T: TransformError, M: MONAD with type t('a) = T.t('a)) => {
 
   let string = value(Js.Json.decodeString, `ExpectedString);
 
-  let floatFromNumber = json =>
-    value(Js.Json.decodeNumber, `ExpectedNumber, json);
+  let floatFromNumber = value(Js.Json.decodeNumber, `ExpectedNumber);
 
   [@ocaml.deprecated "Use floatFromNumber instead."]
   let float = floatFromNumber;
 
-  let intFromNumber = json => {
+  let intFromNumber = {
     let isInt = v => v == 0.0 || mod_float(v, floor(v)) == 0.0;
-    floatFromNumber(json)
-    |> M.flat_map(_, v =>
-         isInt(v) ? M.pure(int_of_float(v)) : T.valErr(`ExpectedInt, json)
-       );
+    flatMap(
+      v => isInt(v) ? pure(int_of_float(v)) : T.valErr(`ExpectedInt),
+      floatFromNumber,
+    );
   };
 
   [@ocaml.deprecated "Use intFromNumber instead."]
@@ -108,13 +107,10 @@ module DecodeBase = (T: TransformError, M: MONAD with type t('a) = T.t('a)) => {
     alt(fromFloat, fromString) |> flatMap(isValid);
   };
 
-  let variantFromJson = (jsonToJs, jsToVariant, json) =>
-    jsonToJs(json)
-    |> M.map(jsToVariant)
-    |> M.flat_map(
-         _,
-         Option.foldLazy(() => T.valErr(`ExpectedValidOption, json), M.pure),
-       );
+  let variantFromJson = (jsonToJs, jsToVariant) =>
+    jsonToJs
+    |> map(jsToVariant)
+    |> flatMap(Option.foldLazy(() => T.valErr(`ExpectedValidOption), pure));
 
   let variantFromString = (stringToVariant, json) =>
     variantFromJson(string, stringToVariant, json);
@@ -124,43 +120,41 @@ module DecodeBase = (T: TransformError, M: MONAD with type t('a) = T.t('a)) => {
 
   let optional = (decode, json) =>
     switch (Js.Json.decodeNull(json)) {
-    | Some(_) => M.pure(None)
-    | None => decode(json) |> M.map(v => Some(v))
+    | Some(_) => pure(None, json)
+    | None => map(v => Some(v), decode, json)
     };
 
-  let array = (decode, json) => {
-    let decodeEach = arr =>
+  let array = decode => {
+    let decodeEach =
       Array.foldLeft(
         ((pos, acc), curr) => {
-          let decoded = T.arrErr(pos, decode(curr));
-          let result = InnerApply.map2(flip(Array.append), acc, decoded);
+          let decoded = _ => T.arrErr(pos, decode(curr));
+          let result = map2(flip(Array.append), acc, decoded);
           (pos + 1, result);
         },
-        (0, M.pure([||])),
-        arr,
+        (0, pure([||])),
       );
 
-    value(Js.Json.decodeArray, `ExpectedArray, json)
-    |> M.flat_map(_, decodeEach >> snd);
+    value(Js.Json.decodeArray, `ExpectedArray) |> flatMap(decodeEach >> snd);
   };
 
-  let list = (decode, json) => array(decode, json) |> M.map(Array.toList);
+  let list = decode => array(decode) |> map(Array.toList);
 
-  let dict = (decode, json) => {
+  let dict = decode => {
     let rec decodeEntries =
       fun
-      | [] => M.pure([])
+      | [] => pure([])
       | [(key, value), ...xs] =>
-        InnerApply.map2(
+        map2(
           (decodedValue, rest) => [(key, decodedValue), ...rest],
-          T.objErr(key, decode(value)),
+          _ => T.objErr(key, decode(value)),
           decodeEntries(xs),
         );
 
-    value(Js.Json.decodeObject, `ExpectedObject, json)
-    |> M.map(Js.Dict.entries >> Array.toList)
-    |> M.flat_map(_, decodeEntries)
-    |> M.map(Js.Dict.fromList);
+    value(Js.Json.decodeObject, `ExpectedObject)
+    |> map(Js.Dict.entries >> Array.toList)
+    |> flatMap(decodeEntries)
+    |> map(Js.Dict.fromList);
   };
 
   let rec at = (fields, decode) =>
@@ -173,16 +167,15 @@ module DecodeBase = (T: TransformError, M: MONAD with type t('a) = T.t('a)) => {
       |> flatMap(at(xs, decode) >> T.objErr(x) >> const)
     };
 
-  let field = (name, decode, json) => at([name], decode, json);
+  let field = (name, decode) => at([name], decode);
 
-  let optionalField = (name, decode, json) =>
-    value(Js.Json.decodeObject, `ExpectedObject, json)
-    |> M.map(Js.Dict.get(_, name))
-    |> M.flat_map(_, opt =>
-         switch (opt) {
-         | None => M.pure(None)
-         | Some(v) => optional(decode, v)
-         }
+  let optionalField = (name, decode) =>
+    value(Js.Json.decodeObject, `ExpectedObject)
+    |> map(Js.Dict.get(_, name))
+    |> flatMap(
+         fun
+         | None => pure(None)
+         | Some(v) => (_ => optional(decode, v)),
        );
 
   let fallback = (name, decode, recovery) =>
@@ -202,7 +195,7 @@ module DecodeBase = (T: TransformError, M: MONAD with type t('a) = T.t('a)) => {
      * `succeed` returns a `json => Result` decode function that ignores the `json`
      * argument and always returns `Ok`
      */
-    let succeed = (v, _) => M.pure(v);
+    let succeed = pure;
 
     let pipe = (a, b, json) => map2((|>), a, b, json);
 
