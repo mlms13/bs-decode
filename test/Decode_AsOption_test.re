@@ -237,6 +237,7 @@ describe("Nested decoders", () => {
 });
 
 describe("Decode with alternatives/fallbacks", () => {
+  let decodeExplode = _json => failwith("Explosion");
   let decodeUnion =
     Decode.(
       oneOf(
@@ -247,6 +248,11 @@ describe("Decode with alternatives/fallbacks", () => {
         ],
       )
     );
+
+  test("alt (doesn't evaluate second if first succeeds)", () =>
+    expect(Decode.(alt(string, decodeExplode, Sample.jsonString)))
+    |> toEqual(Some(Sample.valString))
+  );
 
   test("oneOf (succeeds on first)", () =>
     expect(decodeUnion(Sample.jsonString))

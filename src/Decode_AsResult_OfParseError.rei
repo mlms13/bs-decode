@@ -68,6 +68,14 @@ let flatMap:
   ) =>
   Belt.Result.t('b, Decode_ParseError.failure);
 
+let alt:
+  (
+    Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure),
+    Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure),
+    Js.Json.t
+  ) =>
+  Belt.Result.t('a, Decode_ParseError.failure);
+
 let boolean: Js.Json.t => Belt.Result.t(bool, Decode_ParseError.failure);
 let string: Js.Json.t => Belt.Result.t(string, Decode_ParseError.failure);
 [@ocaml.deprecated "Use floatFromNumber instead."]

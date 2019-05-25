@@ -51,6 +51,10 @@ let flatMap:
   (('a, Js.Json.t) => option('b), Js.Json.t => option('a), Js.Json.t) =>
   option('b);
 
+let alt:
+  (Js.Json.t => option('a), Js.Json.t => option('a), Js.Json.t) =>
+  option('a);
+
 let boolean: Js.Json.t => option(bool);
 let string: Js.Json.t => option(Js.String.t);
 [@ocaml.deprecated "Use floatFromNumber instead."]
