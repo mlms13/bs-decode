@@ -35,12 +35,7 @@ module type TransformError = {
   let lazyAlt: (t('a), unit => t('a)) => t('a);
 };
 
-module DecodeBase =
-       (
-         T: TransformError,
-         M: MONAD with type t('a) = T.t('a),
-         Alt: ALT with type t('a) = T.t('a),
-       ) => {
+module DecodeBase = (T: TransformError, M: MONAD with type t('a) = T.t('a)) => {
   module InnerApply = Relude.Extensions.Apply.ApplyExtensions(M);
 
   module Functor: FUNCTOR with type t('a) = Js.Json.t => M.t('a) = {
@@ -64,10 +59,16 @@ module DecodeBase =
       M.flat_map(decode(json), f(_, json));
   };
 
+  module Alt: ALT with type t('a) = Js.Json.t => M.t('a) = {
+    include Functor;
+    let alt = (a, b, json) => T.lazyAlt(a(json), () => b(json));
+  };
+
   let map = Functor.map;
   let apply = Apply.apply;
   let pure = Applicative.pure;
   let flatMap = (f, decode) => Monad.flat_map(decode, f);
+  let alt = Alt.alt;
   include Relude.Extensions.Apply.ApplyExtensions(Apply);
 
   let value = (decode, failure, json) =>
@@ -94,18 +95,18 @@ module DecodeBase =
   [@ocaml.deprecated "Use intFromNumber instead."]
   let int = intFromNumber;
 
-  let date = json =>
-    json
-    |> floatFromNumber
-    |> M.map(Js.Date.fromFloat)
-    |> Alt.alt(_, M.map(Js.Date.fromString, string(json)))
-    |> M.flat_map(_, result =>
-         result
-         |> Js.Date.toJSONUnsafe
-         |> Js.Nullable.return
-         |> Js.Nullable.isNullable
-           ? T.valErr(`ExpectedValidDate, json) : M.pure(result)
-       );
+  let date = {
+    let fromFloat = map(Js.Date.fromFloat, floatFromNumber);
+    let fromString = map(Js.Date.fromString, string);
+    let isValid = date =>
+      date
+      |> Js.Date.toJSONUnsafe
+      |> Js.Nullable.return
+      |> Js.Nullable.isNullable
+        ? T.valErr(`ExpectedValidDate) : pure(date);
+
+    alt(fromFloat, fromString) |> flatMap(isValid);
+  };
 
   let variantFromJson = (jsonToJs, jsToVariant, json) =>
     jsonToJs(json)
@@ -162,14 +163,14 @@ module DecodeBase =
     |> M.map(Js.Dict.fromList);
   };
 
-  let rec at = (fields, decode, json) =>
+  let rec at = (fields, decode) =>
     switch (fields) {
-    | [] => decode(json)
+    | [] => decode
     | [x, ...xs] =>
-      value(Js.Json.decodeObject, `ExpectedObject, json)
-      |> M.map(Js.Dict.get(_, x))
-      |> M.flat_map(_, Option.fold(T.missingFieldErr(x), M.pure))
-      |> M.flat_map(_, v => T.objErr(x, at(xs, decode, v)))
+      value(Js.Json.decodeObject, `ExpectedObject)
+      |> map(Js.Dict.get(_, x))
+      |> flatMap(Option.fold(_ => T.missingFieldErr(x), pure))
+      |> flatMap(at(xs, decode) >> T.objErr(x) >> const)
     };
 
   let field = (name, decode, json) => at([name], decode, json);
@@ -184,22 +185,17 @@ module DecodeBase =
          }
        );
 
-  let fallback = (name, decode, alt, json) =>
-    Alt.alt(field(name, decode, json), M.pure(alt));
+  let fallback = (name, decode, recovery) =>
+    alt(field(name, decode), pure(recovery));
 
-  let tuple = ((fieldA, decodeA), (fieldB, decodeB), json) =>
-    InnerApply.map2(
+  let tuple = ((fieldA, decodeA), (fieldB, decodeB)) =>
+    map2(
       (a, b) => (a, b),
-      field(fieldA, decodeA, json),
-      field(fieldB, decodeB, json),
+      field(fieldA, decodeA),
+      field(fieldB, decodeB),
     );
 
-  let oneOf = (decode, rest, json) =>
-    List.foldLeft(
-      (a, b) => T.lazyAlt(a, () => b(json)),
-      decode(json),
-      rest,
-    );
+  let oneOf = (decode, rest) => List.foldLeft(alt, decode, rest);
 
   module Pipeline = {
     /**

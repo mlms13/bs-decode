@@ -23,12 +23,6 @@ module ResultUtil = {
     let flat_map = Result.bind;
   };
 
-  module Alt: ALT with type t('a) = Result.t('a, stringNel) = {
-    type t('a) = Result.t('a, stringNel);
-    let map = Monad.map;
-    let alt = Result.alt;
-  };
-
   module Transform:
     DecodeBase.TransformError with type t('a) = Result.t('a, stringNel) = {
     type t('a) = Result.t('a, stringNel);
@@ -59,8 +53,4 @@ module ResultUtil = {
   };
 };
 
-include DecodeBase.DecodeBase(
-          ResultUtil.Transform,
-          ResultUtil.Monad,
-          ResultUtil.Alt,
-        );
+include DecodeBase.DecodeBase(ResultUtil.Transform, ResultUtil.Monad);

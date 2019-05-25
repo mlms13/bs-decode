@@ -79,6 +79,13 @@ describe("Inner decoders", () => {
        )
   );
 
+  test("field (missing)", () =>
+    expect(Decode.field("x", Decode.string, Sample.jsonDictEmpty))
+    |> toEqual(
+         Result.error(NonEmpty.List.pure("Object field \"x\" was missing")),
+       )
+  );
+
   test("field (multiple, failure on second)", () =>
     expect(
       Decode.(

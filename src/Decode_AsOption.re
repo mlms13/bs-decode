@@ -13,10 +13,6 @@ module OptionTransform:
 };
 
 module DecodeAsOption =
-  DecodeBase.DecodeBase(
-    OptionTransform,
-    BsAbstract.Option.Monad,
-    BsAbstract.Option.Alt,
-  );
+  DecodeBase.DecodeBase(OptionTransform, BsAbstract.Option.Monad);
 
 include DecodeAsOption;
