@@ -269,12 +269,16 @@ describe("Decode with alternatives/fallbacks", () => {
   );
 
   test("fallback (used on missing field)", () =>
-    expect(Decode.(fallback("x", boolean, false, Sample.jsonDictEmpty)))
+    expect(
+      Decode.(fallback(field("x", boolean), false, Sample.jsonDictEmpty)),
+    )
     |> toEqual(Some(false))
   );
 
   test("fallback (used on invalid inner data)", () =>
-    expect(Decode.(fallback("title", intFromNumber, 1, Sample.jsonJobCeo)))
+    expect(
+      Decode.(fallback(field("title", intFromNumber), 1, Sample.jsonJobCeo)),
+    )
     |> toEqual(Some(1))
   );
 });
@@ -382,7 +386,7 @@ describe("Decode records", () => {
     Decode.Pipeline.(
       succeed(Sample.makeJob)
       |> hardcoded("Title")
-      |> fallback("x", string, "Company")
+      |> fallbackField("x", string, "Company")
       |> at(["job", "manager", "job", "startDate"], date)
       |> hardcoded(None)
     );

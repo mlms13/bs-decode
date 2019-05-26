@@ -149,12 +149,7 @@ let optionalField:
   Belt.Result.t(option('a), NonEmptyList.t(string));
 
 let fallback:
-  (
-    string,
-    Js.Json.t => Belt.Result.t('a, NonEmptyList.t(string)),
-    'a,
-    Js.Json.t
-  ) =>
+  (Js.Json.t => Belt.Result.t('a, NonEmptyList.t(string)), 'a, Js.Json.t) =>
   Belt.Result.t('a, NonEmptyList.t(string));
 
 let oneOf:
@@ -195,7 +190,7 @@ module Pipeline: {
     ) =>
     Belt.Result.t('b, NonEmptyList.t(string));
 
-  let fallback:
+  let fallbackField:
     (
       string,
       Js.Json.t => Belt.Result.t('a, NonEmptyList.t(string)),
@@ -204,6 +199,14 @@ module Pipeline: {
       Js.Json.t
     ) =>
     Belt.Result.t('b, NonEmptyList.t(string));
+
+  let fallback:
+    (
+      Js.Json.t => Belt.Result.t('a, NonEmptyList.t(string)),
+      'a,
+      Js.Json.t
+    ) =>
+    Belt.Result.t('a, NonEmptyList.t(string));
 
   let hardcoded:
     (

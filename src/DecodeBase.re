@@ -178,8 +178,7 @@ module DecodeBase = (T: TransformError, M: MONAD with type t('a) = T.t('a)) => {
          | Some(v) => (_ => optional(decode, v)),
        );
 
-  let fallback = (name, decode, recovery) =>
-    alt(field(name, decode), pure(recovery));
+  let fallback = (decode, recovery) => alt(decode, pure(recovery));
 
   let tuple = ((fieldA, decodeA), (fieldB, decodeB)) =>
     map2(
@@ -199,15 +198,16 @@ module DecodeBase = (T: TransformError, M: MONAD with type t('a) = T.t('a)) => {
 
     let pipe = (a, b, json) => map2((|>), a, b, json);
 
+    let optionalField = (name, decode) => pipe(optionalField(name, decode));
+
+    let fallbackField = (name, decode, recovery) =>
+      pipe(fallback(field(name, decode), recovery));
+
     let field = (name, decode) => pipe(field(name, decode));
 
     let at = (fields, decode) => pipe(at(fields, decode));
 
-    let optionalField = (name, decode) => pipe(optionalField(name, decode));
-
-    let fallback = (name, decode, alt) => pipe(fallback(name, decode, alt));
-
-    let hardcoded = v => pipe(succeed(v));
+    let hardcoded = v => pipe(pure(v));
 
     /**
      * `run` takes a decoder and some json, and it passes that json to the
@@ -241,5 +241,6 @@ module DecodeBase = (T: TransformError, M: MONAD with type t('a) = T.t('a)) => {
     let tuple = tuple;
     let dict = dict;
     let oneOf = oneOf;
+    let fallback = fallback;
   };
 };

@@ -150,7 +150,6 @@ let optionalField:
 
 let fallback:
   (
-    string,
     Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure),
     'a,
     Js.Json.t
@@ -196,7 +195,7 @@ module Pipeline: {
     ) =>
     Belt.Result.t('b, Decode_ParseError.failure);
 
-  let fallback:
+  let fallbackField:
     (
       string,
       Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure),
@@ -205,6 +204,14 @@ module Pipeline: {
       Js.Json.t
     ) =>
     Belt.Result.t('b, Decode_ParseError.failure);
+
+  let fallback:
+    (
+      Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure),
+      'a,
+      Js.Json.t
+    ) =>
+    Belt.Result.t('a, Decode_ParseError.failure);
 
   let hardcoded:
     (

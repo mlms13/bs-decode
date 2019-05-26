@@ -90,7 +90,7 @@ let field: (string, Js.Json.t => option('a), Js.Json.t) => option('a);
 let optionalField:
   (string, Js.Json.t => option('a), Js.Json.t) => option(option('a));
 
-let fallback: (string, Js.Json.t => option('a), 'a, Js.Json.t) => option('a);
+let fallback: (Js.Json.t => option('a), 'a, Js.Json.t) => option('a);
 
 let oneOf:
   (Js.Json.t => option('a), list(Js.Json.t => option('a)), Js.Json.t) =>
@@ -126,7 +126,7 @@ module Pipeline: {
     ) =>
     option('b);
 
-  let fallback:
+  let fallbackField:
     (
       string,
       Js.Json.t => option('a),
@@ -135,6 +135,8 @@ module Pipeline: {
       Js.Json.t
     ) =>
     option('b);
+
+  let fallback: (Js.Json.t => option('a), 'a, Js.Json.t) => option('a);
 
   let hardcoded:
     ('a, Js.Json.t => option('a => 'c), Js.Json.t) => option('c);

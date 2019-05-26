@@ -4,22 +4,24 @@ The following changes are currently in the `master` branch but have not been pub
 
 ### :rotating_light: Breaking
 
+- `Decode.fallback` doesn't assume you want to work with `field`s, but you can use `Decode.(fallback(field("x", string), "default"))` if you want the old behavior
+- `Decode.Pipeline.fallback` has the same new behavior, but it provides `fallbackField` to achieve the old behavior
 - `Decode.ParseError.map` has been removed (it wasn't used internally or documented)
 
 ### :bug: Bug fixes
 
-- `...AsResult.OfStringNel` actually collects multiple errors now
+- `Decode.AsResult.OfStringNel` actually collects multiple errors now
 
 ### :sparkles: New features
 
 - `Decode.alt` allows combining decode functions and picking the first success
-- `...AsResult.OfStringNel` now includes all of the same `map`, `flatMap`, etc functions for decoders
+- `Decode.AsResult.OfStringNel` now includes all of the same `map`, `flatMap`, etc functions for decoders
 
 ### :heavy_check_mark: Code quality
 
-- Reorganize tests so that `...AsOption` tests decoders pass-vs-fail, `...AsResult` tests failure reporting
+- Reorganize tests so that `Decode_AsOption` tests decoders pass-vs-fail, `Decode_AsResult_*` tests failure reporting
 - Test coverage has increased to 100%
-- Internally, many functions were re-written to use `map`, `flatMap`, `alt`, etc on the functions themselves, rather than running the decoders and transforming the output
+- Internally, many functions were re-written to use `map`, `flatMap`, `alt`, etc on the decoders themselves, rather than running the decoders and transforming the output
 - `Js.Dict.key` was changed to `string` in interface files for better editor suggestions
 
 ## 0.5.1 (May 22, 2019)
