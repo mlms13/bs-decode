@@ -1,7 +1,8 @@
 module NonEmptyList = Relude.NonEmpty.List;
+module ParseError = Decode_ParseError;
 
 module ResultUtil =
-  Decode_ParseError.ResultOf({
+  ParseError.ResultOf({
     type t = DecodeBase.failure;
     let handle = t => t;
   });

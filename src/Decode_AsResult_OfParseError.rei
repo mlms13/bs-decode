@@ -1,4 +1,5 @@
 module NonEmptyList: Decode_NonEmptyList.Nel;
+module ParseError = Decode_ParseError;
 
 let map:
   (

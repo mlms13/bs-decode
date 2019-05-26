@@ -16,6 +16,7 @@ The following changes are currently in the `master` branch but have not been pub
 
 - `Decode.alt` allows combining decode functions and picking the first success
 - `Decode.AsResult.OfStringNel` now includes all of the same `map`, `flatMap`, etc functions for decoders
+- `Decode.ParseError` is aliased as `Decode.AsResult.OfParseError.ParseError` so parse errors can be accessed from an aliased decode module
 
 ### :heavy_check_mark: Code quality
 
