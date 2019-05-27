@@ -2,348 +2,320 @@ module NonEmptyList: Decode_NonEmptyList.Nel;
 module ParseError = Decode_ParseError;
 
 let map:
-  (
-    'a => 'b,
-    Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure),
-    Js.Json.t
-  ) =>
-  Belt.Result.t('b, Decode_ParseError.failure);
+  ('a => 'b, Js.Json.t => Belt.Result.t('a, ParseError.failure), Js.Json.t) =>
+  Belt.Result.t('b, ParseError.failure);
 
 let apply:
   (
-    Js.Json.t => Belt.Result.t('a => 'b, Decode_ParseError.failure),
-    Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure),
+    Js.Json.t => Belt.Result.t('a => 'b, ParseError.failure),
+    Js.Json.t => Belt.Result.t('a, ParseError.failure),
     Js.Json.t
   ) =>
-  Belt.Result.t('b, Decode_ParseError.failure);
+  Belt.Result.t('b, ParseError.failure);
 
 let map2:
   (
     ('a, 'b) => 'c,
-    Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure),
-    Js.Json.t => Belt.Result.t('b, Decode_ParseError.failure),
+    Js.Json.t => Belt.Result.t('a, ParseError.failure),
+    Js.Json.t => Belt.Result.t('b, ParseError.failure),
     Js.Json.t
   ) =>
-  Belt.Result.t('c, Decode_ParseError.failure);
+  Belt.Result.t('c, ParseError.failure);
 
 let map3:
   (
     ('a, 'b, 'c) => 'd,
-    Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure),
-    Js.Json.t => Belt.Result.t('b, Decode_ParseError.failure),
-    Js.Json.t => Belt.Result.t('c, Decode_ParseError.failure),
+    Js.Json.t => Belt.Result.t('a, ParseError.failure),
+    Js.Json.t => Belt.Result.t('b, ParseError.failure),
+    Js.Json.t => Belt.Result.t('c, ParseError.failure),
     Js.Json.t
   ) =>
-  Belt.Result.t('d, Decode_ParseError.failure);
+  Belt.Result.t('d, ParseError.failure);
 
 let map4:
   (
     ('a, 'b, 'c, 'd) => 'e,
-    Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure),
-    Js.Json.t => Belt.Result.t('b, Decode_ParseError.failure),
-    Js.Json.t => Belt.Result.t('c, Decode_ParseError.failure),
-    Js.Json.t => Belt.Result.t('d, Decode_ParseError.failure),
+    Js.Json.t => Belt.Result.t('a, ParseError.failure),
+    Js.Json.t => Belt.Result.t('b, ParseError.failure),
+    Js.Json.t => Belt.Result.t('c, ParseError.failure),
+    Js.Json.t => Belt.Result.t('d, ParseError.failure),
     Js.Json.t
   ) =>
-  Belt.Result.t('e, Decode_ParseError.failure);
+  Belt.Result.t('e, ParseError.failure);
 
 let map5:
   (
     ('a, 'b, 'c, 'd, 'e) => 'f,
-    Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure),
-    Js.Json.t => Belt.Result.t('b, Decode_ParseError.failure),
-    Js.Json.t => Belt.Result.t('c, Decode_ParseError.failure),
-    Js.Json.t => Belt.Result.t('d, Decode_ParseError.failure),
-    Js.Json.t => Belt.Result.t('e, Decode_ParseError.failure),
+    Js.Json.t => Belt.Result.t('a, ParseError.failure),
+    Js.Json.t => Belt.Result.t('b, ParseError.failure),
+    Js.Json.t => Belt.Result.t('c, ParseError.failure),
+    Js.Json.t => Belt.Result.t('d, ParseError.failure),
+    Js.Json.t => Belt.Result.t('e, ParseError.failure),
     Js.Json.t
   ) =>
-  Belt.Result.t('f, Decode_ParseError.failure);
+  Belt.Result.t('f, ParseError.failure);
 
-let pure: ('a, Js.Json.t) => Belt.Result.t('a, Decode_ParseError.failure);
+let pure: ('a, Js.Json.t) => Belt.Result.t('a, ParseError.failure);
 
 let flatMap:
   (
-    ('a, Js.Json.t) => Belt.Result.t('b, Decode_ParseError.failure),
-    Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure),
+    ('a, Js.Json.t) => Belt.Result.t('b, ParseError.failure),
+    Js.Json.t => Belt.Result.t('a, ParseError.failure),
     Js.Json.t
   ) =>
-  Belt.Result.t('b, Decode_ParseError.failure);
+  Belt.Result.t('b, ParseError.failure);
 
 let alt:
   (
-    Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure),
-    Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure),
+    Js.Json.t => Belt.Result.t('a, ParseError.failure),
+    Js.Json.t => Belt.Result.t('a, ParseError.failure),
     Js.Json.t
   ) =>
-  Belt.Result.t('a, Decode_ParseError.failure);
+  Belt.Result.t('a, ParseError.failure);
 
-let boolean: Js.Json.t => Belt.Result.t(bool, Decode_ParseError.failure);
-let string: Js.Json.t => Belt.Result.t(string, Decode_ParseError.failure);
+let boolean: Js.Json.t => Belt.Result.t(bool, ParseError.failure);
+let string: Js.Json.t => Belt.Result.t(string, ParseError.failure);
 [@ocaml.deprecated "Use floatFromNumber instead."]
-let float: Js.Json.t => Belt.Result.t(float, Decode_ParseError.failure);
+let float: Js.Json.t => Belt.Result.t(float, ParseError.failure);
 [@ocaml.deprecated "Use intFromNumber instead."]
-let int: Js.Json.t => Belt.Result.t(int, Decode_ParseError.failure);
-let floatFromNumber:
-  Js.Json.t => Belt.Result.t(float, Decode_ParseError.failure);
-let intFromNumber: Js.Json.t => Belt.Result.t(int, Decode_ParseError.failure);
-let date: Js.Json.t => Belt.Result.t(Js.Date.t, Decode_ParseError.failure);
+let int: Js.Json.t => Belt.Result.t(int, ParseError.failure);
+let floatFromNumber: Js.Json.t => Belt.Result.t(float, ParseError.failure);
+let intFromNumber: Js.Json.t => Belt.Result.t(int, ParseError.failure);
+let date: Js.Json.t => Belt.Result.t(Js.Date.t, ParseError.failure);
 let variantFromJson:
   (
-    Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure),
+    Js.Json.t => Belt.Result.t('a, ParseError.failure),
     'a => option('b),
     Js.Json.t
   ) =>
-  Belt.Result.t('b, Decode_ParseError.failure);
+  Belt.Result.t('b, ParseError.failure);
 let variantFromString:
-  (string => option('a), Js.Json.t) =>
-  Belt.Result.t('a, Decode_ParseError.failure);
+  (string => option('a), Js.Json.t) => Belt.Result.t('a, ParseError.failure);
 let variantFromInt:
-  (int => option('a), Js.Json.t) =>
-  Belt.Result.t('a, Decode_ParseError.failure);
+  (int => option('a), Js.Json.t) => Belt.Result.t('a, ParseError.failure);
 
 let optional:
-  (Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure), Js.Json.t) =>
-  Belt.Result.t(option('a), Decode_ParseError.failure);
+  (Js.Json.t => Belt.Result.t('a, ParseError.failure), Js.Json.t) =>
+  Belt.Result.t(option('a), ParseError.failure);
 
 let array:
-  (Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure), Js.Json.t) =>
-  Belt.Result.t(array('a), Decode_ParseError.failure);
+  (Js.Json.t => Belt.Result.t('a, ParseError.failure), Js.Json.t) =>
+  Belt.Result.t(array('a), ParseError.failure);
 
 let list:
-  (Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure), Js.Json.t) =>
-  Belt.Result.t(list('a), Decode_ParseError.failure);
+  (Js.Json.t => Belt.Result.t('a, ParseError.failure), Js.Json.t) =>
+  Belt.Result.t(list('a), ParseError.failure);
 
 let tuple:
   (
-    (string, Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure)),
-    (string, Js.Json.t => Belt.Result.t('b, Decode_ParseError.failure)),
+    (string, Js.Json.t => Belt.Result.t('a, ParseError.failure)),
+    (string, Js.Json.t => Belt.Result.t('b, ParseError.failure)),
     Js.Json.t
   ) =>
-  Belt.Result.t(('a, 'b), Decode_ParseError.failure);
+  Belt.Result.t(('a, 'b), ParseError.failure);
 
 let dict:
-  (Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure), Js.Json.t) =>
-  Belt.Result.t(Js.Dict.t('a), Decode_ParseError.failure);
+  (Js.Json.t => Belt.Result.t('a, ParseError.failure), Js.Json.t) =>
+  Belt.Result.t(Js.Dict.t('a), ParseError.failure);
 
 let at:
   (
     list(string),
-    Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure),
+    Js.Json.t => Belt.Result.t('a, ParseError.failure),
     Js.Json.t
   ) =>
-  Belt.Result.t('a, Decode_ParseError.failure);
+  Belt.Result.t('a, ParseError.failure);
 
 let field:
-  (
-    string,
-    Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure),
-    Js.Json.t
-  ) =>
-  Belt.Result.t('a, Decode_ParseError.failure);
+  (string, Js.Json.t => Belt.Result.t('a, ParseError.failure), Js.Json.t) =>
+  Belt.Result.t('a, ParseError.failure);
 
 let optionalField:
-  (
-    string,
-    Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure),
-    Js.Json.t
-  ) =>
-  Belt.Result.t(option('a), Decode_ParseError.failure);
+  (string, Js.Json.t => Belt.Result.t('a, ParseError.failure), Js.Json.t) =>
+  Belt.Result.t(option('a), ParseError.failure);
 
 let fallback:
-  (
-    Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure),
-    'a,
-    Js.Json.t
-  ) =>
-  Belt.Result.t('a, Decode_ParseError.failure);
+  (Js.Json.t => Belt.Result.t('a, ParseError.failure), 'a, Js.Json.t) =>
+  Belt.Result.t('a, ParseError.failure);
 
 let oneOf:
   (
-    Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure),
-    list(Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure)),
+    Js.Json.t => Belt.Result.t('a, ParseError.failure),
+    list(Js.Json.t => Belt.Result.t('a, ParseError.failure)),
     Js.Json.t
   ) =>
-  Belt.Result.t('a, Decode_ParseError.failure);
+  Belt.Result.t('a, ParseError.failure);
 
 module Pipeline: {
-  let succeed:
-    ('a, Js.Json.t) => Belt.Result.t('a, Decode_ParseError.failure);
+  let succeed: ('a, Js.Json.t) => Belt.Result.t('a, ParseError.failure);
 
   let field:
     (
       string,
-      Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure),
-      Js.Json.t => Belt.Result.t('a => 'b, Decode_ParseError.failure),
+      Js.Json.t => Belt.Result.t('a, ParseError.failure),
+      Js.Json.t => Belt.Result.t('a => 'b, ParseError.failure),
       Js.Json.t
     ) =>
-    Belt.Result.t('b, Decode_ParseError.failure);
+    Belt.Result.t('b, ParseError.failure);
 
   let at:
     (
       list(string),
-      Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure),
-      Js.Json.t => Belt.Result.t('a => 'b, Decode_ParseError.failure),
+      Js.Json.t => Belt.Result.t('a, ParseError.failure),
+      Js.Json.t => Belt.Result.t('a => 'b, ParseError.failure),
       Js.Json.t
     ) =>
-    Belt.Result.t('b, Decode_ParseError.failure);
+    Belt.Result.t('b, ParseError.failure);
 
   let optionalField:
     (
       string,
-      Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure),
-      Js.Json.t => Belt.Result.t(option('a) => 'b, Decode_ParseError.failure),
+      Js.Json.t => Belt.Result.t('a, ParseError.failure),
+      Js.Json.t => Belt.Result.t(option('a) => 'b, ParseError.failure),
       Js.Json.t
     ) =>
-    Belt.Result.t('b, Decode_ParseError.failure);
+    Belt.Result.t('b, ParseError.failure);
 
   let fallbackField:
     (
       string,
-      Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure),
+      Js.Json.t => Belt.Result.t('a, ParseError.failure),
       'a,
-      Js.Json.t => Belt.Result.t('a => 'b, Decode_ParseError.failure),
+      Js.Json.t => Belt.Result.t('a => 'b, ParseError.failure),
       Js.Json.t
     ) =>
-    Belt.Result.t('b, Decode_ParseError.failure);
+    Belt.Result.t('b, ParseError.failure);
 
   let fallback:
-    (
-      Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure),
-      'a,
-      Js.Json.t
-    ) =>
-    Belt.Result.t('a, Decode_ParseError.failure);
+    (Js.Json.t => Belt.Result.t('a, ParseError.failure), 'a, Js.Json.t) =>
+    Belt.Result.t('a, ParseError.failure);
 
   let hardcoded:
     (
       'a,
-      Js.Json.t => Belt.Result.t('a => 'c, Decode_ParseError.failure),
+      Js.Json.t => Belt.Result.t('a => 'c, ParseError.failure),
       Js.Json.t
     ) =>
-    Belt.Result.t('c, Decode_ParseError.failure);
+    Belt.Result.t('c, ParseError.failure);
 
   let run:
-    (Js.Json.t, Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure)) =>
-    Belt.Result.t('a, Decode_ParseError.failure);
+    (Js.Json.t, Js.Json.t => Belt.Result.t('a, ParseError.failure)) =>
+    Belt.Result.t('a, ParseError.failure);
 
   let map:
     (
       'a => 'b,
-      Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure),
+      Js.Json.t => Belt.Result.t('a, ParseError.failure),
       Js.Json.t
     ) =>
-    Belt.Result.t('b, Decode_ParseError.failure);
+    Belt.Result.t('b, ParseError.failure);
 
   let apply:
     (
-      Js.Json.t => Belt.Result.t('a => 'b, Decode_ParseError.failure),
-      Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure),
+      Js.Json.t => Belt.Result.t('a => 'b, ParseError.failure),
+      Js.Json.t => Belt.Result.t('a, ParseError.failure),
       Js.Json.t
     ) =>
-    Belt.Result.t('b, Decode_ParseError.failure);
+    Belt.Result.t('b, ParseError.failure);
 
   let map2:
     (
       ('a, 'b) => 'c,
-      Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure),
-      Js.Json.t => Belt.Result.t('b, Decode_ParseError.failure),
+      Js.Json.t => Belt.Result.t('a, ParseError.failure),
+      Js.Json.t => Belt.Result.t('b, ParseError.failure),
       Js.Json.t
     ) =>
-    Belt.Result.t('c, Decode_ParseError.failure);
+    Belt.Result.t('c, ParseError.failure);
 
   let map3:
     (
       ('a, 'b, 'c) => 'd,
-      Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure),
-      Js.Json.t => Belt.Result.t('b, Decode_ParseError.failure),
-      Js.Json.t => Belt.Result.t('c, Decode_ParseError.failure),
+      Js.Json.t => Belt.Result.t('a, ParseError.failure),
+      Js.Json.t => Belt.Result.t('b, ParseError.failure),
+      Js.Json.t => Belt.Result.t('c, ParseError.failure),
       Js.Json.t
     ) =>
-    Belt.Result.t('d, Decode_ParseError.failure);
+    Belt.Result.t('d, ParseError.failure);
 
   let map4:
     (
       ('a, 'b, 'c, 'd) => 'e,
-      Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure),
-      Js.Json.t => Belt.Result.t('b, Decode_ParseError.failure),
-      Js.Json.t => Belt.Result.t('c, Decode_ParseError.failure),
-      Js.Json.t => Belt.Result.t('d, Decode_ParseError.failure),
+      Js.Json.t => Belt.Result.t('a, ParseError.failure),
+      Js.Json.t => Belt.Result.t('b, ParseError.failure),
+      Js.Json.t => Belt.Result.t('c, ParseError.failure),
+      Js.Json.t => Belt.Result.t('d, ParseError.failure),
       Js.Json.t
     ) =>
-    Belt.Result.t('e, Decode_ParseError.failure);
+    Belt.Result.t('e, ParseError.failure);
 
   let map5:
     (
       ('a, 'b, 'c, 'd, 'e) => 'f,
-      Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure),
-      Js.Json.t => Belt.Result.t('b, Decode_ParseError.failure),
-      Js.Json.t => Belt.Result.t('c, Decode_ParseError.failure),
-      Js.Json.t => Belt.Result.t('d, Decode_ParseError.failure),
-      Js.Json.t => Belt.Result.t('e, Decode_ParseError.failure),
+      Js.Json.t => Belt.Result.t('a, ParseError.failure),
+      Js.Json.t => Belt.Result.t('b, ParseError.failure),
+      Js.Json.t => Belt.Result.t('c, ParseError.failure),
+      Js.Json.t => Belt.Result.t('d, ParseError.failure),
+      Js.Json.t => Belt.Result.t('e, ParseError.failure),
       Js.Json.t
     ) =>
-    Belt.Result.t('f, Decode_ParseError.failure);
+    Belt.Result.t('f, ParseError.failure);
 
-  let pure: ('a, Js.Json.t) => Belt.Result.t('a, Decode_ParseError.failure);
+  let pure: ('a, Js.Json.t) => Belt.Result.t('a, ParseError.failure);
 
   let flatMap:
     (
-      ('a, Js.Json.t) => Belt.Result.t('b, Decode_ParseError.failure),
-      Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure),
+      ('a, Js.Json.t) => Belt.Result.t('b, ParseError.failure),
+      Js.Json.t => Belt.Result.t('a, ParseError.failure),
       Js.Json.t
     ) =>
-    Belt.Result.t('b, Decode_ParseError.failure);
+    Belt.Result.t('b, ParseError.failure);
 
-  let boolean: Js.Json.t => Belt.Result.t(bool, Decode_ParseError.failure);
-  let string:
-    Js.Json.t => Belt.Result.t(Js.String.t, Decode_ParseError.failure);
-  let floatFromNumber:
-    Js.Json.t => Belt.Result.t(float, Decode_ParseError.failure);
-  let intFromNumber:
-    Js.Json.t => Belt.Result.t(int, Decode_ParseError.failure);
-  let date: Js.Json.t => Belt.Result.t(Js.Date.t, Decode_ParseError.failure);
+  let boolean: Js.Json.t => Belt.Result.t(bool, ParseError.failure);
+  let string: Js.Json.t => Belt.Result.t(Js.String.t, ParseError.failure);
+  let floatFromNumber: Js.Json.t => Belt.Result.t(float, ParseError.failure);
+  let intFromNumber: Js.Json.t => Belt.Result.t(int, ParseError.failure);
+  let date: Js.Json.t => Belt.Result.t(Js.Date.t, ParseError.failure);
   let variantFromJson:
     (
-      Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure),
+      Js.Json.t => Belt.Result.t('a, ParseError.failure),
       'a => option('b),
       Js.Json.t
     ) =>
-    Belt.Result.t('b, Decode_ParseError.failure);
+    Belt.Result.t('b, ParseError.failure);
   let variantFromString:
     (string => option('a), Js.Json.t) =>
-    Belt.Result.t('a, Decode_ParseError.failure);
+    Belt.Result.t('a, ParseError.failure);
   let variantFromInt:
-    (int => option('a), Js.Json.t) =>
-    Belt.Result.t('a, Decode_ParseError.failure);
+    (int => option('a), Js.Json.t) => Belt.Result.t('a, ParseError.failure);
 
   let optional:
-    (Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure), Js.Json.t) =>
-    Belt.Result.t(option('a), Decode_ParseError.failure);
+    (Js.Json.t => Belt.Result.t('a, ParseError.failure), Js.Json.t) =>
+    Belt.Result.t(option('a), ParseError.failure);
 
   let array:
-    (Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure), Js.Json.t) =>
-    Belt.Result.t(array('a), Decode_ParseError.failure);
+    (Js.Json.t => Belt.Result.t('a, ParseError.failure), Js.Json.t) =>
+    Belt.Result.t(array('a), ParseError.failure);
   let list:
-    (Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure), Js.Json.t) =>
-    Belt.Result.t(list('a), Decode_ParseError.failure);
+    (Js.Json.t => Belt.Result.t('a, ParseError.failure), Js.Json.t) =>
+    Belt.Result.t(list('a), ParseError.failure);
 
   let tuple:
     (
-      (string, Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure)),
-      (string, Js.Json.t => Belt.Result.t('b, Decode_ParseError.failure)),
+      (string, Js.Json.t => Belt.Result.t('a, ParseError.failure)),
+      (string, Js.Json.t => Belt.Result.t('b, ParseError.failure)),
       Js.Json.t
     ) =>
-    Belt.Result.t(('a, 'b), Decode_ParseError.failure);
+    Belt.Result.t(('a, 'b), ParseError.failure);
 
   let dict:
-    (Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure), Js.Json.t) =>
-    Belt.Result.t(Js.Dict.t('a), Decode_ParseError.failure);
+    (Js.Json.t => Belt.Result.t('a, ParseError.failure), Js.Json.t) =>
+    Belt.Result.t(Js.Dict.t('a), ParseError.failure);
 
   let oneOf:
     (
-      Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure),
-      list(Js.Json.t => Belt.Result.t('a, Decode_ParseError.failure)),
+      Js.Json.t => Belt.Result.t('a, ParseError.failure),
+      list(Js.Json.t => Belt.Result.t('a, ParseError.failure)),
       Js.Json.t
     ) =>
-    Belt.Result.t('a, Decode_ParseError.failure);
+    Belt.Result.t('a, ParseError.failure);
 };

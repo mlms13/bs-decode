@@ -33,6 +33,32 @@ let jsonStringBlue: Js.Json.t = [%raw {| "blue" |}];
 let jsonStringYellow: Js.Json.t = [%raw {| "yellow" |}];
 let jsonIntFive: Js.Json.t = [%raw {| 5 |}];
 
+let jsonShapeSquare: Js.Json.t = [%raw {| { "kind": "Square", "side": 4 } |}];
+let jsonShapeCircle: Js.Json.t = [%raw
+  {| { "kind": "Circle", "radius": 2 } |}
+];
+let jsonShapeRectangle: Js.Json.t = [%raw
+  {|
+  {
+    "kind": "Rectangle",
+    "width": 3.5,
+    "height": 7
+  }
+  |}
+];
+
+let jsonShapeInvalid: Js.Json.t = [%raw
+  {|
+  {
+    "kind": "Line",
+    "points": [
+      { "x": 4, "y": 0 },
+      { "x": 4, "y": 4 }
+    ]
+  }
+  |}
+];
+
 // typed variants and converters
 [@bs.deriving jsConverter]
 type color = [ | `blue | `red | `green];
