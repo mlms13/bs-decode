@@ -19,6 +19,7 @@
     "type": "git",
     "url": "github.com/mlms13/bs-decode"
   },
+  "bugs": "https://github.com/mlms13/bs-decode/issues",
   "keywords": [
     "reasonml",
     "bucklescript",
