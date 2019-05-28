@@ -17,7 +17,7 @@
   "homepage": "https://mlms13.github.io/bs-decode/docs",
   "repository": {
     "type": "git",
-    "url": "github.com/mlms13/bs-decode"
+    "url": "https://github.com/mlms13/bs-decode.git"
   },
   "bugs": "https://github.com/mlms13/bs-decode/issues",
   "keywords": [
