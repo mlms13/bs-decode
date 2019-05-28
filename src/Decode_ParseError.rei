@@ -1,7 +1,8 @@
 type t('a) =
   | Val('a, Js.Json.t)
-  | Arr(Relude.Globals.NonEmpty.List.t((int, t('a))))
-  | Obj(Relude.Globals.NonEmpty.List.t((string, objError('a))))
+  | TriedMultiple(Relude.NonEmpty.List.t(t('a)))
+  | Arr(Relude.NonEmpty.List.t((int, t('a))))
+  | Obj(Relude.NonEmpty.List.t((string, objError('a))))
 and objError('a) =
   | MissingField
   | InvalidField(t('a));

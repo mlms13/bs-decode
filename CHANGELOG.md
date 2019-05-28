@@ -7,6 +7,7 @@ The following changes are currently in the `master` branch but have not been pub
 - `Decode.fallback` doesn't assume you want to work with `field`s, but you can use `Decode.(fallback(field("x", string), "default"))` if you want the old behavior
 - `Decode.Pipeline.fallback` has the same new behavior, but it provides `fallbackField` to achieve the old behavior
 - `Decode.ParseError.map` has been removed (it wasn't used internally or documented)
+- The `Decode.ParseError` variant type now includes a `TriedMultiple` constructor. This is only a breaking change if you are matching directly on values of this type.
 
 ### :bug: Bug fixes
 

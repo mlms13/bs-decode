@@ -3,7 +3,7 @@ id: return-types
 title: Return Types
 ---
 
-`bs-decode` provides functions that will return values wrapped in either an `option` or a `Belt.Result.t`.
+`bs-decode` provides functions that will return values wrapped in either an `option` or a `Belt.Result.t`. Many of these error handling ideas were inspired by [Composable Error Handling in OCaml](http://keleshev.com/composable-error-handling-in-ocaml), which is a great read that goes into more detail than our summary here.
 
   - `Decode.AsOption`: all functions return `Some(value)` for success or `None` for failures
   - `Decode.AsResult.OfParseError`: all functions return `Ok(value)` for success, or `Error(Decode.ParseError.t)` for failures

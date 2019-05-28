@@ -2,6 +2,7 @@ open Relude.Globals;
 
 type t('a) =
   | Val('a, Js.Json.t)
+  | TriedMultiple(NonEmpty.List.t(t('a)))
   | Arr(NonEmpty.List.t((int, t('a))))
   | Obj(NonEmpty.List.t((string, objError('a))))
 and objError('a) =
@@ -20,13 +21,21 @@ let objPure = (field, err) => Obj(NonEmpty.List.pure((field, err)));
  */
 let combine = (a, b) =>
   switch (a, b) {
-  | (Arr(nela), Arr(nelb)) => Arr(NonEmpty.List.concat(nela, nelb))
-  | (Obj(nela), Obj(nelb)) => Obj(NonEmpty.List.concat(nela, nelb))
-  /* | (Val(a, jsona), Val(b, jsonb)) => f((a, jsona), (b, jsonb)) */
+  | (Arr(xs), Arr(ys)) => Arr(NonEmpty.List.concat(xs, ys))
+  | (Obj(xs), Obj(ys)) => Obj(NonEmpty.List.concat(xs, ys))
+  | (TriedMultiple(xs), x) =>
+    TriedMultiple(NonEmpty.List.(concat(xs, pure(x))))
   | (Val(_), _)
   | (Arr(_), _)
   | (Obj(_), _) => a
   };
+
+let makeTriedMultiple =
+  fun
+  | TriedMultiple(_) as x => x
+  | Val(_) as err => TriedMultiple(NonEmpty.List.pure(err))
+  | Arr(_) as err => TriedMultiple(NonEmpty.List.pure(err))
+  | Obj(_) as err => TriedMultiple(NonEmpty.List.pure(err));
 
 /**
  * Traverse the tree of errors and produce properly-indented error strings:
@@ -46,9 +55,18 @@ let rec toDebugString = (~level=0, ~pre="", innerToString, v) => {
   let msg =
     switch (v) {
     | Val(x, json) => innerToString(x, json)
-    | Arr(nel) =>
+    | TriedMultiple(xs) =>
       let childMessages =
-        nel
+        xs
+        |> NonEmpty.List.map(toDebugString(~level=level + 1, innerToString))
+        |> NonEmpty.List.toSequence
+        |> List.String.joinWith("\n");
+
+      "Attempted multiple decoders, which all failed:\n" ++ childMessages;
+
+    | Arr(xs) =>
+      let childMessages =
+        xs
         |> NonEmpty.List.map(((i, err)) =>
              toDebugString(
                ~level=level + 1,
@@ -132,6 +150,12 @@ module ResultOf = (Err: ValError) => {
       Result.error(objPure(field, MissingField));
     let objErr = field =>
       Result.mapError(x => objPure(field, InvalidField(x)));
-    let lazyAlt = (res, fn) => Result.fold(_ => fn(), Result.ok, res);
+    let lazyAlt = (res, fn) =>
+      switch (res) {
+      | Belt.Result.Ok(_) as ok => ok
+      | Error(x) =>
+        let err = makeTriedMultiple(x);
+        Result.mapError(combine(err), fn());
+      };
   };
 };

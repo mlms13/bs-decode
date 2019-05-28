@@ -13,9 +13,9 @@ Simple decoders can be wrapped in `D.optional` to allow them to tolerate `null` 
 let jsonNull = Js.Json.null;
 let jsonStr = Js.Json.string("foo");
 
-D.optional(D.string, jsonNull); /* Ok(None) */
-D.optional(D.string, jsonStr); /* Ok(Some("foo")) */
-D.optional(D.boolean, jsonStr); /* Error(Val(`ExpectedBoolean, jsonStr)) */
+Decode.(optional(string, jsonNull)); // Ok(None)
+Decode.(optional(string, jsonStr)); // Ok(Some("foo"))
+Decode.(optional(boolean, jsonStr)); // Error(Val(`ExpectedBoolean, jsonStr))
 ```
 
 Note that unlike Elm's `Json.Decode`, optional values aren't atuomatically recovered as `None`. An optional `string` decoder will fail when given a JSON value that isn't a string.
@@ -32,30 +32,28 @@ let json: Js.Json.t = [%bs.raw {|
   }
 |}];
 
-D.optionalField("name", D.string, json); /* Ok(Some("Michael")) */
-D.optionalField("age", D.intFromNumber, json); /* Ok(None) */
-D.optionalField("isAdmin", D.boolean, json); /* Ok(None) */
-D.optionalField("name", D.boolean, json); /* Error(...) */
+Decode.(optionalField("name", string, json)); // Ok(Some("Michael"))
+Decode.(optionalField("age", intFromNumber, json)); // Ok(None)
+Decode.(optionalField("isAdmin", boolean, json)); // Ok(None)
+Decode.(optionalField("name", boolean, json)); // Error(...)
 
-/* compare with `optional` which is probably not what you want: */
+// compare with `optional` which is probably not what you want:
 
-/* Error(Val(`ExpectedInt, ...)) */
-D.optional(D.field("age", D.intFromNumber), json);
+// Error(Val(`ExpectedInt, ...))
+Decode.(optional(field("age", intFromNumber), json));
 
-/* Error(Obj(NonEmptyList.pure(("isAdmin", MissingField)))) */
-D.field("isAdmin", D.optional(D.boolean), json);
+// Error(Obj(NonEmptyList.pure(("isAdmin", MissingField))))
+Decode.(field("isAdmin", optional(boolean), json));
 ```
 
 **Try Multiple Decoders**
 
-If a JSON value could be one of several types, you can try multiple decoders in order using `oneOf`. Decoding will end successfully on the first success, or with an error once all provided decoders have been tried.
+If a JSON value could be one of several types, you can try multiple decoders in order using `alt` or `oneOf`. Decoding will end successfully on the first success, or with a `TriedMultiple` error once all provided decoders have been attempted.
 
-Note that for now, `oneOf` expects a NonEmptyList of decoders. This can be a pain to construct, so the API is likely to change in a future version.
+Note that each attempt is evaluated lazily, so subsequent decoders will only be run if no success has been found yet.
 
 ```re
-module Nel = NonEmptyList; /* from bs-nonempty */
-
-/* each decoder in `oneOf` has to return the same type */
+// each decoder in `oneOf` has to return the same type
 type t =
   | B(bool)
   | S(string)
@@ -64,13 +62,14 @@ type t =
 
 let json = Js.Json.string("foo");
 
-let decodeB = json => D.boolean(json) -> Belt.Result.map(v => B(v));
-let decodeS = json => D.string(json) -> Belt.Result.map(v => S(v));
-let decodeI = json => D.intFromNumber(json) -> Belt.Result.map(v => I(v));
-let decodeF = json => D.floatFromNumber(json) -> Belt.Result.map(v => F(v));
+// functions from `json => Result.t(t, ...)`
+let decodeB = Decode.(boolean |> map(v => B(v)));
+let decodeS = Decode.(string |> p(v => S(v)));
+let decodeI = Decode.(intFromNumber |> map(v => I(v)));
+let decodeF = Decode.(floatFromNumber |> map(v => F(v)));
 
-/* here comes the part you actually care about */
+// here comes the part you actually care about
 
-D.oneOf(Nel.make(decodeB, [decodeS, decodeI]), json); /* Ok(S("foo")) */
-D.oneOf(Nel.make(decodeB, [decodeI]), json); /* Error(Val(`ExpectedInt, ...)) */
+Decode.oneOf(decodeB, [decodeS, decodeI], json); // Ok(S("foo"))
+Decode.oneOf(decodeB, [decodeI], json); // Error(Val(`ExpectedInt, ...))
 ```

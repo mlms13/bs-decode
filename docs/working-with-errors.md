@@ -1,6 +1,6 @@
 ---
-id: handling-errors
-title: Handling Errors
+id: working-with-errors
+title: Working With Errors
 ---
 
 ## The Error Type
@@ -24,11 +24,12 @@ type failure = [
 
 You'll note that this is a polymorphic variant, allowing you to customize the underlying kinds of errors.
 
-The full error type, used as the payload of the Result's `Error` constructor, looks like:
+The simplified error type, used as the payload of the Result's `Error` constructor, looks something like:
 
 ```re
 type t =
   | Val(failure, Js.Json.t)
+  | TriedMultiple(NonEmptyList.t(t))
   | Arr(NonEmptyList.t((int, t)))
   | Obj(NonEmptyList.t((string, objError)))
 and objError =
@@ -36,9 +37,10 @@ and objError =
   | InvalidField(t);
 ```
 
-Ultimately, this is saying that a `ParseError` will be either a `Val` error, an `Arr` error, or an `Obj` error.
+Ultimately, this is saying that a `ParseError` will be either a `Val` error, a `TriedMultiple` error, an `Arr` error, or an `Obj` error.
 
 - `Val` errors contain one of the primitive errors defined above and the JSON that it failed to decode
+- `TriedMultiple` contains a non-empty list of other errors, resulting from `alt`/`oneOf` calls where each attempt fails
 - `Arr` errors hold a non-empty list of position/error pairs
 - `Obj` errors hold a non-empty list of fieldname/ojbect-error pairs
   - Object errors happen either because the field is a `MissingField`, or

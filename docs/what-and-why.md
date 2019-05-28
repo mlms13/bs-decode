@@ -15,6 +15,6 @@ Instead, `bs-decode` chooses to represent errors as data, in the form of `option
 
 ## Complete Errors
 
-When decoding large objects or arrays of JSON data, you might encounter multiple failures. By collecting each failure instead of stopping once the first failure is reached, `bs-decode` gives you much more complete information for debugging. See [Handling Errors](handling-errors.md) for examples of this.
+When decoding large objects or arrays of JSON data, you might encounter multiple failures. By collecting each failure instead of stopping once the first failure is reached, `bs-decode` gives you much more complete information for debugging. See [Working With Errors](working-with-errors.md) for examples of this.
 
 Additionally, having access to a complete, structured representation of errors could allow for creative recovery or representation of those failures.

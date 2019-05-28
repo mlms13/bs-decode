@@ -17,9 +17,6 @@
       "decoding-variants": {
         "title": "Decoding Variants"
       },
-      "handling-errors": {
-        "title": "Handling Errors"
-      },
       "installation": {
         "title": "Installation"
       },
@@ -31,6 +28,9 @@
       },
       "what-and-why": {
         "title": "What & Why"
+      },
+      "working-with-errors": {
+        "title": "Working With Errors"
       }
     },
     "links": {

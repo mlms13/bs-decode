@@ -5,7 +5,7 @@
       "installation",
       "simple-example",
       "return-types",
-      "handling-errors"
+      "working-with-errors"
     ],
     "Decoding Guide": [
       "decoding-simple-values",

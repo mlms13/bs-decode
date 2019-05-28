@@ -45,6 +45,22 @@ describe("Simple decoders", () => {
     |> toEqual(valErr(`ExpectedValidDate, Sample.jsonString))
   );
 
+  test("date (failure)", () =>
+    expect(Decode.date(Sample.jsonNull))
+    |> toEqual(
+         Result.error(
+           Decode.ParseError.(
+             TriedMultiple(
+               NonEmpty.List.make(
+                 Val(`ExpectedNumber, Sample.jsonNull),
+                 [Val(`ExpectedString, Sample.jsonNull)],
+               ),
+             )
+           ),
+         ),
+       )
+  );
+
   test("variant", () =>
     expect(Decode.variantFromString(Sample.colorFromJs, Sample.jsonString))
     |> toEqual(valErr(`ExpectedValidOption, Sample.jsonString))
@@ -95,21 +111,58 @@ describe("Inner decoders", () => {
        )
   );
 
-  test("oneOf", () => {
-    let decodeUnion =
-      Decode.(
-        oneOf(
-          map(Sample.unionS, string),
-          [
-            map(Sample.unionN, optional(floatFromNumber)),
-            map(Sample.unionB, boolean),
-          ],
-        )
-      );
+  let decodeUnion =
+    Decode.(
+      oneOf(
+        map(Sample.unionS, string),
+        [
+          map(Sample.unionN, optional(floatFromNumber)),
+          map(Sample.unionB, boolean),
+        ],
+      )
+    );
 
+  let failureString = {|Attempted multiple decoders, which all failed:
+    Expected string but found {}
+    Expected number but found {}
+    Expected boolean but found {}|};
+
+  test("oneOf (success on first)", () =>
+    expect(decodeUnion(Sample.jsonString))
+    |> toEqual(Result.ok(Sample.S(Sample.valString)))
+  );
+
+  test("oneOf (success on last)", () =>
     expect(decodeUnion(Sample.jsonBool))
-    |> toEqual(Result.ok(Sample.B(Sample.valBool)));
-  });
+    |> toEqual(Result.ok(Sample.B(Sample.valBool)))
+  );
+
+  test("oneOf (failure)", () =>
+    expect(decodeUnion(Sample.jsonDictEmpty))
+    |> toEqual(
+         Result.error(
+           Decode.ParseError.(
+             TriedMultiple(
+               NonEmpty.List.make(
+                 Val(`ExpectedString, Sample.jsonDictEmpty),
+                 [
+                   Val(`ExpectedNumber, Sample.jsonDictEmpty),
+                   Val(`ExpectedBoolean, Sample.jsonDictEmpty),
+                 ],
+               ),
+             )
+           ),
+         ),
+       )
+  );
+
+  test("oneOf (failure to string)", () =>
+    expect(
+      decodeUnion(Sample.jsonDictEmpty)
+      |> Result.mapError(Decode.ParseError.failureToDebugString),
+    )
+    |> toEqual(Result.error(failureString))
+  );
 });
 
 describe("Large, nested decoder", () => {
