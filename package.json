@@ -1,6 +1,6 @@
 {
   "name": "bs-decode",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "description": "Type-safe JSON decoding for ReasonML and OCaml",
   "main": "index.js",
   "directories": {
