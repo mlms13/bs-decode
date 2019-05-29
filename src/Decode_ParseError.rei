@@ -14,10 +14,9 @@ let objPure: (string, objError('a)) => t('a);
 let combine: (t('a), t('a)) => t('a);
 
 let toDebugString:
-  (~level: int=?, ~pre: string=?, ('a, Js.Json.t) => string, t('a)) =>
-  Relude_String.Monoid.t;
+  (~level: int=?, ~pre: string=?, ('a, Js.Json.t) => string, t('a)) => string;
 
-let failureToDebugString: t(DecodeBase.failure) => Relude_String.Monoid.t;
+let failureToDebugString: t(DecodeBase.failure) => string;
 
 module type ValError = {
   type t;
