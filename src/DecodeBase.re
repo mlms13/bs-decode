@@ -125,17 +125,20 @@ module DecodeBase = (T: TransformError, M: MONAD with type t('a) = T.t('a)) => {
     };
 
   let array = decode => {
-    let decodeEach =
+    let map2 = (f, a, b) => M.map(f, a) |> M.apply(_, b);
+    let decodeEach = (arr, _json) =>
       Array.foldLeft(
         ((pos, acc), curr) => {
-          let decoded = _ => T.arrErr(pos, decode(curr));
+          let decoded = T.arrErr(pos, decode(curr));
           let result = map2(flip(Array.append), acc, decoded);
           (pos + 1, result);
         },
-        (0, pure([||])),
-      );
+        (0, M.pure([||])),
+        arr,
+      )
+      |> snd;
 
-    value(Js.Json.decodeArray, `ExpectedArray) |> flatMap(decodeEach >> snd);
+    value(Js.Json.decodeArray, `ExpectedArray) |> flatMap(decodeEach);
   };
 
   let list = decode => array(decode) |> map(Array.toList);

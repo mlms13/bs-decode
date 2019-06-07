@@ -415,3 +415,15 @@ describe("Decode records", () => {
        )
   );
 });
+
+// here we import a gigantic json file (as raw json, to avoid slowing down the
+// compiler)
+[@bs.module]
+external bigjson: Js.Json.t = "./utils/BigJson.json"
+
+describe("Big JSON array", () =>
+  test("Doesn't blow up", () =>
+    expect(Decode.array(Option.pure, bigjson) |> Option.isSome)
+    |> toEqual(true)
+  )
+)
