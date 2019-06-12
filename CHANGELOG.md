@@ -1,6 +1,16 @@
-## Unreleased
+## 0.6.2 (Jun 7, 2019)
 
-The following changes are currently in the `master` branch but have not been published in a tagged release yet.
+### :bug: Bug fixes
+
+- `Decode.array` (and its friend `list`) had a regression where they could fail in some browsers when given large amounts of data, but stack safety has been restored
+
+## 0.6.1 (May 28, 2019)
+
+### :heavy_check_mark: Code quality
+
+- Fix links in `package.json`
+
+## 0.6.0 (May 27, 2019)
 
 ### :rotating_light: Breaking
 
