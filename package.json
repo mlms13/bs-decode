@@ -33,15 +33,15 @@
   "license": "MIT",
   "peerDependencies": {
     "bs-abstract": "^0.17.0",
-    "relude": "^0.12.1"
+    "relude": "^0.14.0"
   },
   "devDependencies": {
     "@glennsl/bs-jest": "^0.4.8",
     "bs-abstract": "^0.17.0",
     "bs-platform": "^5.0.3",
-    "coveralls": "^3.0.3",
+    "coveralls": "^3.0.4",
     "jest": "^24.8.0",
-    "relude": "^0.12.1"
+    "relude": "^0.14.0"
   },
   "jest": {
     "coveragePathIgnorePatterns": [

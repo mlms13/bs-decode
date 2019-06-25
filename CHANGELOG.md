@@ -1,3 +1,9 @@
+## 0.7.0 (Jun 25, 2019)
+
+### :rotating_light: Breaking
+
+- `relude` and `bs-abstract` are now peerDependencies. This means you'll need to add these dependencies to your own `package.json`, and you're much less likely to end up with duplicate versions of these packages.
+
 ## 0.6.2 (Jun 7, 2019)
 
 ### :bug: Bug fixes
