@@ -158,6 +158,44 @@ let tuple5:
   ) =>
   Belt.Result.t(('a, 'b, 'c, 'd, 'e), NonEmptyList.t(string));
 
+let tupleAtLeast2:
+  (
+    Js.Json.t => Belt.Result.t('a, NonEmptyList.t(string)),
+    Js.Json.t => Belt.Result.t('b, NonEmptyList.t(string)),
+    Js.Json.t
+  ) =>
+  Belt.Result.t(('a, 'b), NonEmptyList.t(string));
+
+let tupleAtLeast3:
+  (
+    Js.Json.t => Belt.Result.t('a, NonEmptyList.t(string)),
+    Js.Json.t => Belt.Result.t('b, NonEmptyList.t(string)),
+    Js.Json.t => Belt.Result.t('c, NonEmptyList.t(string)),
+    Js.Json.t
+  ) =>
+  Belt.Result.t(('a, 'b, 'c), NonEmptyList.t(string));
+
+let tupleAtLeast4:
+  (
+    Js.Json.t => Belt.Result.t('a, NonEmptyList.t(string)),
+    Js.Json.t => Belt.Result.t('b, NonEmptyList.t(string)),
+    Js.Json.t => Belt.Result.t('c, NonEmptyList.t(string)),
+    Js.Json.t => Belt.Result.t('d, NonEmptyList.t(string)),
+    Js.Json.t
+  ) =>
+  Belt.Result.t(('a, 'b, 'c, 'd), NonEmptyList.t(string));
+
+let tupleAtLeast5:
+  (
+    Js.Json.t => Belt.Result.t('a, NonEmptyList.t(string)),
+    Js.Json.t => Belt.Result.t('b, NonEmptyList.t(string)),
+    Js.Json.t => Belt.Result.t('c, NonEmptyList.t(string)),
+    Js.Json.t => Belt.Result.t('d, NonEmptyList.t(string)),
+    Js.Json.t => Belt.Result.t('e, NonEmptyList.t(string)),
+    Js.Json.t
+  ) =>
+  Belt.Result.t(('a, 'b, 'c, 'd, 'e), NonEmptyList.t(string));
+
 let tupleFromFields:
   (
     (string, Js.Json.t => Belt.Result.t('a, NonEmptyList.t(string))),

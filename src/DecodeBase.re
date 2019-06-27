@@ -28,6 +28,11 @@ module Tuple = {
     fun
     | [|a, b, c, d, e|] => Some((a, b, c, d, e))
     | _ => None;
+
+  let fromArrayAtLeast2 = xs => Array.take(2, xs) |> fromArray;
+  let fromArrayAtLeast3 = xs => Array.take(3, xs) |> fromArray3;
+  let fromArrayAtLeast4 = xs => Array.take(4, xs) |> fromArray4;
+  let fromArrayAtLeast5 = xs => Array.take(5, xs) |> fromArray5;
 };
 
 type failure = [
@@ -196,6 +201,33 @@ module DecodeBase = (T: TransformError, M: MONAD with type t('a) = T.t('a)) => {
 
   let tuple5 = (da, db, dc, dd, de) =>
     tupleN(5, Tuple.fromArray5, ((a, b, c, d, e)) =>
+      map5(
+        Tuple.make5,
+        _ => da(a),
+        _ => db(b),
+        _ => dc(c),
+        _ => dd(d),
+        _ => de(e),
+      )
+    );
+
+  let tupleAtLeast2 = (da, db) =>
+    tupleN(2, Tuple.fromArrayAtLeast2, ((a, b)) =>
+      map2(Tuple.make2, _ => da(a), _ => db(b))
+    );
+
+  let tupleAtLeast3 = (da, db, dc) =>
+    tupleN(3, Tuple.fromArrayAtLeast3, ((a, b, c)) =>
+      map3(Tuple.make3, _ => da(a), _ => db(b), _ => dc(c))
+    );
+
+  let tupleAtLeast4 = (da, db, dc, dd) =>
+    tupleN(4, Tuple.fromArrayAtLeast4, ((a, b, c, d)) =>
+      map4(Tuple.make4, _ => da(a), _ => db(b), _ => dc(c), _ => dd(d))
+    );
+
+  let tupleAtLeast5 = (da, db, dc, dd, de) =>
+    tupleN(5, Tuple.fromArrayAtLeast5, ((a, b, c, d, e)) =>
       map5(
         Tuple.make5,
         _ => da(a),

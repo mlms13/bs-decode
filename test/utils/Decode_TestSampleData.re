@@ -25,6 +25,7 @@ let jsonTuple: Js.Json.t = [%raw {| ["A", true ] |}];
 let jsonTuple3: Js.Json.t = [%raw {| ["A", true, 3 ] |}];
 let jsonTuple4: Js.Json.t = [%raw {| ["A", true, false, "B" ] |}];
 let jsonTuple5: Js.Json.t = [%raw {| ["A", "B", "C", "D", "E" ] |}];
+let jsonTuple6: Js.Json.t = [%raw {| ["A", "B", "C", "D", "E", "F"] |}];
 
 // Nested typed values
 let valArrayEmpty = [||];

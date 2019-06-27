@@ -195,6 +195,41 @@ describe("Nested decoders", () => {
     |> toEqual(Some(Sample.valTuple5))
   );
 
+  test("tupleAtLeast2", () =>
+    expect(Decode.(tupleAtLeast2(string, string, Sample.jsonTuple6)))
+    |> toEqual(Some(("A", "B")))
+  );
+
+  test("tupleAtLeast3", () =>
+    expect(Decode.(tupleAtLeast3(string, string, string, Sample.jsonTuple6)))
+    |> toEqual(Some(("A", "B", "C")))
+  );
+
+  test("tupleAtLeast4", () =>
+    expect(
+      Decode.(
+        tupleAtLeast4(string, string, string, string, Sample.jsonTuple6)
+      ),
+    )
+    |> toEqual(Some(("A", "B", "C", "D")))
+  );
+
+  test("tupleAtLeast5", () =>
+    expect(
+      Decode.(
+        tupleAtLeast5(
+          string,
+          string,
+          string,
+          string,
+          string,
+          Sample.jsonTuple6,
+        )
+      ),
+    )
+    |> toEqual(Some(("A", "B", "C", "D", "E")))
+  );
+
   test("dict (succeeds)", () =>
     expect(Decode.(dict(floatFromNumber, Sample.jsonDictFloat)))
     |> toEqual(Some(Sample.valDictFloat))

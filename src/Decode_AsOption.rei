@@ -112,6 +112,39 @@ let tuple5:
   ) =>
   option(('a, 'b, 'c, 'd, 'e));
 
+let tupleAtLeast2:
+  (Js.Json.t => option('a), Js.Json.t => option('b), Js.Json.t) =>
+  option(('a, 'b));
+
+let tupleAtLeast3:
+  (
+    Js.Json.t => option('a),
+    Js.Json.t => option('b),
+    Js.Json.t => option('c),
+    Js.Json.t
+  ) =>
+  option(('a, 'b, 'c));
+
+let tupleAtLeast4:
+  (
+    Js.Json.t => option('a),
+    Js.Json.t => option('b),
+    Js.Json.t => option('c),
+    Js.Json.t => option('d),
+    Js.Json.t
+  ) =>
+  option(('a, 'b, 'c, 'd));
+
+let tupleAtLeast5:
+  (
+    Js.Json.t => option('a),
+    Js.Json.t => option('b),
+    Js.Json.t => option('c),
+    Js.Json.t => option('d),
+    Js.Json.t => option('e),
+    Js.Json.t
+  ) =>
+  option(('a, 'b, 'c, 'd, 'e));
 let tupleFromFields:
   (
     (string, Js.Json.t => option('a)),
