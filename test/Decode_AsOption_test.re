@@ -6,78 +6,78 @@ module Decode = Decode.AsOption;
 module Sample = Decode_TestSampleData;
 
 describe("Simple decoders", () => {
-  test("Decode bool (success)", () =>
+  test("bool (success)", () =>
     expect(Decode.boolean(Sample.jsonBool))
     |> toEqual(Some(Sample.valBool))
   );
 
-  test("Decode bool (fails on null)", () =>
+  test("bool (fails on null)", () =>
     expect(Decode.boolean(Sample.jsonNull)) |> toEqual(None)
   );
 
-  test("Decode bool (fails on int)", () =>
+  test("bool (fails on int)", () =>
     expect(Decode.boolean(Sample.jsonInt)) |> toEqual(None)
   );
 
-  test("Decode bool (fails on string)", () =>
+  test("bool (fails on string)", () =>
     expect(Decode.boolean(Sample.jsonStringTrue)) |> toEqual(None)
   );
 
-  test("Decode string (success)", () =>
+  test("string (success)", () =>
     expect(Decode.string(Sample.jsonString))
     |> toEqual(Some(Sample.valString))
   );
 
-  test("Decode string (fails on float)", () =>
+  test("string (fails on float)", () =>
     expect(Decode.string(Sample.jsonFloat)) |> toEqual(None)
   );
 
-  test("Decode float (success)", () =>
+  test("float (success)", () =>
     expect(Decode.floatFromNumber(Sample.jsonFloat))
     |> toEqual(Some(Sample.valFloat))
   );
 
-  test("Decode float (fails on string)", () =>
+  test("float (fails on string)", () =>
     expect(Decode.floatFromNumber(Sample.jsonString)) |> toEqual(None)
   );
 
-  test("Decode int (success)", () =>
+  test("int (success)", () =>
     expect(Decode.intFromNumber(Sample.jsonInt))
     |> toEqual(Some(Sample.valInt))
   );
 
-  test("Decode int (succeeds on zero)", () =>
+  test("int (succeeds on zero)", () =>
     expect(Decode.intFromNumber(Sample.jsonIntZero))
     |> toEqual(Some(Sample.valIntZero))
   );
 
-  test("Decode int (fails on string)", () =>
+  test("int (fails on string)", () =>
     expect(Decode.intFromNumber(Sample.jsonString)) |> toEqual(None)
   );
 
-  test("Decode int (fails on float)", () =>
+  test("int (fails on float)", () =>
     expect(Decode.intFromNumber(Sample.jsonFloat)) |> toEqual(None)
   );
 
-  test("Decode date (succeeds on valid string)", () =>
+  test("date (succeeds on valid string)", () =>
     expect(Decode.date(Sample.jsonDateString))
     |> toEqual(Some(Sample.valDateString))
   );
 
-  test("Decode date (succeeds on valid number)", () =>
+  test("date (succeeds on valid number)", () =>
     expect(Decode.date(Sample.jsonDateNumber))
     |> toEqual(Some(Sample.valDateNumber))
   );
 
-  test("Decode date (fails on invalid string)", () =>
+  test("date (fails on invalid string)", () =>
     expect(Decode.date(Sample.jsonString)) |> toEqual(None)
   );
 
-  test("Decode date (fails on invalid number)", () =>
+  test("date (fails on invalid number)", () =>
     expect(Decode.date(Js.Json.number(Js.Float._NaN))) |> toEqual(None)
   );
 
-  test("Decode date (fails on null)", () =>
+  test("date (fails on null)", () =>
     expect(Decode.date(Sample.jsonNull)) |> toEqual(None)
   );
 });
@@ -109,60 +109,103 @@ describe("Variant decoders", () => {
 });
 
 describe("Nested decoders", () => {
-  test("Decode optional float (succeeds on null)", () =>
+  test("optional float (succeeds on null)", () =>
     expect(Decode.(optional(floatFromNumber, Sample.jsonNull)))
     |> toEqual(Some(None))
   );
 
-  test("Decode optional float (succeeds on float)", () =>
+  test("optional float (succeeds on float)", () =>
     expect(Decode.(optional(floatFromNumber, Sample.jsonFloat)))
     |> toEqual(Some(Some(Sample.valFloat)))
   );
 
-  test("Decode optional float (fails on bool)", () =>
+  test("optional float (fails on bool)", () =>
     expect(Decode.(optional(floatFromNumber, Sample.jsonBool)))
     |> toEqual(None)
   );
 
-  test("Decode array (succeeds)", () =>
+  test("array (succeeds)", () =>
     expect(Decode.(array(string, Sample.jsonArrayString)))
     |> toEqual(Some(Sample.valArrayString))
   );
 
-  test("Decode array (succeeds on empty)", () =>
+  test("array (succeeds on empty)", () =>
     expect(Decode.(array(string, Sample.jsonArrayEmpty)))
     |> toEqual(Some(Sample.valArrayEmpty))
   );
 
-  test("Decode array (fails on non-array)", () =>
+  test("array (fails on non-array)", () =>
     expect(Decode.(array(string, Sample.jsonString))) |> toEqual(None)
   );
 
-  test("Decode array (fails on invalid inner data)", () =>
+  test("array (fails on invalid inner data)", () =>
     expect(Decode.(array(boolean, Sample.jsonArrayString))) |> toEqual(None)
   );
 
-  test("Decode list (succeeds)", () =>
+  test("list (succeeds)", () =>
     expect(Decode.(list(string, Sample.jsonArrayString)))
     |> toEqual(Some(Sample.valListString))
   );
 
-  test("Decode list (succeeds on empty)", () =>
+  test("list (succeeds on empty)", () =>
     expect(Decode.(list(string, Sample.jsonArrayEmpty)))
     |> toEqual(Some(Sample.valListEmpty))
   );
 
-  test("Decode dict (succeeds)", () =>
+  test("tuple2 (succeeds)", () =>
+    expect(Decode.(tuple(string, boolean, Sample.jsonTuple)))
+    |> toEqual(Some(Sample.valTuple))
+  );
+
+  test("tuple2 (fails on non-array)", () =>
+    expect(Decode.(tuple(string, boolean, Sample.jsonBool)))
+    |> toEqual(None)
+  );
+
+  test("tuple2 (fails on wrong size)", () =>
+    expect(Decode.(tuple(string, boolean, Sample.jsonArrayEmpty)))
+    |> toEqual(None)
+  );
+
+  test("tuple2 (fails on bad inner value)", () =>
+    expect(Decode.(tuple(string, string, Sample.jsonTuple)))
+    |> toEqual(None)
+  );
+
+  test("tuple3 (succeeds)", () =>
+    expect(
+      Decode.(tuple3(string, boolean, intFromNumber, Sample.jsonTuple3)),
+    )
+    |> toEqual(Some(Sample.valTuple3))
+  );
+
+  test("tuple4 (succeeds)", () =>
+    expect(
+      Decode.(tuple4(string, boolean, boolean, string, Sample.jsonTuple4)),
+    )
+    |> toEqual(Some(Sample.valTuple4))
+  );
+
+  test("tuple5 (succeeds)", () =>
+    expect(
+      Decode.(
+        tuple5(string, string, string, string, string, Sample.jsonTuple5)
+      ),
+    )
+    |> toEqual(Some(Sample.valTuple5))
+  );
+
+  test("dict (succeeds)", () =>
     expect(Decode.(dict(floatFromNumber, Sample.jsonDictFloat)))
     |> toEqual(Some(Sample.valDictFloat))
   );
 
-  test("Decode dict (succeeds on empty)", () =>
+  test("dict (succeeds on empty)", () =>
     expect(Decode.(dict(string, Sample.jsonDictEmpty)))
     |> toEqual(Some(Sample.valDictEmpty))
   );
 
-  test("Decode dict (fails on record)", () =>
+  test("dict (fails on record)", () =>
     expect(Decode.(dict(string, Sample.jsonPersonBill))) |> toEqual(None)
   );
 
@@ -215,10 +258,10 @@ describe("Nested decoders", () => {
     |> toEqual(None)
   );
 
-  test("tuple (success)", () =>
+  test("tupleFromFields (success)", () =>
     expect(
       Decode.(
-        tuple(
+        tupleFromFields(
           ("name", string),
           ("age", intFromNumber),
           Sample.jsonPersonBill,
@@ -228,9 +271,11 @@ describe("Nested decoders", () => {
     |> toEqual(Some(("Bill", 27)))
   );
 
-  test("tuple (failure)", () =>
+  test("tupleFromFields (failure)", () =>
     expect(
-      Decode.(tuple(("x", string), ("y", string), Sample.jsonDictEmpty)),
+      Decode.(
+        tupleFromFields(("x", string), ("y", string), Sample.jsonDictEmpty)
+      ),
     )
     |> toEqual(None)
   );
@@ -418,12 +463,11 @@ describe("Decode records", () => {
 
 // here we import a gigantic json file (as raw json, to avoid slowing down the
 // compiler)
-[@bs.module]
-external bigjson: Js.Json.t = "./utils/BigJson.json"
+[@bs.module] external bigjson: Js.Json.t = "./utils/BigJson.json";
 
 describe("Big JSON array", () =>
   test("Doesn't blow up", () =>
     expect(Decode.array(Option.pure, bigjson) |> Option.isSome)
     |> toEqual(true)
   )
-)
+);

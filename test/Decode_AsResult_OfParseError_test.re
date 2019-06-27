@@ -96,6 +96,26 @@ describe("Inner decoders", () => {
        )
   );
 
+  test("tuple (fails on null)", () =>
+    expect(Decode.(tuple2(string, boolean, Sample.jsonNull)))
+    |> toEqual(valErr(`ExpectedArray, Sample.jsonNull))
+  );
+
+  test("tuple (fails on wrong size)", () =>
+    expect(Decode.(tuple2(string, boolean, Sample.jsonArrayEmpty)))
+    |> toEqual(valErr(`ExpectedTuple(2), Sample.jsonArrayEmpty))
+  );
+
+  test("tuple (fails on inner decode)", () =>
+    expect(Decode.(tuple2(boolean, string, Sample.jsonTuple)))
+    |> toEqual(
+         arrErr(
+           (0, Val(`ExpectedBoolean, Js.Json.string("A"))),
+           [(1, Val(`ExpectedString, Js.Json.boolean(true)))],
+         ),
+       )
+  );
+
   test("field (missing)", () =>
     expect(Decode.field("x", Decode.string, Sample.jsonJobCeo))
     |> toEqual(objErrSingle("x", MissingField))

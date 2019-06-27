@@ -1,12 +1,42 @@
 open Relude.Globals;
 open BsAbstract.Interface;
 
+// TODO: move to Relude.Tuple
+module Tuple = {
+  let make = (a, b) => (a, b);
+  let make2 = make;
+  let make3 = (a, b, c) => (a, b, c);
+  let make4 = (a, b, c, d) => (a, b, c, d);
+  let make5 = (a, b, c, d, e) => (a, b, c, d, e);
+
+  let fromArray =
+    fun
+    | [|a, b|] => Some((a, b))
+    | _ => None;
+
+  let fromArray3 =
+    fun
+    | [|a, b, c|] => Some((a, b, c))
+    | _ => None;
+
+  let fromArray4 =
+    fun
+    | [|a, b, c, d|] => Some((a, b, c, d))
+    | _ => None;
+
+  let fromArray5 =
+    fun
+    | [|a, b, c, d, e|] => Some((a, b, c, d, e))
+    | _ => None;
+};
+
 type failure = [
   | `ExpectedBoolean
   | `ExpectedString
   | `ExpectedNumber
   | `ExpectedInt
   | `ExpectedArray
+  | `ExpectedTuple(int)
   | `ExpectedObject
   | `ExpectedValidDate
   | `ExpectedValidOption
@@ -19,6 +49,7 @@ let failureToPartialString =
   | `ExpectedNumber => "Expected number"
   | `ExpectedInt => "Expected int"
   | `ExpectedArray => "Expected array"
+  | `ExpectedTuple(size) => "Expected tuple of size " ++ Int.toString(size)
   | `ExpectedObject => "Expected object"
   | `ExpectedValidDate => "Expected a valid date"
   | `ExpectedValidOption => "Expected a valid option";
@@ -36,8 +67,6 @@ module type TransformError = {
 };
 
 module DecodeBase = (T: TransformError, M: MONAD with type t('a) = T.t('a)) => {
-  module InnerApply = Relude.Extensions.Apply.ApplyExtensions(M);
-
   module Functor: FUNCTOR with type t('a) = Js.Json.t => M.t('a) = {
     type t('a) = Js.Json.t => M.t('a);
     let map = (f, decode) => decode >> M.map(f);
@@ -143,6 +172,40 @@ module DecodeBase = (T: TransformError, M: MONAD with type t('a) = T.t('a)) => {
 
   let list = decode => array(decode) |> map(Array.toList);
 
+  let tupleN = (size, extract, decode) =>
+    array(M.pure)
+    |> map(extract)
+    |> flatMap(Option.fold(T.valErr(`ExpectedTuple(size)), decode));
+
+  let tuple = (da, db) =>
+    tupleN(2, Tuple.fromArray, ((a, b)) =>
+      map2(Tuple.make, _ => T.arrErr(0, da(a)), _ => T.arrErr(1, db(b)))
+    );
+
+  let tuple2 = tuple;
+
+  let tuple3 = (da, db, dc) =>
+    tupleN(3, Tuple.fromArray3, ((a, b, c)) =>
+      map3(Tuple.make3, _ => da(a), _ => db(b), _ => dc(c))
+    );
+
+  let tuple4 = (da, db, dc, dd) =>
+    tupleN(4, Tuple.fromArray4, ((a, b, c, d)) =>
+      map4(Tuple.make4, _ => da(a), _ => db(b), _ => dc(c), _ => dd(d))
+    );
+
+  let tuple5 = (da, db, dc, dd, de) =>
+    tupleN(5, Tuple.fromArray5, ((a, b, c, d, e)) =>
+      map5(
+        Tuple.make5,
+        _ => da(a),
+        _ => db(b),
+        _ => dc(c),
+        _ => dd(d),
+        _ => de(e),
+      )
+    );
+
   let dict = decode => {
     let rec decodeEntries =
       fun
@@ -183,19 +246,15 @@ module DecodeBase = (T: TransformError, M: MONAD with type t('a) = T.t('a)) => {
 
   let fallback = (decode, recovery) => alt(decode, pure(recovery));
 
-  let tuple = ((fieldA, decodeA), (fieldB, decodeB)) =>
-    map2(
-      (a, b) => (a, b),
-      field(fieldA, decodeA),
-      field(fieldB, decodeB),
-    );
+  let tupleFromFields = ((fieldA, decodeA), (fieldB, decodeB)) =>
+    map2(Tuple.make, field(fieldA, decodeA), field(fieldB, decodeB));
 
   let oneOf = (decode, rest) => List.foldLeft(alt, decode, rest);
 
   module Pipeline = {
     /**
-     * `succeed` returns a `json => Result` decode function that ignores the `json`
-     * argument and always returns `Ok`
+     * `succeed` returns a `json => Result` decode function that ignores the
+     * `json` argument and always returns `Ok`
      */
     let succeed = pure;
 
@@ -241,7 +300,9 @@ module DecodeBase = (T: TransformError, M: MONAD with type t('a) = T.t('a)) => {
     let optional = optional;
     let array = array;
     let list = list;
-    let tuple = tuple;
+    // TODO: tupleN
+
+    let tupleFromFields = tupleFromFields;
     let dict = dict;
     let oneOf = oneOf;
     let fallback = fallback;

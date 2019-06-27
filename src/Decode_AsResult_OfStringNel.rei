@@ -114,6 +114,52 @@ let list:
 
 let tuple:
   (
+    Js.Json.t => Belt.Result.t('a, NonEmptyList.t(string)),
+    Js.Json.t => Belt.Result.t('b, NonEmptyList.t(string)),
+    Js.Json.t
+  ) =>
+  Belt.Result.t(('a, 'b), NonEmptyList.t(string));
+
+let tuple2:
+  (
+    Js.Json.t => Belt.Result.t('a, NonEmptyList.t(string)),
+    Js.Json.t => Belt.Result.t('b, NonEmptyList.t(string)),
+    Js.Json.t
+  ) =>
+  Belt.Result.t(('a, 'b), NonEmptyList.t(string));
+
+let tuple3:
+  (
+    Js.Json.t => Belt.Result.t('a, NonEmptyList.t(string)),
+    Js.Json.t => Belt.Result.t('b, NonEmptyList.t(string)),
+    Js.Json.t => Belt.Result.t('c, NonEmptyList.t(string)),
+    Js.Json.t
+  ) =>
+  Belt.Result.t(('a, 'b, 'c), NonEmptyList.t(string));
+
+let tuple4:
+  (
+    Js.Json.t => Belt.Result.t('a, NonEmptyList.t(string)),
+    Js.Json.t => Belt.Result.t('b, NonEmptyList.t(string)),
+    Js.Json.t => Belt.Result.t('c, NonEmptyList.t(string)),
+    Js.Json.t => Belt.Result.t('d, NonEmptyList.t(string)),
+    Js.Json.t
+  ) =>
+  Belt.Result.t(('a, 'b, 'c, 'd), NonEmptyList.t(string));
+
+let tuple5:
+  (
+    Js.Json.t => Belt.Result.t('a, NonEmptyList.t(string)),
+    Js.Json.t => Belt.Result.t('b, NonEmptyList.t(string)),
+    Js.Json.t => Belt.Result.t('c, NonEmptyList.t(string)),
+    Js.Json.t => Belt.Result.t('d, NonEmptyList.t(string)),
+    Js.Json.t => Belt.Result.t('e, NonEmptyList.t(string)),
+    Js.Json.t
+  ) =>
+  Belt.Result.t(('a, 'b, 'c, 'd, 'e), NonEmptyList.t(string));
+
+let tupleFromFields:
+  (
     (string, Js.Json.t => Belt.Result.t('a, NonEmptyList.t(string))),
     (string, Js.Json.t => Belt.Result.t('b, NonEmptyList.t(string))),
     Js.Json.t
@@ -320,7 +366,7 @@ module Pipeline: {
     (Js.Json.t => Belt.Result.t('a, NonEmptyList.t(string)), Js.Json.t) =>
     Belt.Result.t(list('a), NonEmptyList.t(string));
 
-  let tuple:
+  let tupleFromFields:
     (
       (string, Js.Json.t => Belt.Result.t('a, NonEmptyList.t(string))),
       (string, Js.Json.t => Belt.Result.t('b, NonEmptyList.t(string))),

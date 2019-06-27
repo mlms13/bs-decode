@@ -108,6 +108,52 @@ let list:
 
 let tuple:
   (
+    Js.Json.t => Belt.Result.t('a, ParseError.failure),
+    Js.Json.t => Belt.Result.t('b, ParseError.failure),
+    Js.Json.t
+  ) =>
+  Belt.Result.t(('a, 'b), ParseError.failure);
+
+let tuple2:
+  (
+    Js.Json.t => Belt.Result.t('a, ParseError.failure),
+    Js.Json.t => Belt.Result.t('b, ParseError.failure),
+    Js.Json.t
+  ) =>
+  Belt.Result.t(('a, 'b), ParseError.failure);
+
+let tuple3:
+  (
+    Js.Json.t => Belt.Result.t('a, ParseError.failure),
+    Js.Json.t => Belt.Result.t('b, ParseError.failure),
+    Js.Json.t => Belt.Result.t('c, ParseError.failure),
+    Js.Json.t
+  ) =>
+  Belt.Result.t(('a, 'b, 'c), ParseError.failure);
+
+let tuple4:
+  (
+    Js.Json.t => Belt.Result.t('a, ParseError.failure),
+    Js.Json.t => Belt.Result.t('b, ParseError.failure),
+    Js.Json.t => Belt.Result.t('c, ParseError.failure),
+    Js.Json.t => Belt.Result.t('d, ParseError.failure),
+    Js.Json.t
+  ) =>
+  Belt.Result.t(('a, 'b, 'c, 'd), ParseError.failure);
+
+let tuple5:
+  (
+    Js.Json.t => Belt.Result.t('a, ParseError.failure),
+    Js.Json.t => Belt.Result.t('b, ParseError.failure),
+    Js.Json.t => Belt.Result.t('c, ParseError.failure),
+    Js.Json.t => Belt.Result.t('d, ParseError.failure),
+    Js.Json.t => Belt.Result.t('e, ParseError.failure),
+    Js.Json.t
+  ) =>
+  Belt.Result.t(('a, 'b, 'c, 'd, 'e), ParseError.failure);
+
+let tupleFromFields:
+  (
     (string, Js.Json.t => Belt.Result.t('a, ParseError.failure)),
     (string, Js.Json.t => Belt.Result.t('b, ParseError.failure)),
     Js.Json.t
@@ -299,7 +345,7 @@ module Pipeline: {
     (Js.Json.t => Belt.Result.t('a, ParseError.failure), Js.Json.t) =>
     Belt.Result.t(list('a), ParseError.failure);
 
-  let tuple:
+  let tupleFromFields:
     (
       (string, Js.Json.t => Belt.Result.t('a, ParseError.failure)),
       (string, Js.Json.t => Belt.Result.t('b, ParseError.failure)),

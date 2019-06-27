@@ -1,3 +1,14 @@
+## 0.8.0 (Future)
+
+### :rotating_light: Breaking
+
+- `tuple` (which previously contructed a `tuple` from a JSON object) is now `tupleFromFields`
+- A new base failure constructor `ExpectedTuple(int)` now exists. This is only breaking if you are manually matching on `ParseError.Val` failures.
+
+### :sparkles: New features
+
+- `tuple`, `tuple2`...`tuple5` Decode JSON arrays as tuples
+
 ## 0.7.0 (Jun 25, 2019)
 
 ### :rotating_light: Breaking

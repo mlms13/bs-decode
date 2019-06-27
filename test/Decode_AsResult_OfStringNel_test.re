@@ -52,6 +52,11 @@ describe("Simple decode errors", () => {
     |> toEqual(makeErr("Expected array but found", Sample.jsonNull))
   );
 
+  test("tuple", () =>
+    expect(Decode.(tuple(string, boolean, Sample.jsonArrayEmpty)))
+    |> toEqual(makeErr("Expected tuple of size 2 but found", Sample.jsonArrayEmpty))
+  );
+
   test("object", () =>
     expect(Decode.field("x", Decode.string, Sample.jsonArrayEmpty))
     |> toEqual(makeErr("Expected object but found", Sample.jsonArrayEmpty))

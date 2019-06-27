@@ -73,7 +73,46 @@ let optional: (Js.Json.t => option('a), Js.Json.t) => option(option('a));
 
 let array: (Js.Json.t => option('a), Js.Json.t) => option(array('a));
 let list: (Js.Json.t => option('a), Js.Json.t) => option(list('a));
+
 let tuple:
+  (Js.Json.t => option('a), Js.Json.t => option('b), Js.Json.t) =>
+  option(('a, 'b));
+
+let tuple2:
+  (Js.Json.t => option('a), Js.Json.t => option('b), Js.Json.t) =>
+  option(('a, 'b));
+
+let tuple3:
+  (
+    Js.Json.t => option('a),
+    Js.Json.t => option('b),
+    Js.Json.t => option('c),
+    Js.Json.t
+  ) =>
+  option(('a, 'b, 'c));
+
+let tuple4:
+  (
+    Js.Json.t => option('a),
+    Js.Json.t => option('b),
+    Js.Json.t => option('c),
+    Js.Json.t => option('d),
+    Js.Json.t
+  ) =>
+  option(('a, 'b, 'c, 'd));
+
+let tuple5:
+  (
+    Js.Json.t => option('a),
+    Js.Json.t => option('b),
+    Js.Json.t => option('c),
+    Js.Json.t => option('d),
+    Js.Json.t => option('e),
+    Js.Json.t
+  ) =>
+  option(('a, 'b, 'c, 'd, 'e));
+
+let tupleFromFields:
   (
     (string, Js.Json.t => option('a)),
     (string, Js.Json.t => option('b)),
@@ -210,7 +249,7 @@ module Pipeline: {
 
   let array: (Js.Json.t => option('a), Js.Json.t) => option(array('a));
   let list: (Js.Json.t => option('a), Js.Json.t) => option(list('a));
-  let tuple:
+  let tupleFromFields:
     (
       (string, Js.Json.t => option('a)),
       (string, Js.Json.t => option('b)),
