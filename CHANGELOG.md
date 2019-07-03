@@ -1,13 +1,14 @@
-## 0.8.0 (Future)
+## 0.8.0 (Jul 3, 2019)
 
 ### :rotating_light: Breaking
 
+- Long-deprecated `int` and `float` functions have been removed. You should be using `intFromNumber` and `floatFromNumber` instead to avoid shadowing issues
 - `tuple` (which previously contructed a `tuple` from a JSON object) is now `tupleFromFields`
-- A new base failure constructor `ExpectedTuple(int)` now exists. This is only breaking if you are manually matching on `ParseError.Val` failures.
+- Base `failure` type now includes an `ExpectedTuple(int)` constructor, where `int` is the expected size. This is only a breaking change if you're manually matching on values of the base `failure` type.
 
 ### :sparkles: New features
 
-- `tuple`, `tuple2`...`tuple5` Decode JSON arrays as tuples
+- JSON arrays can now be decoded directly into tuples using `tuple2`...`tuple5` (which will fail if the JSON array is larger than expected) or `tupleAtLeast2`...`tupleAtLeast5` (which will tolerate longer arrays)
 
 ## 0.7.0 (Jun 25, 2019)
 
