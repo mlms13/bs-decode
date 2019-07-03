@@ -80,9 +80,6 @@ module DecodeBase = (T: TransformError, M: MONAD with type t('a) = T.t('a)) => {
 
   let floatFromNumber = value(Js.Json.decodeNumber, `ExpectedNumber);
 
-  [@ocaml.deprecated "Use floatFromNumber instead."]
-  let float = floatFromNumber;
-
   let intFromNumber = {
     let isInt = v => v == 0.0 || mod_float(v, floor(v)) == 0.0;
     flatMap(
@@ -90,9 +87,6 @@ module DecodeBase = (T: TransformError, M: MONAD with type t('a) = T.t('a)) => {
       floatFromNumber,
     );
   };
-
-  [@ocaml.deprecated "Use intFromNumber instead."]
-  let int = intFromNumber;
 
   let date = {
     let fromFloat = map(Js.Date.fromFloat, floatFromNumber);
