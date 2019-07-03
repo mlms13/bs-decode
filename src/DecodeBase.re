@@ -1,40 +1,6 @@
 open Relude.Globals;
 open BsAbstract.Interface;
 
-// TODO: move to Relude.Tuple
-module Tuple = {
-  let make = (a, b) => (a, b);
-  let make2 = make;
-  let make3 = (a, b, c) => (a, b, c);
-  let make4 = (a, b, c, d) => (a, b, c, d);
-  let make5 = (a, b, c, d, e) => (a, b, c, d, e);
-
-  let fromArray =
-    fun
-    | [|a, b|] => Some((a, b))
-    | _ => None;
-
-  let fromArray3 =
-    fun
-    | [|a, b, c|] => Some((a, b, c))
-    | _ => None;
-
-  let fromArray4 =
-    fun
-    | [|a, b, c, d|] => Some((a, b, c, d))
-    | _ => None;
-
-  let fromArray5 =
-    fun
-    | [|a, b, c, d, e|] => Some((a, b, c, d, e))
-    | _ => None;
-
-  let fromArrayAtLeast2 = xs => Array.take(2, xs) |> fromArray;
-  let fromArrayAtLeast3 = xs => Array.take(3, xs) |> fromArray3;
-  let fromArrayAtLeast4 = xs => Array.take(4, xs) |> fromArray4;
-  let fromArrayAtLeast5 = xs => Array.take(5, xs) |> fromArray5;
-};
-
 type failure = [
   | `ExpectedBoolean
   | `ExpectedString
