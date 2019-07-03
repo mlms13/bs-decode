@@ -75,10 +75,6 @@ let alt:
 
 let boolean: Js.Json.t => Belt.Result.t(bool, ParseError.failure);
 let string: Js.Json.t => Belt.Result.t(string, ParseError.failure);
-[@ocaml.deprecated "Use floatFromNumber instead."]
-let float: Js.Json.t => Belt.Result.t(float, ParseError.failure);
-[@ocaml.deprecated "Use intFromNumber instead."]
-let int: Js.Json.t => Belt.Result.t(int, ParseError.failure);
 let floatFromNumber: Js.Json.t => Belt.Result.t(float, ParseError.failure);
 let intFromNumber: Js.Json.t => Belt.Result.t(int, ParseError.failure);
 let date: Js.Json.t => Belt.Result.t(Js.Date.t, ParseError.failure);
