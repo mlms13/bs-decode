@@ -234,7 +234,8 @@ module DecodeBase = (T: TransformError, M: MONAD with type t('a) = T.t('a)) => {
          fun
          | None => pure(None)
          | Some(v) => (_ => optional(decode, v)),
-       );
+       )
+    >> T.objErr(name);
 
   let fallback = (decode, recovery) => alt(decode, pure(recovery));
 
