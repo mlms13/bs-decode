@@ -131,6 +131,16 @@ describe("Inner decoders", () => {
        )
   );
 
+  test("optionalField (failure on inner decode)", () =>
+    expect(Decode.(optionalField("title", boolean, Sample.jsonJobCeo)))
+    |> toEqual(
+         objErrSingle(
+           "title",
+           InvalidField(Val(`ExpectedBoolean, Js.Json.string("CEO"))),
+         ),
+       )
+  );
+
   let decodeUnion =
     Decode.(
       oneOf(
