@@ -1,3 +1,13 @@
+## 0.8.1 (Jul 12, 2019)
+
+### :bug: Bug fixes
+
+- `optionField` values that are present but fail to decode will now report the field in the `ParseError`
+
+### :heavy_check_mark: Code quality
+
+- CI will now show failures correctly if tests don't pass
+
 ## 0.8.0 (Jul 3, 2019)
 
 ### :rotating_light: Breaking
