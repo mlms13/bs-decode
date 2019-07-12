@@ -286,7 +286,7 @@ describe("Parse error combinations", () => {
   test("combine Obj/Val", () =>
     expect(
       Decode.(
-        map2(combine, field("x", boolean), boolean, Sample.jsonDictEmpty)
+        map2(combine, field("y", boolean), boolean, Sample.jsonDictEmpty)
       ),
     )
     |> toEqual(Result.error(objError))

@@ -35,6 +35,7 @@ jobs:
 
       # run tests!
       - run: npm run cleanbuild
+      - run: npm run test
       - run: npm run coverage
       - store_artifacts:
           path: coverage
