@@ -233,6 +233,14 @@ let oneOf:
 module Pipeline: {
   let succeed: ('a, Js.Json.t) => Belt.Result.t('a, ParseError.failure);
 
+  let pipe:
+    (
+      Js.Json.t => Belt.Result.t('a, ParseError.failure),
+      Js.Json.t => Belt.Result.t('a => 'b, ParseError.failure),
+      Js.Json.t
+    ) =>
+    Belt.Result.t('b, ParseError.failure);
+
   let field:
     (
       string,
@@ -479,6 +487,10 @@ module Pipeline: {
   let dict:
     (Js.Json.t => Belt.Result.t('a, ParseError.failure), Js.Json.t) =>
     Belt.Result.t(Js.Dict.t('a), ParseError.failure);
+
+  let stringMap:
+    (Js.Json.t => Belt.Result.t('a, ParseError.failure), Js.Json.t) =>
+    Belt.Result.t(Belt.Map.String.t('a), ParseError.failure);
 
   let oneOf:
     (

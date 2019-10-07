@@ -316,6 +316,7 @@ module DecodeBase = (T: TransformError, M: MONAD with type t('a) = T.t('a)) => {
 
     let tupleFromFields = tupleFromFields;
     let dict = dict;
+    let stringMap = stringMap;
     let oneOf = oneOf;
     let fallback = fallback;
   };

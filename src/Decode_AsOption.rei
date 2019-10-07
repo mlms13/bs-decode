@@ -170,6 +170,10 @@ let oneOf:
 module Pipeline: {
   let succeed: ('a, Js.Json.t) => option('a);
 
+  let pipe:
+    (Js.Json.t => option('a), Js.Json.t => option('a => 'b), Js.Json.t) =>
+    option('b);
+
   let field:
     (
       string,
@@ -363,6 +367,8 @@ module Pipeline: {
     option(('a, 'b));
 
   let dict: (Js.Json.t => option('a), Js.Json.t) => option(Js.Dict.t('a));
+  let stringMap:
+    (Js.Json.t => option('a), Js.Json.t) => option(Belt.Map.String.t('a));
 
   let oneOf:
     (Js.Json.t => option('a), list(Js.Json.t => option('a)), Js.Json.t) =>
