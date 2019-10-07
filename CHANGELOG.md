@@ -1,3 +1,16 @@
+## 0.9.0 (Oct 7, 2019)
+
+### :sparkles: New features
+
+- Decode into a Belt Map (with string keys)
+- Allow easy access to tuple helpers from Pipeline
+- `pipe` function itself is now public
+
+### :heavy_check_mark: Code quality
+
+- More tests around string and int decoding
+- Bump dependencies
+
 ## 0.8.1 (Jul 12, 2019)
 
 ### :bug: Bug fixes
