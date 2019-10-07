@@ -150,6 +150,8 @@ let tupleFromFields:
   option(('a, 'b));
 
 let dict: (Js.Json.t => option('a), Js.Json.t) => option(Js.Dict.t('a));
+let stringMap:
+  (Js.Json.t => option('a), Js.Json.t) => option(Belt.Map.String.t('a));
 
 let at: (list(string), Js.Json.t => option('a), Js.Json.t) => option('a);
 

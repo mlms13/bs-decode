@@ -215,6 +215,16 @@ module DecodeBase = (T: TransformError, M: MONAD with type t('a) = T.t('a)) => {
     |> map(Js.Dict.fromList);
   };
 
+  let stringMap = decode =>
+    dict(decode)
+    |> map(Js.Dict.entries)
+    |> map(
+         Array.foldLeft(
+           (acc, (key, v)) => Belt.Map.String.set(acc, key, v),
+           Belt.Map.String.empty,
+         ),
+       );
+
   let rec at = (fields, decode) =>
     switch (fields) {
     | [] => decode

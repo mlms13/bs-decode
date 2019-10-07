@@ -249,6 +249,28 @@ describe("Nested decoders", () => {
     expect(Decode.(dict(string, Sample.jsonPersonBill))) |> toEqual(None)
   );
 
+  test("stringMap (succeeds)", () =>
+    expect(
+      Decode.map(
+        Belt.Map.String.eq(Sample.valMapFloat, _, Float.eq),
+        Decode.(stringMap(floatFromNumber)),
+        Sample.jsonDictFloat,
+      ),
+    )
+    |> toEqual(Some(true))
+  );
+
+  test("stringMap (fails)", () =>
+    expect(
+      Decode.map(
+        Belt.Map.String.eq(Sample.valMapFloat, _, Float.eq),
+        Decode.(stringMap(floatFromNumber)),
+        Sample.jsonNull,
+      ),
+    )
+    |> toEqual(None)
+  );
+
   test("at (succeeds on nested field)", () =>
     expect(
       Decode.(

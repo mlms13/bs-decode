@@ -127,9 +127,10 @@ let jsonPersonBill: Js.Json.t = [%raw
 ];
 
 // Typed dicts and records
+let valDictAsArray = [|("key1", 3.14), ("key2", 2.22), ("key3", 100.0)|];
 let valDictEmpty: Js.Dict.t(string) = Js.Dict.empty();
-let valDictFloat =
-  Js.Dict.fromArray([|("key1", 3.14), ("key2", 2.22), ("key3", 100.0)|]);
+let valDictFloat = Js.Dict.fromArray(valDictAsArray);
+let valMapFloat = Belt.Map.String.fromArray(valDictAsArray);
 
 type job = {
   title: string,

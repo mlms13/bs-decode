@@ -204,6 +204,10 @@ let dict:
   (Js.Json.t => Belt.Result.t('a, NonEmptyList.t(string)), Js.Json.t) =>
   Belt.Result.t(Js.Dict.t('a), NonEmptyList.t(string));
 
+let stringMap:
+  (Js.Json.t => Belt.Result.t('a, NonEmptyList.t(string)), Js.Json.t) =>
+  Belt.Result.t(Belt.Map.String.t('a), NonEmptyList.t(string));
+
 let at:
   (
     list(string),
