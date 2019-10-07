@@ -35,6 +35,11 @@ describe("Simple decoders", () => {
     |> toEqual(valErr(`ExpectedNumber, Sample.jsonNull))
   );
 
+  test("intFromNumber (string containing int)", () =>
+    expect(Decode.intFromNumber(Sample.jsonString4))
+    |> toEqual(valErr(`ExpectedNumber, Sample.jsonString4))
+  );
+
   test("intFromNumber (float)", () =>
     expect(Decode.intFromNumber(Sample.jsonFloat))
     |> toEqual(valErr(`ExpectedInt, Sample.jsonFloat))

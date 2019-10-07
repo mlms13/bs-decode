@@ -3,6 +3,7 @@ let jsonNull: Js.Json.t = [%raw {| null |}];
 let jsonBool: Js.Json.t = [%raw {| true |}];
 let jsonString: Js.Json.t = [%raw {| "string" |}];
 let jsonStringTrue: Js.Json.t = [%raw {| "true" |}];
+let jsonString4: Js.Json.t = [%raw {| "4" |}];
 let jsonFloat: Js.Json.t = [%raw {| 3.14 |}];
 let jsonInt: Js.Json.t = [%raw {| 1 |}];
 let jsonIntZero: Js.Json.t = [%raw {| 0 |}];
@@ -12,6 +13,7 @@ let jsonDateString: Js.Json.t = [%raw {| "2018-11-17T05:40:35.869Z" |}];
 // Simple typed values
 let valBool = true;
 let valString = "string";
+let valString4 = "4";
 let valFloat = 3.14;
 let valInt = 1;
 let valIntZero = 0;

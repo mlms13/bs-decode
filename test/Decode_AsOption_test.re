@@ -28,6 +28,11 @@ describe("Simple decoders", () => {
     |> toEqual(Some(Sample.valString))
   );
 
+  test("string (is still string when it contains a number)", () =>
+    expect(Decode.string(Sample.jsonString4))
+    |> toEqual(Some(Sample.valString4))
+  );
+
   test("string (fails on float)", () =>
     expect(Decode.string(Sample.jsonFloat)) |> toEqual(None)
   );
