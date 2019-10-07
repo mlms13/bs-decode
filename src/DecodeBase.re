@@ -303,7 +303,16 @@ module DecodeBase = (T: TransformError, M: MONAD with type t('a) = T.t('a)) => {
     let optional = optional;
     let array = array;
     let list = list;
-    // TODO: tupleN
+
+    let tuple = tuple;
+    let tuple2 = tuple2;
+    let tuple3 = tuple3;
+    let tuple4 = tuple4;
+    let tuple5 = tuple5;
+    let tupleAtLeast2 = tupleAtLeast2;
+    let tupleAtLeast3 = tupleAtLeast3;
+    let tupleAtLeast4 = tupleAtLeast4;
+    let tupleAtLeast5 = tupleAtLeast5;
 
     let tupleFromFields = tupleFromFields;
     let dict = dict;
