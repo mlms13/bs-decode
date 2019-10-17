@@ -13,7 +13,7 @@ Decode JSON values into structured ReasonML and OCaml types. Inspired by Elm's [
 
 **Install via npm:**
 
-`npm install --save bs-decode`
+`npm install --save bs-decode relude bs-abstract`
 
 **Update your bsconfig.json**
 
