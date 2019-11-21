@@ -9,7 +9,7 @@ Sometimes, you may need to decode nullable JSON values, or JSON values that can 
 
 Simple decoders can be wrapped in `D.optional` to allow them to tolerate `null` values and decode into `option('a)` rather than `'a`.
 
-```re
+```reasonml
 let jsonNull = Js.Json.null;
 let jsonStr = Js.Json.string("foo");
 
@@ -24,7 +24,7 @@ Note that unlike Elm's `Json.Decode`, optional values aren't atuomatically recov
 
 This gets into [decoding objects](decoding-objects.md), which is covered elsewhere. But it's important to be aware of the specialized `optionalField` function, in addition to the normal `optional` function. `optionalField` will tolerate both missing fields in a JSON object as well as present fields with `null` values, however like the normal `optional` function, this won't automatically recover from unexpected JSON.
 
-```re
+```reasonml
 let json: Js.Json.t = [%bs.raw {|
   {
     "name": "Michael",
@@ -52,7 +52,7 @@ If a JSON value could be one of several types, you can try multiple decoders in 
 
 Note that each attempt is evaluated lazily, so subsequent decoders will only be run if no success has been found yet.
 
-```re
+```reasonml
 // each decoder in `oneOf` has to return the same type
 type t =
   | B(bool)

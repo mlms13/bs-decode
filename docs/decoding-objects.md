@@ -7,7 +7,7 @@ title: Decoding Object Fields
 
 Decoding values from a JSON object requires specifying the string key of the field to be decoded, as well as an inner decode function to parse the value.
 
-```re
+```reasonml
 // imagine `json` is `{ "foo": "xyz", "bar": 4 }`
 
 // Ok("xyz")
@@ -27,7 +27,7 @@ Decode.optionalField("missing", Decode.intFromNumber, json);
 
 If a value you need is nested deeply in a JSON structure and you don't want to decode all of the intermediate bits of JSON, you can use `at` to dig through multiple keys:
 
-```re
+```reasonml
 // json looks like { "a": { "b": { "c": false }}}
 Decode.at(["a", "b", "c"], Decode.boolean); // Ok(false)
 
@@ -39,7 +39,7 @@ Decode.at(["a", "b", "c", "d"], Decode.boolean);
 
 Back to that `user` type we defined in our [simple example](simple-example.md):
 
-```re
+```reasonml
 type user = {
   name: string,
   age: int,
@@ -57,7 +57,7 @@ let make = (name, age, isAdmin, lastLogin) =>
 
 Given the `user` type above and its `make` function, you can build up a record by decoding each field in a style inspired by the [Elm Decode Pipeline](https://package.elm-lang.org/packages/NoRedInk/elm-decode-pipeline/3.0.1/) library for Elm. Order matters here, as each decoded field is passed into the next available slot in the `make` function.
 
-```re
+```reasonml
 let decode = json =>
   Decode.Pipeline.(
     succeed(make)
@@ -75,7 +75,7 @@ Unlike other decode functions we've looked at, the Pipeline style is not eager. 
 
 It's also possible to use `map` and `apply` functions (often in their infix form `<$>` and `<*>`) to combine smaller decoders, using them to call the `make` function. This style my look more familiar if you've used validation libraries in Haskell.
 
-```re
+```reasonml
 let ((<$>), (<*>)) = D.ResultUtil.Applicative(map, apply);
 
 let decode = json =>

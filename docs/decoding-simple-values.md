@@ -9,7 +9,7 @@ Note that the output of our decode functions is wrapped in a `Belt.Result.t` bec
 
 **String**
 
-```re
+```reasonml
 let json = Js.Json.string("foo");
 D.string(json); /* Ok("foo") */
 
@@ -21,7 +21,7 @@ D.string(json); /* Error(Val(`ExpectedString, json)) */
 
 JSON numbers can be decoded as either floats or ints. These decoders are suffixed with `...FromNumber` to allow you to open locally without getting compiler complaints about shadowing `float` from OCaml's Pervasives.
 
-```re
+```reasonml
 let json = Js.Json.number(3.);
 D.floatFromNumber(json); /* Ok(3.0) */
 D.intFromNumber(json); /* Ok(3) */
@@ -35,7 +35,7 @@ Note that `intFromNumber` will reject numbers with fractional parts (rather than
 
 **Boolean**
 
-```reason
+```reasonml
 let json = Js.Json.boolean(true);
 D.boolean(json); /* Ok(true) */
 ```
@@ -44,7 +44,7 @@ D.boolean(json); /* Ok(true) */
 
 JSON arrays can be decoded into either arrays or lists. Decoding a JSON array requires you to also pass a decoder for the inner type.
 
-```reason
+```reasonml
 let json = Js.Json.array([| Js.Json.string("a") |]);
 
 D.array(D.string, json); /* Ok([| "a" |]) */
@@ -58,7 +58,7 @@ D.list(D.intFromNumber, json);
 
 JSON doesn't natively support dates, but `bs-decode` provides decoders that will try to build a date from a JSON float or from a JSON string that can be understood by `new Date` in JavaScript.
 
-```reason
+```reasonml
 let json = Js.Json.string("2018-11-17T05:40:35.869Z");
 D.date(json); /* Ok(Js.Date.fromString("2018-11-17T05:40:35.869Z")) */
 
@@ -72,7 +72,7 @@ While the `Js.Date.from*` functions in the comments above could return invalid D
 
 JSON objects can also be used to store key/value pairs, where the keys are strings. This can be represented as a `Js.Dict.t('a)` in ReasonML.
 
-```reason
+```reasonml
 /**
  * Assume `json` is a value that looks like:
  * { "foo": 3, "bar": 2 }

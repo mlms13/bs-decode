@@ -9,13 +9,14 @@ The following assumes you're working with `Decode.AsResult.OfParseError` (or [a 
 
 The underlying/primitive decode errors look like:
 
-```re
+```reasonml
 type failure = [
   | `ExpectedBoolean
   | `ExpectedString
   | `ExpectedNumber
   | `ExpectedInt
   | `ExpectedArray
+  | `ExpectedTuple(int) // expected size of tuple
   | `ExpectedObject
   | `ExpectedValidDate
   | `ExpectedValidOption
@@ -26,7 +27,7 @@ You'll note that this is a polymorphic variant, allowing you to customize the un
 
 The simplified error type, used as the payload of the Result's `Error` constructor, looks something like:
 
-```re
+```reasonml
 type t =
   | Val(failure, Js.Json.t)
   | TriedMultiple(NonEmptyList.t(t))
@@ -52,9 +53,9 @@ This error structure can be destructured with recursive pattern matching.
 
 Pattern matching on the error structure with the intention of logging what went wrong is a common enough pattern that we provide utilities to help you with this.
 
-```re
+```reasonml
 switch (runSomeDecoder(json)) {
-| Belt.Result.Ok(v) => /* do something with your value */
+| Belt.Result.Ok(v) => // do something with your value
 | Belt.Result.Error(err) =>
   Js.log(Decode.ParseError.failureToDebugString(err))
 };

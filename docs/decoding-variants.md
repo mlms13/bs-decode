@@ -7,7 +7,7 @@ title: Decoding Variants
 
 For variants that aren't very complex and don't require special debugging powers, you can use the built-in function `variantFromString` or `variantFromInt` to convert `string` and `int` values into values of your variant type. The conversion function can "fail" by returning `None`.
 
-```reason
+```reasonml
 type color = Blue | Red | Green;
 let parseColor = str =>
   switch (str) {
@@ -32,7 +32,7 @@ You can get this by extending the underlying `DecodeBase.failure` type with extr
 
 This may sound overwhelming, but the whole thing can be accomplished in about 6 lines of code:
 
-```reason
+```reasonml
 module R =
   Decode.ParseError.ResultOf({
     type t = [ DecodeBase.failure | `InvalidColor | `InvalidShape];
@@ -46,7 +46,7 @@ Now we have a `D` that is slightly different from the `Decode.AsResult.OfParseEr
 
 We can change the `parseColor` function we defined above to return a Result where the Error is of type `InvalidColor` and it includes the specific piece of JSON we were trying to parse, for detailed debugging:
 
-```reason
+```reasonml
 open Belt;
 
 let parseColor = str =>
