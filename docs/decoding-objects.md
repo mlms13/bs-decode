@@ -55,7 +55,9 @@ let make = (name, age, isAdmin, lastLogin) =>
 
 ### Pipeline-Style
 
-Given the `user` type above and its `make` function, you can build up a record by decoding each field in a style inspired by the [Elm Decode Pipeline](https://package.elm-lang.org/packages/NoRedInk/elm-decode-pipeline/3.0.1/) library for Elm. Order matters here, as each decoded field is passed into the next available slot in the `make` function.
+Given the `user` type above and its `make` function, you can build up a record by decoding each field in a style inspired by the [Elm Decode Pipeline](https://package.elm-lang.org/packages/NoRedInk/elm-decode-pipeline/3.0.1/) library for Elm.
+
+The order of decoded fields is significant, as the pipeline leverages the partial application of the `make` function. Each `field` or `optionalField` line in the example below fills in the next available slot in the `make` function.
 
 ```reasonml
 let decode = json =>
@@ -73,15 +75,17 @@ Unlike other decode functions we've looked at, the Pipeline style is not eager. 
 
 ### Haskell Validation-Style
 
-It's also possible to use `map` and `apply` functions (often in their infix form `<$>` and `<*>`) to combine smaller decoders, using them to call the `make` function. This style my look more familiar if you've used validation libraries in Haskell.
+It's also possible to use `map` and `apply` functions (often in their infix form `<$>` and `<*>`) to build up a larger decoder from smaller ones. This style my look more familiar if you've used validation libraries in Haskell.
 
 ```reasonml
-let ((<$>), (<*>)) = D.ResultUtil.Applicative(map, apply);
+let ((<$>), (<*>)) = Decode.(map, apply);
 
-let decode = json =>
-  User.make
-    <$> D.field("name", D.string, json)
-    <*> D.field("age", D.intFromNumber, json)
-    <*> D.field("isAdmin", D.boolean, json)
-    <*> D.optionalField("lastLogin", D.date, json);
+let decode =
+  Decode.(
+    User.make
+    <$> field("name", string)
+    <*> field("age", intFromNumber)
+    <*> field("isAdmin", boolean)
+    <*> optionalField("lastLogin", date)
+  );
 ```

@@ -16,7 +16,7 @@ type failure = [
   | `ExpectedNumber
   | `ExpectedInt
   | `ExpectedArray
-  | `ExpectedTuple(int) // expected size of tuple
+  | `ExpectedTuple(int) // expected size of
   | `ExpectedObject
   | `ExpectedValidDate
   | `ExpectedValidOption
