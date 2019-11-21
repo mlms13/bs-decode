@@ -23,6 +23,7 @@ let valDateString = Js.Date.fromString("2018-11-17T05:40:35.869Z");
 // Nested JSON values
 let jsonArrayEmpty: Js.Json.t = [%raw {| [] |}];
 let jsonArrayString: Js.Json.t = [%raw {| ["A", "B", "C"] |}];
+let jsonArrayNested: Js.Json.t = [%raw {| [["a", "b"], [], ["c"]] |}];
 let jsonTuple: Js.Json.t = [%raw {| ["A", true ] |}];
 let jsonTuple3: Js.Json.t = [%raw {| ["A", true, 3 ] |}];
 let jsonTuple4: Js.Json.t = [%raw {| ["A", true, false, "B" ] |}];
@@ -32,6 +33,7 @@ let jsonTuple6: Js.Json.t = [%raw {| ["A", "B", "C", "D", "E", "F"] |}];
 // Nested typed values
 let valArrayEmpty = [||];
 let valArrayString = [|"A", "B", "C"|];
+let valArrayNested = [|[|"a", "b"|], [||], [|"c"|]|];
 let valListEmpty = [];
 let valListString = ["A", "B", "C"];
 let valTuple = ("A", true);

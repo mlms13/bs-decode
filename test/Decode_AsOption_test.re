@@ -139,6 +139,11 @@ describe("Nested decoders", () => {
     |> toEqual(Some(Sample.valArrayEmpty))
   );
 
+  test("array (succeeds on nested)", () =>
+    expect(Decode.(array(array(string), Sample.jsonArrayNested)))
+    |> toEqual(Some(Sample.valArrayNested))
+  );
+
   test("array (fails on non-array)", () =>
     expect(Decode.(array(string, Sample.jsonString))) |> toEqual(None)
   );
