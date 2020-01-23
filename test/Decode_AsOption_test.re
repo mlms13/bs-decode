@@ -466,15 +466,13 @@ describe("Decode records", () => {
       )
     );
 
-  let decodeJobInfix = {
-    let ((<$>), (<*>)) = Decode.(map, apply);
-
+  let ((<$>), (<*>)) = Decode.(map, apply);
+  let decodeJobInfix =
     Sample.makeJob
     <$> Decode.(field("title", string))
     <*> Decode.(field("companyName", string))
     <*> Decode.(field("startDate", date))
     <*> Decode.pure(None);
-  };
 
   let rec decodeJobPipeline = json =>
     Decode.Pipeline.(

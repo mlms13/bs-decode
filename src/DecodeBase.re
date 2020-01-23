@@ -261,7 +261,7 @@ module DecodeBase = (T: TransformError, M: MONAD with type t('a) = T.t('a)) => {
      */
     let succeed = pure;
 
-    let pipe = (a, b, json) => map2((|>), a, b, json);
+    let pipe = (a, b) => apply(b, a);
 
     let optionalField = (name, decode) => pipe(optionalField(name, decode));
 
@@ -278,7 +278,7 @@ module DecodeBase = (T: TransformError, M: MONAD with type t('a) = T.t('a)) => {
      * `run` takes a decoder and some json, and it passes that json to the
      * decoder. The result is that your decoder is run with the provided json
      */
-    let run = (json, decode) => decode(json);
+    let run = (|>);
 
     /**
      * Alias many functions from outside the Pipeline for easy local opens
