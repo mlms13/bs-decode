@@ -38,38 +38,21 @@ module type TransformError = {
 };
 
 module DecodeBase = (T: TransformError, M: MONAD with type t('a) = T.t('a)) => {
-  module Functor: FUNCTOR with type t('a) = Js.Json.t => M.t('a) = {
-    type t('a) = Js.Json.t => M.t('a);
-    let map = (f, decode) => decode >> M.map(f);
-  };
+  type t('a) = Js.Json.t => M.t('a);
 
-  module Apply: APPLY with type t('a) = Js.Json.t => M.t('a) = {
-    include Functor;
-    let apply = (f, decode, json) => M.apply(f(json), decode(json));
-  };
+  let map = (f, decode) => decode >> M.map(f);
+  let apply = (f, decode, json) => M.apply(f(json), decode(json));
+  let pure = (v, _) => M.pure(v);
+  let flat_map = (decode, f, json) => M.flat_map(decode(json), f(_, json));
+  let alt = (a, b, json) => T.lazyAlt(a(json), () => b(json));
 
-  module Applicative: APPLICATIVE with type t('a) = Js.Json.t => M.t('a) = {
-    include Apply;
-    let pure = (v, _) => M.pure(v);
-  };
+  include Relude.Extensions.Apply.ApplyExtensions({
+    type nonrec t('a) = t('a);
+    let map = map;
+    let apply = apply;
+  });
 
-  module Monad: MONAD with type t('a) = Js.Json.t => M.t('a) = {
-    include Applicative;
-    let flat_map = (decode, f, json) =>
-      M.flat_map(decode(json), f(_, json));
-  };
-
-  module Alt: ALT with type t('a) = Js.Json.t => M.t('a) = {
-    include Functor;
-    let alt = (a, b, json) => T.lazyAlt(a(json), () => b(json));
-  };
-
-  let map = Functor.map;
-  let apply = Apply.apply;
-  let pure = Applicative.pure;
-  let flatMap = (f, decode) => Monad.flat_map(decode, f);
-  let alt = Alt.alt;
-  include Relude.Extensions.Apply.ApplyExtensions(Apply);
+  let flatMap = (f, decode) => flat_map(decode, f);
 
   let value = (decode, failure, json) =>
     decode(json) |> Option.foldLazy(() => T.valErr(failure, json), M.pure);
@@ -255,10 +238,6 @@ module DecodeBase = (T: TransformError, M: MONAD with type t('a) = T.t('a)) => {
   let oneOf = (decode, rest) => List.foldLeft(alt, decode, rest);
 
   module Pipeline = {
-    /**
-     * `succeed` returns a `json => Result` decode function that ignores the
-     * `json` argument and always returns `Ok`
-     */
     let succeed = pure;
 
     let pipe = (a, b) => apply(b, a);
