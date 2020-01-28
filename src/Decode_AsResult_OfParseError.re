@@ -3,7 +3,7 @@ module ParseError = Decode_ParseError;
 
 module ResultUtil =
   ParseError.ResultOf({
-    type t = DecodeBase.failure;
+    type t = ParseError.base;
     let handle = t => t;
   });
 

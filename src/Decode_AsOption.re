@@ -1,5 +1,5 @@
 module OptionTransform:
-  DecodeBase.TransformError with type t('a) = option('a) = {
+  Decode_ParseError.TransformError with type t('a) = option('a) = {
   type t('a) = option('a);
   let valErr = (_, _) => None;
   let arrErr = (_, opt) => opt;

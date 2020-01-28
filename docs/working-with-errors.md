@@ -55,8 +55,8 @@ Pattern matching on the error structure with the intention of logging what went 
 
 ```reasonml
 switch (runSomeDecoder(json)) {
-| Belt.Result.Ok(v) => // do something with your value
-| Belt.Result.Error(err) =>
+| Ok(v) => // do something with your value
+| Error(err) =>
   Js.log(Decode.ParseError.failureToDebugString(err))
 };
 ```

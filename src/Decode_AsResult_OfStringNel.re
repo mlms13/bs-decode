@@ -1,35 +1,36 @@
 open Relude.Globals;
 
-// we are intentionally aliasing this module here and including the alis in the
+// we are intentionally aliasing this module here and including the alias in the
 // rei to make it easy for users to interact with NonEmptyLists without needing
 // to use Relude directly
 module NonEmptyList = NonEmpty.List;
 
 module ResultUtil = {
   open BsAbstract.Interface;
-  type stringNel = NonEmptyList.t(string);
+  module ParseError = Decode_ParseError;
 
-  module Monad: MONAD with type t('a) = Result.t('a, stringNel) = {
-    type t('a) = Result.t('a, stringNel);
+  module Monad: MONAD with type t('a) = result('a, NonEmptyList.t(string)) = {
+    type t('a) = result('a, NonEmptyList.t(string));
     let map = Result.map;
     let apply = (a, b) =>
       switch (a, b) {
-      | (Belt.Result.Ok(f), Belt.Result.Ok(v)) => Belt.Result.Ok(f(v))
+      | (Ok(f), Ok(v)) => Ok(f(v))
       | (Ok(_), Error(v)) => Error(v)
       | (Error(v), Ok(_)) => Error(v)
-      | (Error(xa), Error(xb)) => Error(NonEmpty.List.concat(xa, xb))
+      | (Error(xa), Error(xb)) => Error(NonEmptyList.concat(xa, xb))
       };
     let pure = Result.pure;
     let flat_map = Result.bind;
   };
 
   module Transform:
-    DecodeBase.TransformError with type t('a) = Result.t('a, stringNel) = {
-    type t('a) = Result.t('a, stringNel);
+    ParseError.TransformError with
+      type t('a) = result('a, NonEmptyList.t(string)) = {
+    type t('a) = result('a, NonEmptyList.t(string));
 
     let pureErr = NonEmptyList.pure >> Result.error;
     let mapErr = fn => Result.bimap(id, NonEmptyList.map(fn));
-    let valErr = (v, json) => pureErr(DecodeBase.failureToString(v, json));
+    let valErr = (v, json) => pureErr(ParseError.failureToString(v, json));
 
     let arrErr = (pos, v) =>
       mapErr(

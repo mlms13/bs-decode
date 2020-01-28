@@ -6,9 +6,10 @@ open Jest;
 open Expect;
 open Relude.Globals;
 
+module ParseError = Decode_ParseError;
 module Sample = Decode_TestSampleData;
 
-type customError = [ DecodeBase.failure | `InvalidColor | `InvalidShape];
+type customError = [ ParseError.base | `InvalidColor | `InvalidShape];
 
 module ResultOfCustomError =
   Decode.ParseError.ResultOf({
@@ -16,7 +17,6 @@ module ResultOfCustomError =
     let handle = x => (x :> t);
   });
 
-module ParseError = Decode.ParseError;
 module Decode =
   DecodeBase.DecodeBase(
     ResultOfCustomError.TransformError,
@@ -27,7 +27,7 @@ let toDebugString = (err, json) =>
   switch (err) {
   | `InvalidColor => "Expected color but found " ++ Js.Json.stringify(json)
   | `InvalidShape => "Expected shape but found " ++ Js.Json.stringify(json)
-  | #DecodeBase.failure as e => DecodeBase.failureToString(e, json)
+  | #ParseError.base as e => ParseError.failureToString(e, json)
   };
 
 // helper module to represent the color type and provie a simple decoder

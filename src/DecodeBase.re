@@ -1,43 +1,10 @@
 open Relude.Globals;
 open BsAbstract.Interface;
 
-type failure = [
-  | `ExpectedBoolean
-  | `ExpectedString
-  | `ExpectedNumber
-  | `ExpectedInt
-  | `ExpectedArray
-  | `ExpectedTuple(int)
-  | `ExpectedObject
-  | `ExpectedValidDate
-  | `ExpectedValidOption
-];
+module ParseError = Decode_ParseError;
 
-let failureToPartialString =
-  fun
-  | `ExpectedBoolean => "Expected boolean"
-  | `ExpectedString => "Expected string"
-  | `ExpectedNumber => "Expected number"
-  | `ExpectedInt => "Expected int"
-  | `ExpectedArray => "Expected array"
-  | `ExpectedTuple(size) => "Expected tuple of size " ++ Int.toString(size)
-  | `ExpectedObject => "Expected object"
-  | `ExpectedValidDate => "Expected a valid date"
-  | `ExpectedValidOption => "Expected a valid option";
-
-let failureToString = (v, json) =>
-  failureToPartialString(v) ++ " but found " ++ Js.Json.stringify(json);
-
-module type TransformError = {
-  type t('a);
-  let valErr: (failure, Js.Json.t) => t('a);
-  let arrErr: (int, t('a)) => t('a);
-  let missingFieldErr: string => t('a);
-  let objErr: (string, t('a)) => t('a);
-  let lazyAlt: (t('a), unit => t('a)) => t('a);
-};
-
-module DecodeBase = (T: TransformError, M: MONAD with type t('a) = T.t('a)) => {
+module DecodeBase =
+       (T: ParseError.TransformError, M: MONAD with type t('a) = T.t('a)) => {
   type t('a) = Js.Json.t => M.t('a);
 
   let map = (f, decode) => decode >> M.map(f);
@@ -54,7 +21,7 @@ module DecodeBase = (T: TransformError, M: MONAD with type t('a) = T.t('a)) => {
 
   let flatMap = (f, decode) => flat_map(decode, f);
 
-  let value = (decode, failure, json) =>
+  let value = (decode, failure: ParseError.base, json) =>
     decode(json) |> Option.foldLazy(() => T.valErr(failure, json), M.pure);
 
   let boolean = value(Js.Json.decodeBoolean, `ExpectedBoolean);
