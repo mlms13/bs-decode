@@ -21,7 +21,7 @@ module DecodeBase =
 
   let flatMap = (f, decode) => flat_map(decode, f);
 
-  let value = (decode, failure: ParseError.base, json) =>
+  let value = (decode, failure, json) =>
     decode(json) |> Option.foldLazy(() => T.valErr(failure, json), M.pure);
 
   let boolean = value(Js.Json.decodeBoolean, `ExpectedBoolean);

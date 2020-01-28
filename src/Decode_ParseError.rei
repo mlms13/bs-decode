@@ -57,12 +57,6 @@ module ResultOf:
       let flat_map: (t('a), 'a => t('b)) => t('b);
     };
 
-    module Alt: {
-      type nonrec t('a) = result('a, t(Err.t));
-      let map: ('a => 'b, t('a)) => t('b);
-      let alt: (t('a), t('a)) => t('a);
-    };
-
     module TransformError: {
       type nonrec t('a) = result('a, t(Err.t));
       let valErr: (base, Js.Json.t) => t('a);

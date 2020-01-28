@@ -170,11 +170,6 @@ module ResultOf = (Err: ValError) => {
     let flat_map = Result.bind;
   };
 
-  module Alt: ALT with type t('a) = r('a) = {
-    include Monad;
-    let alt = Result.alt;
-  };
-
   module TransformError: TransformError with type t('a) = r('a) = {
     type t('a) = r('a);
 
