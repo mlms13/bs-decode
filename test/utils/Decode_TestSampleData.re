@@ -31,7 +31,6 @@ let jsonTuple5: Js.Json.t = [%raw {| ["A", "B", "C", "D", "E" ] |}];
 let jsonTuple6: Js.Json.t = [%raw {| ["A", "B", "C", "D", "E", "F"] |}];
 
 // Nested typed values
-let valArrayEmpty = [||];
 let valArrayString = [|"A", "B", "C"|];
 let valArrayNested = [|[|"a", "b"|], [||], [|"c"|]|];
 let valListEmpty = [];
