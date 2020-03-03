@@ -28,7 +28,7 @@ D.variantFromString(parseColor, Js.Json.string("Yellow"));
 
 In other cases, `ExpectedValidOption` might not be enough debugging information. You may want custom handling (or simply more specific errors) when something goes wrong during decoding.
 
-You can get this by extending the underlying `DecodeBase.failure` type with extra constructors. You use this extension to build your own custom `Decode.ParseError`, which in turn can be used to build a custom decode module on top of `DecodeBase`.
+You can get this by extending the underlying `Decode.ParseError.base` type with extra constructors. You use this extension to build your own custom `Decode.ParseError`, which in turn can be used to build a custom decode module on top of `DecodeBase`.
 
 This may sound overwhelming, but the whole thing can be accomplished in about 6 lines of code:
 

@@ -11,17 +11,14 @@ module Sample = Decode_TestSampleData;
 
 type customError = [ ParseError.base | `InvalidColor | `InvalidShape];
 
-module ResultOfCustomError =
+module ResultCustom =
   Decode.ParseError.ResultOf({
     type t = customError;
     let handle = x => (x :> t);
   });
 
 module Decode =
-  DecodeBase.DecodeBase(
-    ResultOfCustomError.TransformError,
-    ResultOfCustomError.Monad,
-  );
+  DecodeBase.DecodeBase(ResultCustom.TransformError, ResultCustom);
 
 let toDebugString = (err, json) =>
   switch (err) {

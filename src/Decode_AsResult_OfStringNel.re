@@ -6,22 +6,21 @@ open Relude.Globals;
 module NonEmptyList = NonEmpty.List;
 
 module ResultUtil = {
-  open BsAbstract.Interface;
   module ParseError = Decode_ParseError;
+  type t('a) = result('a, NonEmptyList.t(string));
 
-  module Monad: MONAD with type t('a) = result('a, NonEmptyList.t(string)) = {
-    type t('a) = result('a, NonEmptyList.t(string));
-    let map = Result.map;
-    let apply = (a, b) =>
-      switch (a, b) {
-      | (Ok(f), Ok(v)) => Ok(f(v))
-      | (Ok(_), Error(v)) => Error(v)
-      | (Error(v), Ok(_)) => Error(v)
-      | (Error(xa), Error(xb)) => Error(NonEmptyList.concat(xa, xb))
-      };
-    let pure = Result.pure;
-    let flat_map = Result.bind;
-  };
+  let map = Result.map;
+
+  let apply = (a, b) =>
+    switch (a, b) {
+    | (Ok(f), Ok(v)) => Ok(f(v))
+    | (Ok(_), Error(v)) => Error(v)
+    | (Error(v), Ok(_)) => Error(v)
+    | (Error(xa), Error(xb)) => Error(NonEmptyList.concat(xa, xb))
+    };
+
+  let pure = Result.pure;
+  let flat_map = Result.bind;
 
   module Transform:
     ParseError.TransformError with
@@ -54,4 +53,4 @@ module ResultUtil = {
   };
 };
 
-include DecodeBase.DecodeBase(ResultUtil.Transform, ResultUtil.Monad);
+include DecodeBase.DecodeBase(ResultUtil.Transform, ResultUtil);

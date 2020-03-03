@@ -531,7 +531,7 @@ describe("Decode records", () => {
 [@bs.module] external bigjson: Js.Json.t = "./utils/BigJson.json";
 
 describe("Big JSON array", () =>
-  test("Doesn't blow up", () =>
+  test("is stack-safe", () =>
     expect(Decode.array(Option.pure, bigjson) |> Option.isSome)
     |> toEqual(true)
   )

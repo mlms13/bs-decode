@@ -49,16 +49,15 @@ module type ValError = {
 module ResultOf:
   (Err: ValError) =>
    {
-    module Monad: {
-      type nonrec t('a) = result('a, t(Err.t));
-      let map: ('a => 'b, t('a)) => t('b);
-      let apply: (t('a => 'b), t('a)) => t('b);
-      let pure: 'a => t('a);
-      let flat_map: (t('a), 'a => t('b)) => t('b);
-    };
+    type error = t(Err.t);
+    type nonrec t('a) = result('a, error);
+    let map: ('a => 'b, t('a)) => t('b);
+    let apply: (t('a => 'b), t('a)) => t('b);
+    let pure: 'a => t('a);
+    let flat_map: (t('a), 'a => t('b)) => t('b);
 
     module TransformError: {
-      type nonrec t('a) = result('a, t(Err.t));
+      type nonrec t('a) = result('a, error);
       let valErr: (base, Js.Json.t) => t('a);
       let arrErr: (int, t('a)) => t('a);
       let missingFieldErr: string => t('a);

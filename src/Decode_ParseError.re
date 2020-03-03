@@ -152,26 +152,22 @@ module type ValError = {
 };
 
 module ResultOf = (Err: ValError) => {
-  open BsAbstract.Interface;
+  type error = t(Err.t);
+  type nonrec t('a) = result('a, error);
+  let map = Result.map;
+  let apply = (f, v) =>
+    switch (f, v) {
+    | (Ok(fn), Ok(a)) => Result.ok(fn(a))
+    | (Ok(_), Error(_) as err) => err
+    | (Error(_) as err, Ok(_)) => err
+    | (Error(fnx), Error(ax)) => Result.error(combine(fnx, ax))
+    };
 
-  type r('a) = Result.t('a, t(Err.t));
+  let pure = Result.pure;
+  let flat_map = Result.bind;
 
-  module Monad: MONAD with type t('a) = r('a) = {
-    type t('a) = r('a);
-    let map = Result.map;
-    let apply = (f, v) =>
-      switch (f, v) {
-      | (Ok(fn), Ok(a)) => Result.ok(fn(a))
-      | (Ok(_), Error(_) as err) => err
-      | (Error(_) as err, Ok(_)) => err
-      | (Error(fnx), Error(ax)) => Result.error(combine(fnx, ax))
-      };
-    let pure = Result.pure;
-    let flat_map = Result.bind;
-  };
-
-  module TransformError: TransformError with type t('a) = r('a) = {
-    type t('a) = r('a);
+  module TransformError: TransformError with type t('a) = result('a, error) = {
+    type t('a) = result('a, error);
 
     let valErr = (v, json) => Result.error(Val(Err.handle(v), json));
     let arrErr = pos => Result.mapError(arrPure(pos));
