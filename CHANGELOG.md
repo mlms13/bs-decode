@@ -1,3 +1,20 @@
+## 0.10.0 (Mar 3, 2020)
+
+### :rotating_light: Breaking changes
+
+- All error-related types now live in `Decode.ParseError`. Specifically, this means that `DecodeBase.failure` is now `Decode.ParseError.base`, which is important if you're extending the base errors to create your own custom errors.
+
+### :memo: Documentation
+
+- README explains peer dependencies better
+- Nested array decoding is demonstrated in the tests
+- Haskell-style object decoding operates on the decoders, not the result
+
+### :heavy_check_mark: Code quality
+
+- Bump dependencies and allow compilation with Bucklescript 7.1
+- Internally, use structural typing for typeclasses rather than named modules
+
 ## 0.9.0 (Oct 7, 2019)
 
 ### :sparkles: New features

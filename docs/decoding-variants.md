@@ -39,7 +39,7 @@ module R =
     let handle = x => (x :> t);
   });
 
-module D = DecodeBase.DecodeBase(R.TransformError, R.Monad);
+module D = DecodeBase.DecodeBase(R.TransformError, R);
 ```
 
 Now we have a `D` that is slightly different from the `Decode.AsResult.OfParseError` that we've been using up until now. This `D` can produce `Val` parse errors that can be `InvalidColor` or `InvalidShape`.
