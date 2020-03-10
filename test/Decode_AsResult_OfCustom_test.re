@@ -17,8 +17,7 @@ module ResultCustom =
     let handle = x => (x :> t);
   });
 
-module Decode =
-  DecodeBase.DecodeBase(ResultCustom.TransformError, ResultCustom);
+module Decode = Decode.Make(ResultCustom.TransformError, ResultCustom);
 
 let toDebugString = (err, json) =>
   switch (err) {

@@ -1,6 +1,6 @@
 {
   "name": "bs-decode",
-  "bsc-flags": ["-bs-no-version-header", "-bs-super-errors"],
+  "bsc-flags": [],
   "bs-dependencies": [
     "bs-abstract",
     "relude"
@@ -8,14 +8,20 @@
   "bs-dev-dependencies": [
     "@glennsl/bs-jest"
   ],
-  "sources": [{
-    "dir": "./src",
-    "subdirs": true
-  }, {
-    "dir": "./test",
-    "type": "dev",
-    "subdirs": true
-  }],
+  "sources": [
+    {
+      "dir": "./src",
+      "subdirs": true,
+      "public": [
+        "Decode"
+      ]
+    },
+    {
+      "dir": "./test",
+      "type": "dev",
+      "subdirs": true
+    }
+  ],
   "package-specs": {
     "module": "commonjs",
     "in-source": true
@@ -24,6 +30,6 @@
   "suffix": ".bs.js",
   "warnings": {
     "number": "+A-40-42",
-    "error": "+8+11"
+    "error": "+A"
   }
 }

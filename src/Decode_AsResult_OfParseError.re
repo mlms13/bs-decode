@@ -7,4 +7,4 @@ module Result =
     let handle = t => t;
   });
 
-include DecodeBase.DecodeBase(Result.TransformError, Result);
+include Decode_Base.Make(Result.TransformError, Result);

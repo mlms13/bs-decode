@@ -1,3 +1,6 @@
+module Base = Decode_Base;
+module Make = Base.Make;
+
 module ParseError = Decode_ParseError;
 
 module AsOption = Decode_AsOption;

@@ -53,4 +53,4 @@ module ResultUtil = {
   };
 };
 
-include DecodeBase.DecodeBase(ResultUtil.Transform, ResultUtil);
+include Decode_Base.Make(ResultUtil.Transform, ResultUtil);
