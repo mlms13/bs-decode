@@ -24,6 +24,8 @@ module DecodeBase =
   let value = (decode, failure, json) =>
     decode(json) |> Option.foldLazy(() => T.valErr(failure, json), M.pure);
 
+  let okJson = M.pure;
+
   let boolean = value(Js.Json.decodeBoolean, `ExpectedBoolean);
 
   let string = value(Js.Json.decodeString, `ExpectedString);

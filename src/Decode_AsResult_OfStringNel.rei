@@ -72,6 +72,7 @@ let alt:
   ) =>
   result('a, NonEmptyList.t(string));
 
+let okJson: Js.Json.t => result(Js.Json.t, NonEmptyList.t(string));
 let boolean: Js.Json.t => result(bool, NonEmptyList.t(string));
 let string: Js.Json.t => result(string, NonEmptyList.t(string));
 let floatFromNumber: Js.Json.t => result(float, NonEmptyList.t(string));

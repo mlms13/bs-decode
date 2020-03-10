@@ -55,6 +55,7 @@ let alt:
   (Js.Json.t => option('a), Js.Json.t => option('a), Js.Json.t) =>
   option('a);
 
+let okJson: Js.Json.t => option(Js.Json.t);
 let boolean: Js.Json.t => option(bool);
 let string: Js.Json.t => option(Js.String.t);
 let floatFromNumber: Js.Json.t => option(float);

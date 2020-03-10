@@ -73,6 +73,7 @@ let alt:
   ) =>
   result('a, ParseError.failure);
 
+let okJson: Js.Json.t => result(Js.Json.t, ParseError.failure);
 let boolean: Js.Json.t => result(bool, ParseError.failure);
 let string: Js.Json.t => result(string, ParseError.failure);
 let floatFromNumber: Js.Json.t => result(float, ParseError.failure);
