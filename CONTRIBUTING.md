@@ -16,9 +16,9 @@ Also, please make sure that your code has been formatted with [`refmt`](https://
 
 ### Project structure
 
-- `DecodeBase.re` is where all of the decoders are defined
-- `Decode_As*.re` modules construct `DecodeBase` with everything it needs to produce decoders for a specific output type (e.g. `option`, `result`)
-- `Decode_ParseError.re` defines the structured errors and helper functions to work with `Belt.Result.t` values of that error type
+- `Decode_Base.re` is where all of the decoders are defined
+- `Decode_As*.re` modules construct `Decode_Base` with everything it needs to produce decoders for a specific output type (e.g. `option`, `result`)
+- `Decode_ParseError.re` defines the structured errors and helper functions to work with `result` values of that error type
 
 ### Tests
 
