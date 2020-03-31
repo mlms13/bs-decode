@@ -1,5 +1,5 @@
 open Relude.Globals;
-open BsAbstract.Interface;
+open BsBastet.Interface;
 
 module ParseError = Decode_ParseError;
 

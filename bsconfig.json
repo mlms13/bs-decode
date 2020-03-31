@@ -2,7 +2,7 @@
   "name": "bs-decode",
   "bsc-flags": [],
   "bs-dependencies": [
-    "bs-abstract",
+    "bs-bastet",
     "relude"
   ],
   "bs-dev-dependencies": [
