@@ -11,10 +11,7 @@
   "sources": [
     {
       "dir": "./src",
-      "subdirs": true,
-      "public": [
-        "Decode"
-      ]
+      "subdirs": true
     },
     {
       "dir": "./test",
