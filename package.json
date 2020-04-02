@@ -33,14 +33,14 @@
   "license": "MIT",
   "peerDependencies": {
     "bs-bastet": "^1.2.5",
-    "relude": "^0.59.0"
+    "relude": "github:reazen/relude#letops"
   },
   "devDependencies": {
     "@glennsl/bs-jest": "^0.5.1",
     "bs-bastet": "^1.2.5",
-    "bs-platform": "^7.2.2",
+    "bs-platform": "github:bucklescript/bucklescript#1b6678b",
     "coveralls": "^3.0.9",
-    "relude": "^0.59.0"
+    "relude": "github:reazen/relude#letops"
   },
   "jest": {
     "coveragePathIgnorePatterns": [

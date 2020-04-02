@@ -1,4 +1,3 @@
-module NonEmptyList = Relude.NonEmpty.List;
 module ParseError = Decode_ParseError;
 
 module Result =

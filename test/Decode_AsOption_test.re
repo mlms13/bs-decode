@@ -501,6 +501,30 @@ describe("Decode records", () => {
       |> hardcoded(None)
     );
 
+  let rec decodeJobLetOps = json => {
+    let go = {
+      open Decode;
+      let+ title = field("title", string)
+      and+ companyName = field("companyName", string)
+      and+ startDate = field("startDate", date)
+      and+ manager = optionalField("manager", decodeEmployeeLetOps);
+      Sample.{title, companyName, startDate, manager};
+    };
+    go(json);
+  }
+  and decodeEmployeeLetOps = json => {
+    let go = {
+      open Decode;
+      let+ name = field("name", string)
+      and+ age = field("age", intFromNumber)
+      and+ job = field("job", decodeJobLetOps);
+      Sample.{name, age, job};
+    };
+    go(json);
+  };
+
+  let _ = decodeJobLetOps(Sample.jsonJobCeo);
+
   test("map3", () =>
     expect(decodeJobMap3(Sample.jsonJobCeo))
     |> toEqual(Some(Sample.jobCeo))
@@ -513,6 +537,11 @@ describe("Decode records", () => {
 
   test("pipeline", () =>
     expect(decodeEmployeePipeline(Sample.jsonPersonBill))
+    |> toEqual(Some(Sample.employeeBill))
+  );
+
+  test("letops", () =>
+    expect(decodeEmployeeLetOps(Sample.jsonPersonBill))
     |> toEqual(Some(Sample.employeeBill))
   );
 

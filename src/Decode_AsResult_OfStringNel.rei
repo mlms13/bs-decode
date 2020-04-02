@@ -72,6 +72,26 @@ let alt:
   ) =>
   result('a, NonEmptyList.t(string));
 
+let (let+):
+  (Js.Json.t => result('a, NonEmptyList.t(string)), 'a => 'b, Js.Json.t) =>
+  result('b, NonEmptyList.t(string));
+
+let (and+):
+  (
+    Js.Json.t => result('a, NonEmptyList.t(string)),
+    Js.Json.t => result('b, NonEmptyList.t(string)),
+    Js.Json.t
+  ) =>
+  result(('a, 'b), NonEmptyList.t(string));
+
+let ( let* ):
+  (
+    Js.Json.t => result('a, NonEmptyList.t(string)),
+    ('a, Js.Json.t) => result('b, NonEmptyList.t(string)),
+    Js.Json.t
+  ) =>
+  result('b, NonEmptyList.t(string));
+
 let okJson: Js.Json.t => result(Js.Json.t, NonEmptyList.t(string));
 let boolean: Js.Json.t => result(bool, NonEmptyList.t(string));
 let string: Js.Json.t => result(string, NonEmptyList.t(string));

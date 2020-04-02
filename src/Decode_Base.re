@@ -13,13 +13,17 @@ module Make =
   let flat_map = (decode, f, json) => M.flat_map(decode(json), f(_, json));
   let alt = (a, b, json) => T.lazyAlt(a(json), () => b(json));
 
-  include Relude.Extensions.Apply.ApplyExtensions({
+  module Monad = {
     type nonrec t('a) = t('a);
     let map = map;
     let apply = apply;
-  });
+    let pure = pure;
+    let flat_map = flat_map;
+  };
 
-  let flatMap = (f, decode) => flat_map(decode, f);
+  include Relude.Extensions.Functor.FunctorExtensions(Monad);
+  include Relude.Extensions.Apply.ApplyExtensions(Monad);
+  include Relude.Extensions.Monad.MonadExtensions(Monad);
 
   let value = (decode, failure, json) =>
     decode(json) |> Option.foldLazy(() => T.valErr(failure, json), M.pure);

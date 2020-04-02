@@ -1,4 +1,3 @@
-module NonEmptyList: Decode_NonEmptyList.Nel;
 module ParseError = Decode_ParseError;
 
 let map:
@@ -72,6 +71,26 @@ let alt:
     Js.Json.t
   ) =>
   result('a, ParseError.failure);
+
+let (let+):
+  (Js.Json.t => result('a, ParseError.failure), 'a => 'b, Js.Json.t) =>
+  result('b, ParseError.failure);
+
+let (and+):
+  (
+    Js.Json.t => result('a, ParseError.failure),
+    Js.Json.t => result('b, ParseError.failure),
+    Js.Json.t
+  ) =>
+  result(('a, 'b), ParseError.failure);
+
+let ( let* ):
+  (
+    Js.Json.t => result('a, ParseError.failure),
+    ('a, Js.Json.t) => result('b, ParseError.failure),
+    Js.Json.t
+  ) =>
+  result('b, ParseError.failure);
 
 let okJson: Js.Json.t => result(Js.Json.t, ParseError.failure);
 let boolean: Js.Json.t => result(bool, ParseError.failure);
