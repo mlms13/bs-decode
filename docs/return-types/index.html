@@ -54,7 +54,7 @@
                 };
               }
             });
-        </script></nav></div><div class="container mainContainer"><div class="wrapper"><div class="post"><header class="postHeader"><h1 class="postHeaderTitle">Return Types</h1></header><article><div><span><p><code>bs-decode</code> provides functions that will return values wrapped in either an <code>option</code> or a <code>Belt.Result.t</code>. Many of these error handling ideas were inspired by <a href="http://keleshev.com/composable-error-handling-in-ocaml">Composable Error Handling in OCaml</a>, which is a great read that goes into more detail than our summary here.</p>
+        </script></nav></div><div class="container mainContainer docsContainer"><div class="wrapper"><div class="post"><header class="postHeader"><h1 id="__docusaurus" class="postHeaderTitle">Return Types</h1></header><article><div><span><p><code>bs-decode</code> provides functions that will return values wrapped in either an <code>option</code> or a <code>Belt.Result.t</code>. Many of these error handling ideas were inspired by <a href="http://keleshev.com/composable-error-handling-in-ocaml">Composable Error Handling in OCaml</a>, which is a great read that goes into more detail than our summary here.</p>
 <ul>
 <li><code>Decode.AsOption</code>: all functions return <code>Some(value)</code> for success or <code>None</code> for failures</li>
 <li><code>Decode.AsResult.OfParseError</code>: all functions return <code>Ok(value)</code> for success, or <code>Error(Decode.ParseError.t)</code> for failures</li>
