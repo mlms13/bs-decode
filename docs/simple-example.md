@@ -23,7 +23,7 @@ let make = (name, age, isAdmin, lastLogin) =>
 
 // now we build up a decoder
 let decode = json =>
-  Decode.AsResult.OfParseError.(
+  Decode.AsResult.OfParseError.Pipeline.(
     succeed(make)
     |> field("name", string)
     |> field("age", intFromNumber)
