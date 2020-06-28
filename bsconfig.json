@@ -1,16 +1,11 @@
 {
   "name": "bs-decode",
   "bsc-flags": [],
-  "bs-dependencies": [
-    "bs-bastet",
-    "relude"
-  ],
-  "bs-dev-dependencies": [
-    "@glennsl/bs-jest"
-  ],
+  "bs-dependencies": ["bs-bastet", "relude"],
+  "bs-dev-dependencies": ["@glennsl/bs-jest"],
   "sources": [
     {
-      "dir": "./src",
+      "dir": "src",
       "subdirs": true
     },
     {
