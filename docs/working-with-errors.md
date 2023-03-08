@@ -5,7 +5,7 @@ title: Working With Errors
 
 ## The Error Type
 
-The following assumes you're working with `Decode.AsResult.OfParseError` (or [a customization](decoding-variants.md) built on top of it). We'll look at the type of the errors and how you can work with that type.
+When using `Decode.AsResult.OfParseError`, each decoder can fail with a Result Error that holds a variant value representing the structured decode error.
 
 The underlying/primitive decode errors look like:
 
@@ -23,9 +23,7 @@ type failure = [
 ]
 ```
 
-You'll note that this is a polymorphic variant, allowing you to customize the underlying kinds of errors.
-
-The simplified error type, used as the payload of the Result's `Error` constructor, looks something like:
+The full error structure (where the base `Val` errors hold the failure type above) looks like:
 
 ```reasonml
 type t =
@@ -41,9 +39,9 @@ and objError =
 Ultimately, this is saying that a `ParseError` will be either a `Val` error, a `TriedMultiple` error, an `Arr` error, or an `Obj` error.
 
 - `Val` errors contain one of the primitive errors defined above and the JSON that it failed to decode
-- `TriedMultiple` contains a non-empty list of other errors, resulting from `alt`/`oneOf` calls where each attempt fails
+- `TriedMultiple` happens when multiple decoders were attempted (e.g. using `alt`) and it contains a non-empty list of other errors
 - `Arr` errors hold a non-empty list of position/error pairs
-- `Obj` errors hold a non-empty list of fieldname/ojbect-error pairs
+- `Obj` errors hold a non-empty list of fieldname/object-error pairs
   - Object errors happen either because the field is a `MissingField`, or
   - the field exists but its value couldn't be decoded (`InvalidField` which recursively contains any of the above errors)
 
@@ -51,17 +49,17 @@ This error structure can be destructured with recursive pattern matching.
 
 ## Logging
 
-Pattern matching on the error structure with the intention of logging what went wrong is a common enough pattern that we provide utilities to help you with this.
+One of the most common reasons to pattern match on the error structure is to log what went wrong while decoding. This is a common enough use case that helpers are provided to do just that:
 
 ```reasonml
-switch (runSomeDecoder(json)) {
-| Ok(v) => // do something with your value
+switch (decode(json)) {
+| Ok(v) => ... // do something with your successful value
 | Error(err) =>
   Js.log(Decode.ParseError.failureToDebugString(err))
 };
 ```
 
-Obviously, the output of `failureToDebugString` will depend on the decoder and the JSON value you pass to it, but the string output of that function could look something like:
+The actual output of `failureToDebugString` will depend on the decoder and the JSON value you pass to it, but the string output of that function could look something like:
 
 ```sh
 Failed to decode array:
@@ -70,5 +68,3 @@ Failed to decode array:
         Field "bar" had an invalid value: Failed to decode array:
             At position 0: Expected int but found []
 ```
-
-This same technique can be extended to your [custom decode errors](decoding-variants.md) as well.
