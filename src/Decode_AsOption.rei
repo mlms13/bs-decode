@@ -168,6 +168,7 @@ let oneOf:
   (Js.Json.t => option('a), list(Js.Json.t => option('a)), Js.Json.t) =>
   option('a);
 
+[@deprecated "Will be removed in favor up the upcoming addition of letops"]
 module Pipeline: {
   let succeed: ('a, Js.Json.t) => option('a);
 

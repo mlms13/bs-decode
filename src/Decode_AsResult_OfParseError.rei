@@ -227,6 +227,7 @@ let oneOf:
   ) =>
   result('a, ParseError.failure);
 
+[@deprecated "Will be removed in favor up the upcoming addition of letops"]
 module Pipeline: {
   let succeed: ('a, Js.Json.t) => result('a, ParseError.failure);
 
