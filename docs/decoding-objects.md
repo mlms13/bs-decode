@@ -58,14 +58,14 @@ let make = (name, age, isAdmin, lastLogin) =>
 In the very near future, `bs-decode` will be switching from BuckleScript to Melange. This will give us access to newer OCaml features, such as [binding operators](https://v2.ocaml.org/manual/bindingops.html). This dramatically simplifies the syntax for decoding and constructing complex objects:
 
 ```reasonml
-let decode =
-  Decode.{
-    let+ name = field("name", string)
-    and+ age = field("age", intFromNumber)
-    and+ isAdmin = field("isAdmin", boolean)
-    and+ lastLogin = optionalField("lastLogin", date);
-    User.make(name, age, isAdmin, lastLogin);
-  };
+let decode = {
+  open Decode;
+  let+ name = field("name", string)
+  and+ age = field("age", intFromNumber)
+  and+ isAdmin = field("isAdmin", boolean)
+  and+ lastLogin = optionalField("lastLogin", date);
+  User.make(name, age, isAdmin, lastLogin);
+};
 ```
 
 Once available, this will replace the "Pipeline" decoding (see below). Unlike the other strategies outlined below, the order of the field decoders doesn't matter. It's much easier to see how each field is used in the constructor, and it works with labeled functions and literal record construction.
