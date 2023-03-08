@@ -3,47 +3,24 @@ id: return-types
 title: Return Types
 ---
 
-`bs-decode` provides functions that will return values wrapped in either an `option` or a `Belt.Result.t`. Many of these error handling ideas were inspired by [Composable Error Handling in OCaml](http://keleshev.com/composable-error-handling-in-ocaml), which is a great read that goes into more detail than our summary here.
+`bs-decode` provides decode functions that will return values wrapped in either an `option` or a `result`. Many of these error handling ideas were inspired by [Composable Error Handling in OCaml](http://keleshev.com/composable-error-handling-in-ocaml), which is a great read that goes into more detail than our summary here.
 
-  - `Decode.AsOption`: all functions return `Some(value)` for success or `None` for failures
   - `Decode.AsResult.OfParseError`: all functions return `Ok(value)` for success, or `Error(Decode.ParseError.t)` for failures
   - `Decode.AsResult.OfStringNel`: all functions return `Ok(value)` for success, or `Error(NonEmptyList.t(string))` for failures
-
-Each of these has some pros and cons to consider:
-
-## Option
-
-Pros:
-
-- Lots of good tooling already exists to work with options
-- You can add on your own layers of validation that also return options without worrying about unifying the errors
-
-Cons:
-
-- You lose all of the structural error information, even if all you want to do is log it
+  - `Decode.AsOption`: all functions return `Some(value)` for success or `None` for failures
 
 ## Result of ParseError
 
-Pros:
+While it's possible to choose other error representations when using `bs-decode`, this is the preferred choice for decoding, as it provides the richest error information. In a future release, this will be the only supported value for holding the decode output.
 
-- Errors are structured and can be checked exhaustively
-- Great debugging information when you log the errors
+For more information on how to work with the structured error data returned by these decoders, see [Working With Errors](working-with-errors.md).
 
-Cons:
+## Option (Deprecated)
 
-- Adding your own layer of validation comes with some boilerplate (see [Decoding Variants](decoding-variants.md))
+If you prefer to work with `option` for the sake of simplicity, it's recommended that you still use `Decode.AsResult.OfParseError` and convert the `result` to `option` after running the decoder.
 
-## Result of NonEmptyList String
+## Result of NonEmptyList String (Deprecated)
 
-Pros:
+Instead of providing structured, typed error information when a decoder fails, `Decode.AsResult.OfStringNel` returns a non-empty list of `string` error messages. The benefit is that string error messages are easy to read and easy to extend with your own validation error messages. However, the error messages provided aren't as rich in information as the errors when using `Decode.AsResult.OfParseError`, and if your goal is simply to read the output, it's better to use those decoders and convert the error messages to a string using `Decode.ParseError.failureToDebugString`.
 
-- Reports all failures, giving decent debugging info
-- Easy to extend with your own validation, as long as your validation returns a `Result.t('a, NonEmptyList.t(string))`
-
-Cons:
-
-- Strings are fine for logging, but bad for pattern matching
-
-## The Winner?
-
-`Decode.AsResult.OfParseError` requires [a bit more work up-front](decoding-variants.md) if you want to add your own custom validations, but the extra structure is probably worth it for anything larger than a trivial example project. `Decode.AsOption` is an easy way to get started, though, and switching to a `Result` decoder later should be trivial if you decide that's what you want.
+We're hoping to reduce the need for custom error messages (the biggest benefit of using this set of decoders), and maintaining multiple types of `result` decoders adds quite a bit of complexity to the `bs-decode` library, so this set of decoders will likely be removed in a future release.
