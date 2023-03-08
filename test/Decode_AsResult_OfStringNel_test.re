@@ -2,6 +2,7 @@ open Jest;
 open Expect;
 open Relude.Globals;
 
+[@ocaml.warning "-3"]
 module Decode = Decode.AsResult.OfStringNel;
 module Sample = Decode_TestSampleData;
 module Nel = Decode.NonEmptyList;
@@ -54,7 +55,9 @@ describe("Simple decode errors", () => {
 
   test("tuple", () =>
     expect(Decode.(tuple(string, boolean, Sample.jsonArrayEmpty)))
-    |> toEqual(makeErr("Expected tuple of size 2 but found", Sample.jsonArrayEmpty))
+    |> toEqual(
+         makeErr("Expected tuple of size 2 but found", Sample.jsonArrayEmpty),
+       )
   );
 
   test("object", () =>

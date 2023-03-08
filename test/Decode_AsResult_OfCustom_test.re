@@ -17,6 +17,7 @@ module ResultCustom =
     let handle = x => (x :> t);
   });
 
+[@ocaml.warning "-3"]
 module Decode = Decode.Make(ResultCustom.TransformError, ResultCustom);
 
 let toDebugString = (err, json) =>
