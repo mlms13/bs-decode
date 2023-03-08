@@ -230,6 +230,7 @@ let oneOf:
   ) =>
   result('a, NonEmptyList.t(string));
 
+[@deprecated "Will be removed in favor up the upcoming addition of letops"]
 module Pipeline: {
   let succeed: ('a, Js.Json.t) => result('a, NonEmptyList.t(string));
 

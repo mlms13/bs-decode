@@ -474,6 +474,7 @@ describe("Decode records", () => {
     <*> Decode.(field("startDate", date))
     <*> Decode.pure(None);
 
+  [@ocaml.warning "-3"]
   let rec decodeJobPipeline = json =>
     Decode.Pipeline.(
       succeed(Sample.makeJob)
@@ -483,6 +484,7 @@ describe("Decode records", () => {
       |> optionalField("manager", decodeEmployeePipeline)
       |> run(json)
     )
+  [@ocaml.warning "-3"]
   and decodeEmployeePipeline = json =>
     Decode.Pipeline.(
       succeed(Sample.makeEmployee)
@@ -492,6 +494,7 @@ describe("Decode records", () => {
       |> run(json)
     );
 
+  [@ocaml.warning "-3"]
   let decodeJobPipelineRecovery =
     Decode.Pipeline.(
       succeed(Sample.makeJob)
