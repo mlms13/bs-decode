@@ -87,7 +87,63 @@ describe("Simple decoders", () => {
   );
 });
 
+describe("Literal decoders", () => {
+  test("literalString (success)", () =>
+    expect(Decode.literalString("blue", Sample.jsonStringBlue))
+    |> toEqual(Some("blue"))
+  );
+
+  test("literalString (failure, wrong type)", () =>
+    expect(Decode.literalString("blue", Sample.jsonIntFive))
+    |> toEqual(None)
+  );
+
+  test("literalString (failure, wrong value)", () =>
+    expect(Decode.literalString("blue", Sample.jsonStringYellow))
+    |> toEqual(None)
+  );
+
+  test("literalInt (success)", () =>
+    expect(Decode.literalInt(5, Sample.jsonIntFive)) |> toEqual(Some(5))
+  );
+
+  test("literalInt (failure, wrong type)", () =>
+    expect(Decode.literalInt(5, Sample.jsonStringBlue)) |> toEqual(None)
+  );
+
+  test("literalInt (failure, wrong value)", () =>
+    expect(Decode.literalInt(5, Sample.jsonIntZero)) |> toEqual(None)
+  );
+
+  test("literalFloat (success)", () =>
+    expect(Decode.literalFloat(5.0, Sample.jsonIntFive))
+    |> toEqual(Some(5.0))
+  );
+
+  test("literalFloat (failure, wrong type)", () =>
+    expect(Decode.literalFloat(5.0, Sample.jsonStringBlue)) |> toEqual(None)
+  );
+
+  test("literalFloat (failure, wrong value)", () =>
+    expect(Decode.literalFloat(5.0, Sample.jsonIntZero)) |> toEqual(None)
+  );
+});
+
 describe("Variant decoders", () => {
+  let decodePolyColor =
+    Decode.stringUnion(
+      ("blue", `blue),
+      [("red", `red), ("green", `green)],
+    );
+
+  test("stringUnion (success)", () =>
+    expect(decodePolyColor(Sample.jsonStringBlue)) |> toEqual(Some(`blue))
+  );
+
+  test("stringUnion (failure)", () =>
+    expect(decodePolyColor(Sample.jsonString4)) |> toEqual(None)
+  );
+
   test("variantFromString (success)", () =>
     expect(
       Decode.variantFromString(Sample.colorFromJs, Sample.jsonStringBlue),

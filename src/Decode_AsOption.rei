@@ -61,6 +61,13 @@ let string: Js.Json.t => option(Js.String.t);
 let floatFromNumber: Js.Json.t => option(float);
 let intFromNumber: Js.Json.t => option(int);
 let date: Js.Json.t => option(Js.Date.t);
+let literal:
+  (('a, 'a) => bool, Js.Json.t => option('a), 'a, Js.Json.t) => option('a);
+let literalString: (string, Js.Json.t) => option(string);
+let literalInt: (int, Js.Json.t) => option(int);
+let literalFloat: (float, Js.Json.t) => option(float);
+let stringUnion:
+  ((string, 'a), list((string, 'a)), Js.Json.t) => option('a);
 let variantFromJson:
   (Js.Json.t => option('a), 'a => option('b), Js.Json.t) => option('b);
 let variantFromString: (string => option('a), Js.Json.t) => option('a);

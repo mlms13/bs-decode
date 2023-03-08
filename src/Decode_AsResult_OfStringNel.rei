@@ -78,6 +78,27 @@ let string: Js.Json.t => result(string, NonEmptyList.t(string));
 let floatFromNumber: Js.Json.t => result(float, NonEmptyList.t(string));
 let intFromNumber: Js.Json.t => result(int, NonEmptyList.t(string));
 let date: Js.Json.t => result(Js.Date.t, NonEmptyList.t(string));
+let literal:
+  (
+    ('a, 'a) => bool,
+    Js.Json.t => result('a, NonEmptyList.t(string)),
+    'a,
+    Js.Json.t
+  ) =>
+  result('a, NonEmptyList.t(string));
+
+let literalString:
+  (string, Js.Json.t) => result(string, NonEmptyList.t(string));
+
+let literalInt: (int, Js.Json.t) => result(int, NonEmptyList.t(string));
+
+let literalFloat:
+  (float, Js.Json.t) => result(float, NonEmptyList.t(string));
+
+let stringUnion:
+  ((string, 'a), list((string, 'a)), Js.Json.t) =>
+  result('a, NonEmptyList.t(string));
+
 let variantFromJson:
   (
     Js.Json.t => result('a, NonEmptyList.t(string)),

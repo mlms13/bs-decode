@@ -79,6 +79,20 @@ let string: Js.Json.t => result(string, ParseError.failure);
 let floatFromNumber: Js.Json.t => result(float, ParseError.failure);
 let intFromNumber: Js.Json.t => result(int, ParseError.failure);
 let date: Js.Json.t => result(Js.Date.t, ParseError.failure);
+let literal:
+  (
+    ('a, 'a) => bool,
+    Js.Json.t => result('a, ParseError.failure),
+    'a,
+    Js.Json.t
+  ) =>
+  result('a, ParseError.failure);
+let literalString: (string, Js.Json.t) => result(string, ParseError.failure);
+let literalInt: (int, Js.Json.t) => result(int, ParseError.failure);
+let literalFloat: (float, Js.Json.t) => result(float, ParseError.failure);
+let stringUnion:
+  ((string, 'a), list((string, 'a)), Js.Json.t) =>
+  result('a, ParseError.failure);
 let variantFromJson:
   (
     Js.Json.t => result('a, ParseError.failure),

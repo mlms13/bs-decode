@@ -21,6 +21,8 @@ module Make =
 
   let flatMap = (f, decode) => flat_map(decode, f);
 
+  let oneOf = (decode, rest) => List.foldLeft(alt, decode, rest);
+
   let value = (decode, failure, json) =>
     decode(json) |> Option.foldLazy(() => T.valErr(failure, json), M.pure);
 
@@ -53,6 +55,20 @@ module Make =
     alt(fromFloat, fromString) |> flatMap(isValid);
   };
 
+  let literal = (eq, decode, a) =>
+    decode
+    |> flatMap(v => eq(v, a) ? pure(a) : T.valErr(`ExpectedValidOption));
+
+  let literalString = literal((==), string);
+
+  let literalInt = literal((==), intFromNumber);
+
+  let literalFloat = literal((==), floatFromNumber);
+
+  let stringUnion = (first, rest) => {
+    let mkDecode = ((s, v)) => literalString(s) |> map(_ => v);
+    first |> mkDecode |> oneOf(_, rest |> List.map(mkDecode));
+  };
   let variantFromJson = (jsonToJs, jsToVariant) =>
     jsonToJs
     |> map(jsToVariant)
@@ -168,14 +184,7 @@ module Make =
   };
 
   let stringMap = decode =>
-    dict(decode)
-    |> map(Js.Dict.entries)
-    |> map(
-         Array.foldLeft(
-           (acc, (key, v)) => Belt.Map.String.set(acc, key, v),
-           Belt.Map.String.empty,
-         ),
-       );
+    dict(decode) |> map(Js.Dict.entries) |> map(Belt.Map.String.fromArray);
 
   let rec at = (fields, decode) =>
     switch (fields) {
@@ -203,8 +212,6 @@ module Make =
 
   let tupleFromFields = ((fieldA, decodeA), (fieldB, decodeB)) =>
     map2(Tuple.make, field(fieldA, decodeA), field(fieldB, decodeB));
-
-  let oneOf = (decode, rest) => List.foldLeft(alt, decode, rest);
 
   module Pipeline = {
     let succeed = pure;
