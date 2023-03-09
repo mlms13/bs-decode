@@ -48,7 +48,7 @@ let make = (name, age, isAdmin, lastLogin) =>
 
 /**
  * Given a JSON value that looks like:
- * { "name": "Michael", "age": 32, "roles": ["admin"] }
+ * { "name": "Alice", "age": 44, "roles": ["admin"] }
  *
  * you can write a function to convert this JSON into a value of type `user`
  */
@@ -59,12 +59,12 @@ let decode = json =>
     succeed(make)
     |> field("name", string)
     |> field("age", intFromNumber)
-    |> field("roles", map(List.contains("admin"), list(string)))
+    |> field("roles", list(string) |> map(List.contains("admin")))
     |> optionalField("lastLogin", date)
     |> run(json)
   );
 
-let myUser = decode(json); /* Ok({ name: "Michael", ...}) */
+let myUser = decode(json); /* Ok({ name: "Alice", ...}) */
 ```
 
 ## Contributing

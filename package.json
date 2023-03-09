@@ -29,7 +29,7 @@
     "result",
     "applicative"
   ],
-  "author": "Michael Martin-Smucker",
+  "author": "Michael Martin",
   "license": "MIT",
   "peerDependencies": {
     "bs-bastet": "^2.0.0",
