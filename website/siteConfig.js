@@ -16,12 +16,6 @@ const siteConfig = {
   ],
 
   users: [
-    {
-      caption: 'Home Bay',
-      image: '/img/homebay.svg',
-      infoLink: 'https://www.homebay.com',
-      pinned: true,
-    },
   ],
 
   /* path to images for header/footer */
@@ -35,7 +29,7 @@ const siteConfig = {
     secondaryColor: '#1188aa',
   },
 
-  copyright: `Copyright © ${new Date().getFullYear()} Michael Martin-Smucker`,
+  copyright: `Copyright © ${new Date().getFullYear()} Michael Martin`,
 
   highlight: {
 
