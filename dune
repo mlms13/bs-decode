@@ -1,0 +1,23 @@
+(subdir
+ node_modules
+ (dirs bs-bastet relude))
+
+(subdir
+ node_modules/bs-bastet/bastet/src
+ (library
+  (name bsBastet)
+  (modes melange)
+  (flags -w -67)))
+
+(subdir
+ node_modules/relude/src
+ (include_subdirs unqualified)
+ (library
+  (name relude)
+  (modes melange)
+  (libraries bsBastet)))
+
+(melange.emit
+ (target lol)
+ (alias lol)
+ (libraries bsBastet relude))

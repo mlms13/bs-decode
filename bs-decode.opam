@@ -1,0 +1,36 @@
+opam-version: "2.0"
+synopsis: "Type-safe JSON decoding for ReasonML and OCaml"
+description: "Type-safe JSON decoding for ReasonML and OCaml"
+maintainer: ["Michael Martin"]
+authors: ["Michael Martin"]
+license: "MIT"
+homepage: "https://github.com/mlms13/bs-decode"
+bug-reports: "https://github.com/mlms13/bs-decode/issues"
+depends: [
+  "dune" {>= "3.1"}
+  "ocaml" {>= "4.14.0" & < "4.15.0"}
+  "reason" {>= "3.8.2" & < "4.0.0"}
+  "mel"
+  "melange"
+  "ocaml-lsp-server" {dev}
+  "ocamlformat-rpc" {dev}
+  "odoc" {with-doc}
+]
+build: [
+  ["dune" "subst"] {dev}
+  [
+    "dune"
+    "build"
+    "-p"
+    name
+    "-j"
+    jobs
+    "@install"
+    "@runtest" {with-test}
+    "@doc" {with-doc}
+  ]
+]
+pin-depends: [
+  [ "melange.0.3.2" "git+https://github.com/melange-re/melange" ]
+  [ "dune.3.7.0" "git+https://github.com/ocaml/dune#086a78cc56b25a4da5795671698d7ef4d1473a21" ]
+]
