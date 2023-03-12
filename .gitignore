@@ -1,15 +1,20 @@
-node_modules
-*/log
-.vscode
-
-# generated
-/lib/bs
+# ocaml/melange/bsb
+_opam
 *.bs.js
-/dist
-.merlin
 .bsb.lock
+.merlin
+/lib/bs
+
+# nodejs
+node_modules
+npm-debug.log
+
+# tests/docs
 /website/build
 /coverage
+
+# editor
+.vscode
 
 # os files
 .DS_Store
