@@ -37,11 +37,15 @@
     "relude": "^0.66.1"
   },
   "jest": {
+    "testPathIgnorePatterns": [
+      "node_modules",
+      "_build"
+    ],
     "coveragePathIgnorePatterns": [
-      "./test"
+      "./test/output/test"
     ],
     "testMatch": [
-      "**/test/*.js"
+      "**/test/output/test/*.js"
     ]
   }
 }

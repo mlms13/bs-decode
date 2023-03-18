@@ -1,9 +1,10 @@
 # ocaml/melange/bsb
-_opam
-*.bs.js
-.bsb.lock
+.melange.eobjs
 .merlin
-/lib/bs
+/_build
+/_opam
+/test/output
+dune.mel
 
 # nodejs
 node_modules

@@ -4,8 +4,6 @@
 
 (using melange 0.1)
 
-(generate_opam_files true)
-
 (name bs-decode)
 
 (license "MIT")

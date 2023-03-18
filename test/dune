@@ -1,0 +1,9 @@
+(include_subdirs unqualified)
+
+(melange.emit
+ (target output)
+ (promote (until-clean))
+ (alias main)
+ (compile_flags :standard)
+ (libraries melange jest bsBastet relude bsDecode)
+ (module_systems commonjs))
