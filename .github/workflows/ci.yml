@@ -9,13 +9,14 @@ on:
 jobs:
   build:
     name: Build and test the project
-    matrix:
-      system:
-        - ubuntu-latest
-      node-version:
-        - 18.x
-      ocaml-compiler:
-        - 4.14.x
+    strategy:
+      matrix:
+        system:
+          - ubuntu-latest
+        node-version:
+          - 18.x
+        ocaml-compiler:
+          - 4.14.x
 
     runs-on: ${{ matrix.system }}
 
