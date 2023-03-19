@@ -13,7 +13,4 @@ If you wish to make any significant edits to the docs website, you may want to g
 ```sh
 # Run with Yarn
 yarn start
-
-# ...or run with npm
-npm run start
 ```
