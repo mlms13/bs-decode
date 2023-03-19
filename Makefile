@@ -44,11 +44,11 @@ copy-test-json: ## Copy test json files to the right place
 
 .PHONY: test
 test: copy-test-json
-	jest
+	yarn test
 
 .PHONY: test-coverage
 test-coverage: copy-test-json
-	jest --coverage
+	yarn test --coverage
 
 .PHONY: format
 format: ## Format the codebase with ocamlformat
