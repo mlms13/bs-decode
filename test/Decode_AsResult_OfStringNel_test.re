@@ -127,7 +127,7 @@ describe("Inner decoders", () => {
         )
       );
 
-    expect(decodeUnion(Sample.jsonBool))
+    expect(decodeUnion(Sample.jsonTrue))
     |> toEqual(Result.ok(Sample.(B(valBool))));
   });
 });

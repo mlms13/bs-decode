@@ -1,6 +1,7 @@
 // Simple JSON values
 let jsonNull: Js.Json.t = [%raw {| null |}];
-let jsonBool: Js.Json.t = [%raw {| true |}];
+let jsonTrue: Js.Json.t = [%raw {| true |}];
+let jsonFalse: Js.Json.t = [%raw {| false |}];
 let jsonString: Js.Json.t = [%raw {| "string" |}];
 let jsonStringTrue: Js.Json.t = [%raw {| "true" |}];
 let jsonString4: Js.Json.t = [%raw {| "4" |}];

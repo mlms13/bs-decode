@@ -65,10 +65,20 @@ module Make =
 
   let literalFloat = literal((==), floatFromNumber);
 
-  let stringUnion = (first, rest) => {
-    let mkDecode = ((s, v)) => literalString(s) |> map(_ => v);
+  let literalBool = literal((==), boolean);
+
+  let literalTrue = literalBool(true);
+
+  let literalFalse = literalBool(false);
+
+  let union = (decode, first, rest) => {
+    let mkDecode = ((s, v)) => decode(s) |> map(_ => v);
     first |> mkDecode |> oneOf(_, rest |> List.map(mkDecode));
   };
+
+  let stringUnion = first => union(literalString, first);
+
+  let intUnion = first => union(literalInt, first);
 
   let variantFromJson = (jsonToJs, jsToVariant) =>
     jsonToJs

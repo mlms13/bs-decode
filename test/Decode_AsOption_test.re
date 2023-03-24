@@ -8,7 +8,7 @@ module Sample = Decode_TestSampleData;
 
 describe("Simple decoders", () => {
   test("bool (success)", () =>
-    expect(Decode.boolean(Sample.jsonBool))
+    expect(Decode.boolean(Sample.jsonTrue))
     |> toEqual(Some(Sample.valBool))
   );
 
@@ -182,7 +182,7 @@ describe("Nested decoders", () => {
   );
 
   test("optional float (fails on bool)", () =>
-    expect(Decode.(optional(floatFromNumber, Sample.jsonBool)))
+    expect(Decode.(optional(floatFromNumber, Sample.jsonTrue)))
     |> toEqual(None)
   );
 
@@ -225,7 +225,7 @@ describe("Nested decoders", () => {
   );
 
   test("tuple2 (fails on non-array)", () =>
-    expect(Decode.(tuple(string, boolean, Sample.jsonBool)))
+    expect(Decode.(tuple(string, boolean, Sample.jsonTrue)))
     |> toEqual(None)
   );
 
@@ -429,7 +429,7 @@ describe("Decode with alternatives/fallbacks", () => {
   );
 
   test("oneOf (succeeds on last)", () =>
-    expect(decodeUnion(Sample.jsonBool))
+    expect(decodeUnion(Sample.jsonTrue))
     |> toEqual(Some(Sample.(B(valBool))))
   );
 
