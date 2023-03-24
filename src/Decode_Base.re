@@ -69,6 +69,7 @@ module Make =
     let mkDecode = ((s, v)) => literalString(s) |> map(_ => v);
     first |> mkDecode |> oneOf(_, rest |> List.map(mkDecode));
   };
+
   let variantFromJson = (jsonToJs, jsToVariant) =>
     jsonToJs
     |> map(jsToVariant)

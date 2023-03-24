@@ -93,6 +93,8 @@ let literalFloat: (float, Js.Json.t) => result(float, ParseError.failure);
 let stringUnion:
   ((string, 'a), list((string, 'a)), Js.Json.t) =>
   result('a, ParseError.failure);
+
+[@deprecated "Use literal instead"]
 let variantFromJson:
   (
     Js.Json.t => result('a, ParseError.failure),
@@ -100,8 +102,12 @@ let variantFromJson:
     Js.Json.t
   ) =>
   result('b, ParseError.failure);
+
+[@deprecated "Use stringUnion instead"]
 let variantFromString:
   (string => option('a), Js.Json.t) => result('a, ParseError.failure);
+
+[@deprecated "Use literalInt and alt/oneOf instead"]
 let variantFromInt:
   (int => option('a), Js.Json.t) => result('a, ParseError.failure);
 
@@ -213,6 +219,7 @@ let dict:
   (Js.Json.t => result('a, ParseError.failure), Js.Json.t) =>
   result(Js.Dict.t('a), ParseError.failure);
 
+[@deprecated "Use dict instead, and convert the Dict to a Map"]
 let stringMap:
   (Js.Json.t => result('a, ParseError.failure), Js.Json.t) =>
   result(Belt.Map.String.t('a), ParseError.failure);

@@ -67,6 +67,7 @@ describe("Simple decoders", () => {
   );
 
   test("variant", () =>
+    [@ocaml.warning "-3"]
     expect(Decode.variantFromString(Sample.colorFromJs, Sample.jsonString))
     |> toEqual(valErr(`ExpectedValidOption, Sample.jsonString))
   );
