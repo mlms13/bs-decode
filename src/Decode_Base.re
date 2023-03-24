@@ -214,6 +214,8 @@ module Make =
   let tupleFromFields = ((fieldA, decodeA), (fieldB, decodeB)) =>
     map2(Tuple.make, field(fieldA, decodeA), field(fieldB, decodeB));
 
+  let hush = (decode, json) => decode(json) |> Result.toOption;
+
   module Pipeline = {
     let succeed = pure;
 

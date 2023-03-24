@@ -14,6 +14,18 @@ let objErr = (first, rest) =>
 
 let objErrSingle = (field, err) => objErr((field, err), []);
 
+describe("Decode utils", () => {
+  test("hush (success)", () => {
+    let decodeBooleanOpt = Decode.(boolean |> hush);
+    expect(decodeBooleanOpt(Sample.jsonBool)) |> toEqual(Some(true));
+  });
+
+  test("hush (failure)", () => {
+    let decodeStringOpt = Decode.(string |> hush);
+    expect(decodeStringOpt(Sample.jsonNull)) |> toEqual(None);
+  });
+});
+
 describe("Simple decoders", () => {
   test("boolean", () =>
     expect(Decode.boolean(Sample.jsonNull))
