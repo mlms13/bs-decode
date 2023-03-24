@@ -17,7 +17,7 @@ let objErrSingle = (field, err) => objErr((field, err), []);
 describe("Decode utils", () => {
   test("hush (success)", () => {
     let decodeBooleanOpt = Decode.(boolean |> hush);
-    expect(decodeBooleanOpt(Sample.jsonBool)) |> toEqual(Some(true));
+    expect(decodeBooleanOpt(Sample.jsonTrue)) |> toEqual(Some(true));
   });
 
   test("hush (failure)", () => {
@@ -27,6 +27,9 @@ describe("Decode utils", () => {
 });
 
 describe("Simple decoders", () => {
+  let decodeIntColor =
+    Decode.intUnion((0, `blue), [(1, `red), (2, `green)]);
+
   test("boolean", () =>
     expect(Decode.boolean(Sample.jsonNull))
     |> toEqual(valErr(`ExpectedBoolean, Sample.jsonNull))
@@ -71,6 +74,48 @@ describe("Simple decoders", () => {
                NonEmpty.List.make(
                  Val(`ExpectedNumber, Sample.jsonNull),
                  [Val(`ExpectedString, Sample.jsonNull)],
+               ),
+             )
+           ),
+         ),
+       )
+  );
+
+  test("literalTrue (success)", () =>
+    expect(Decode.literalTrue(Sample.jsonTrue)) |> toEqual(Result.ok(true))
+  );
+
+  test("literalTrue (failure)", () =>
+    expect(Decode.literalTrue(Sample.jsonFalse))
+    |> toEqual(valErr(`ExpectedValidOption, Sample.jsonFalse))
+  );
+
+  test("literalFalse (success)", () =>
+    expect(Decode.literalFalse(Sample.jsonFalse))
+    |> toEqual(Result.ok(false))
+  );
+
+  test("literalFalse (failure)", () =>
+    expect(Decode.literalFalse(Sample.jsonTrue))
+    |> toEqual(valErr(`ExpectedValidOption, Sample.jsonTrue))
+  );
+
+  test("intUnion (success)", () =>
+    expect(decodeIntColor(Sample.jsonIntZero)) |> toEqual(Result.ok(`blue))
+  );
+
+  test("intUnion (failure)", () =>
+    expect(decodeIntColor(Sample.jsonIntFive))
+    |> toEqual(
+         Result.error(
+           Decode.ParseError.(
+             TriedMultiple(
+               NonEmpty.List.make(
+                 Val(`ExpectedValidOption, Sample.jsonIntFive),
+                 [
+                   Val(`ExpectedValidOption, Sample.jsonIntFive),
+                   Val(`ExpectedValidOption, Sample.jsonIntFive),
+                 ],
                ),
              )
            ),
@@ -181,7 +226,7 @@ describe("Inner decoders", () => {
   );
 
   test("oneOf (success on last)", () =>
-    expect(decodeUnion(Sample.jsonBool))
+    expect(decodeUnion(Sample.jsonTrue))
     |> toEqual(Result.ok(Sample.B(Sample.valBool)))
   );
 

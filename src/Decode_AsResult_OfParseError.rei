@@ -90,9 +90,25 @@ let literal:
 let literalString: (string, Js.Json.t) => result(string, ParseError.failure);
 let literalInt: (int, Js.Json.t) => result(int, ParseError.failure);
 let literalFloat: (float, Js.Json.t) => result(float, ParseError.failure);
+let literalBool: (bool, Js.Json.t) => result(bool, ParseError.failure);
+let literalTrue: Js.Json.t => result(bool, ParseError.failure);
+let literalFalse: Js.Json.t => result(bool, ParseError.failure);
+
+let union:
+  (
+    ('a, Js.Json.t) => result('a, ParseError.failure),
+    ('a, 'b),
+    list(('a, 'b)),
+    Js.Json.t
+  ) =>
+  result('b, ParseError.failure);
+
 let stringUnion:
   ((string, 'a), list((string, 'a)), Js.Json.t) =>
   result('a, ParseError.failure);
+
+let intUnion:
+  ((int, 'a), list((int, 'a)), Js.Json.t) => result('a, ParseError.failure);
 
 [@deprecated "Use literal instead"]
 let variantFromJson:
