@@ -43,6 +43,11 @@
     "relude": "^0.66.1"
   },
   "jest": {
+    "testPathIgnorePatterns": [
+      "./test/output",
+      "_build",
+      "_opam"
+    ],
     "coveragePathIgnorePatterns": [
       "./test"
     ],

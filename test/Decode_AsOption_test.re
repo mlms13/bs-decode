@@ -2,6 +2,7 @@ open Jest;
 open Expect;
 open Relude.Globals;
 
+[@ocaml.warning "-3"]
 module Decode = Decode.AsOption;
 module Sample = Decode_TestSampleData;
 
