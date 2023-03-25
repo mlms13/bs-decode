@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.1.0 (Mar 25, 2023)
+
+This release adds helpers to ease the transition away from the deprecated features in the 1.0 release. Barring any bugs that require fixing, this is the last planned release in the 1.x series.
+
+### :warning: Deprecated features
+
+- Some deprecations mentioned in the previous release notes weren't actually deprecated in the code. Those will now trigger compiler warnings.
+
+### :sparkles: New features
+
+- `hush` is a new function that takes a `Decode.AsResult.OfParseError` decoder and converts it into a `Js.Json.t => option('a)` decoder (effectively "hushing" the error). This should make the transition away from `Decode.AsOption` easier.
+- `literalBool`, `literalTrue`, and `literalFalse` join the other `literal*` decoders that first decode, then further validate the output
+- `intUnion` works like `stringUnion` and should make the transition away from `variantFromInt` easier
+
 ## 1.0.0 (Mar 9, 2023)
 
 Version 1.0 is here! Very little has changed since 0.11.2; mostly this release indicates the stability (or lack of maintenance, depending on how you look at it) over the last several years. The 1.x releases will be the last to support BuckleScript as we turn our attention to Melange.
