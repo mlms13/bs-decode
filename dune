@@ -1,6 +1,13 @@
 (subdir
  node_modules
- (dirs bs-bastet relude))
+ (vendored_dirs melange.belt)
+ (data_only_dirs bs-jest bs-bastet relude))
+
+(subdir
+ node_modules/@glennsl/bs-jest/src
+ (library
+  (name jest)
+  (modes melange)))
 
 (subdir
  node_modules/bs-bastet/bastet/src
@@ -16,8 +23,3 @@
   (name relude)
   (modes melange)
   (libraries bsBastet)))
-
-(melange.emit
- (target lol)
- (alias lol)
- (libraries bsBastet relude))
