@@ -1,7 +1,6 @@
 project_name = bs-decode
 
 DUNE = opam exec -- dune
-MEL = opam exec -- mel
 
 .DEFAULT_GOAL := help
 
@@ -21,23 +20,35 @@ init: create-switch install ## Configure everything to develop this repository i
 
 .PHONY: install
 install: ## Install development dependencies
-	npm install
+	yarn install
 	opam install -y . --deps-only
 	opam pin -y add $(project_name).dev .
 	rm -rf node_modules/melange && ln -sfn $$(opam var melange:lib)/runtime node_modules/melange
 
 .PHONY: build
 build: ## Build the project
-	$(MEL) build
+	$(DUNE) build @main
+
+.PHONY: watch
+watch: ## Watch for the filesystem and rebuild on every change
+	$(DUNE) build --watch @main
 
 .PHONY: clean
 clean: ## Clean build artifacts and other generated files
-	$(MEL) clean
+	rm test/output/test/utils/BigJson.json
+	$(DUNE) clean
+
+.PHONY: copy-test-json
+copy-test-json: ## Copy test json files to the right place
+	cp test/utils/BigJson.json test/output/test/utils/BigJson.json
+
+.PHONY: test
+test: copy-test-json
+	jest
 
 .PHONY: test-coverage
-test-coverage: ## Run the tests (producing a coverage report)
+test-coverage: copy-test-json
 	jest --coverage
-
 
 .PHONY: format
 format: ## Format the codebase with ocamlformat
@@ -46,7 +57,3 @@ format: ## Format the codebase with ocamlformat
 .PHONY: format-check
 format-check: ## Checks if format is correct
 	$(DUNE) build @fmt
-
-.PHONY: watch
-watch: ## Watch for the filesystem and rebuild on every change
-	$(MEL) build --watch

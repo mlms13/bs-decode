@@ -38,15 +38,15 @@
   },
   "jest": {
     "testPathIgnorePatterns": [
-      "./test/output",
+      "node_modules",
       "_build",
       "_opam"
     ],
     "coveragePathIgnorePatterns": [
-      "./test"
+      "./test/output/test"
     ],
     "testMatch": [
-      "**/test/*.js"
+      "**/test/output/test/*.js"
     ]
   }
 }

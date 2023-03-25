@@ -1,0 +1,5 @@
+(library
+ (name bsDecode)
+ (wrapped false)
+ (libraries bsBastet relude)
+ (modes melange))
