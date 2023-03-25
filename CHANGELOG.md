@@ -1,3 +1,57 @@
+# Changelog
+
+## 1.0.0 (Mar 9, 2023)
+
+Version 1.0 is here! Very little has changed since 0.11.2; mostly this release indicates the stability (or lack of maintenance, depending on how you look at it) over the last several years. The 1.x releases will be the last to support BuckleScript as we turn our attention to Melange.
+
+There are no breaking changes in this release, but there are a handful of deprecations. We should end up with decent alternatives to all of the features that will eventually be removed, but if any of this concerns you, please let me know!
+
+### :warning: Deprecated features
+
+  - `Decode.AsResult.OfStringNel` will be removed in an upcoming release. The errors are less useful than `OfParseError`, and there's a cost to maintaining multiple decoder types
+  - `Decode.AsOption` will also be removed. Again, there's a maintenance burden in keeping it, and if you really want `option`, it's easy enough to convert the `result` return into an `option`.
+  - `Decode.Make` (for making your own custom output types) will eventually be removed as we focus on `ParseError`
+  - `variantFromJson` and `variantFromString` will be removed in favor of new, simpler, more consistent tools for decoding variants (see the new `literal` functions below)
+  - The `Decode.Pipeline` module is now deprecated. See [the docs](https://mlms13.github.io/bs-decode/docs/decoding-objects) for alternatives and a teaser about upcoming changes that will make this experience way better
+  - `stringMap` will be removed as we try to limit how much we depend on Belt-specific features. You can use the `dict` decoder instead and convert the `Js.Dict` to a `Belt.String.Map`.
+
+### :sparkles: New features
+
+  - Functions have been added to decode literal values e.g. `literalString`, `literalInt`, and `literalFloat`. These functions first decode to the expected type, then ensure the value exactly matches the provided value. This is useful for decoding unions of string literals (e.g. `"dev" | "prod"`)
+  - Decoding sting unions is such a common need that we've provided a `stringUnion` function to make it even simpler
+
+### :memo: Documentation
+
+- The [documentation site](https://mlms13.github.io/bs-decode/docs/what-and-why) got a handful of updates to explain the deprecations
+- The guide on [decoding variants](https://mlms13.github.io/bs-decode/docs/decoding-variants) was almost completely rewritten and might be particularly helpful
+
+### :robot: Dependency updates
+
+- `bs-bastet` was bumped to `2.0` and `relude` was bumped to `0.66.1`. As peer dependencies, this change is the most likely to impact your existing projects, but hopefully the update isn't too bad
+
+## 0.11.2 (Jun 28, 2020)
+
+### :bug: Bug fixes
+
+- Compiled output files will no longer have a `/./` in the middle of the path, which causes issues with some bundlers/dev setups (thanks @hamza0867 for finding and fixing this!)
+
+## 0.11.1 (Mar 31, 2020)
+
+### :bug: Bug fixes
+
+- Revert the `public` flag in the `bsconfig.json`. There are apparently some strange quirks that cause aliased modules not to compile in downstream projects, so I got rid of it. You still shouldn't need to access `Decode_*` modules directly (instead use `Decode.AsWhatever`) but those modules won't be hidden from you.
+
+## 0.11.0 (Mar 31, 2020)
+
+### :rotating_light: Breaking changes
+
+- The `bs-abstract` peer-dependency is now `bs-bastet`, and the required Relude version is 0.59+. See the [Relude release notes](https://github.com/reazen/relude/releases/tag/v0.59.0) and the [Bastet migration guide](https://github.com/Risto-Stevcev/bastet/blob/1.2.5/MIGRATION.md) for details.
+- Alias everything in `Decode` and prevent direct access to the `Decode_*` modules via Bucklescript's `public` flag
+
+### :sparkles: New features
+
+- `okJson` is a decoder that always passes and preserves the input JSON
+
 ## 0.10.0 (Mar 3, 2020)
 
 ### :rotating_light: Breaking changes
