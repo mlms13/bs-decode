@@ -11,6 +11,9 @@ node_modules
 .vscode
 
 # generated
+_build/
+_opam/
+test/output/
 /lib/bs
 *.bs.js
 /dist
