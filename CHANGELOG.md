@@ -14,6 +14,7 @@ More deprecations have been added to prepare for v2.0, as well as some new funct
 
 - `arrayAt` allows decoding only specific positions of arrays, which is useful for building your own tuples
 - `null` is a new decoder that only succeeds if it encounters a JSON `null` value
+- `dictJson`, `arrayJson`, `listJson` were added to allow decoding outer structures while preserving inner JSON
 
 ## 1.1.0 (Mar 25, 2023)
 
