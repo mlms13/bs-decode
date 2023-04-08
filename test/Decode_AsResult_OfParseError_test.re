@@ -159,6 +159,21 @@ describe("Inner decoders", () => {
        )
   );
 
+  test("arrayAt (success)", () =>
+    expect(Decode.arrayAt(1, Decode.string, Sample.jsonArrayString))
+    |> toEqual(Result.ok("B"))
+  );
+
+  test("arrayAt (failure, non-array)", () =>
+    expect(Decode.arrayAt(3, Decode.string, Sample.jsonNull))
+    |> toEqual(valErr(`ExpectedArray, Sample.jsonNull))
+  );
+
+  test("arrayAt (failure, empty array)", () =>
+    expect(Decode.arrayAt(1, Decode.string, Sample.jsonArrayEmpty))
+    |> toEqual(valErr(`ExpectedTuple(2), Sample.jsonArrayEmpty))
+  );
+
   test("tuple (fails on null)", () =>
     expect(Decode.(tuple2(string, boolean, Sample.jsonNull)))
     |> toEqual(valErr(`ExpectedArray, Sample.jsonNull))
