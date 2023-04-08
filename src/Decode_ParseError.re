@@ -1,6 +1,7 @@
 open Relude.Globals;
 
 type base = [
+  | `ExpectedNull
   | `ExpectedBoolean
   | `ExpectedString
   | `ExpectedNumber
@@ -59,6 +60,7 @@ let makeTriedMultiple =
 
 let failureToPartialString =
   fun
+  | `ExpectedNull => "Expected null"
   | `ExpectedBoolean => "Expected boolean"
   | `ExpectedString => "Expected string"
   | `ExpectedNumber => "Expected number"
