@@ -143,9 +143,13 @@ let array:
   (Js.Json.t => result('a, ParseError.failure), Js.Json.t) =>
   result(array('a), ParseError.failure);
 
+let arrayJson: Js.Json.t => result(array(Js.Json.t), ParseError.failure);
+
 let list:
   (Js.Json.t => result('a, ParseError.failure), Js.Json.t) =>
   result(list('a), ParseError.failure);
+
+let listJson: Js.Json.t => result(list(Js.Json.t), ParseError.failure);
 
 let arrayAt:
   (int, Js.Json.t => result('a, ParseError.failure), Js.Json.t) =>
@@ -256,6 +260,8 @@ let tupleFromFields:
 let dict:
   (Js.Json.t => result('a, ParseError.failure), Js.Json.t) =>
   result(Js.Dict.t('a), ParseError.failure);
+
+let dictJson: Js.Json.t => result(Js.Dict.t(Js.Json.t), ParseError.failure);
 
 [@deprecated "Use dict instead, and convert the Dict to a Map"]
 let stringMap:

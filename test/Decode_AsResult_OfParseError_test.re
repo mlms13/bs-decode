@@ -143,9 +143,39 @@ describe("Simple decoders", () => {
     |> toEqual(valErr(`ExpectedArray, Sample.jsonNull))
   );
 
+  test("arrayJson (success)", () =>
+    expect(Decode.arrayJson(Sample.jsonArrayString))
+    |> toEqual(Result.ok([|"A", "B", "C"|] |> Array.map(Js.Json.string)))
+  );
+
+  test("arrayJson (failure, null)", () =>
+    expect(Decode.arrayJson(Sample.jsonNull))
+    |> toEqual(valErr(`ExpectedArray, Sample.jsonNull))
+  );
+
+  test("listJson (success)", () =>
+    expect(Decode.listJson(Sample.jsonArrayString))
+    |> toEqual(Result.ok(["A", "B", "C"] |> List.map(Js.Json.string)))
+  );
+
+  test("listJson (failure, number)", () =>
+    expect(Decode.arrayJson(Sample.jsonFloat))
+    |> toEqual(valErr(`ExpectedArray, Sample.jsonFloat))
+  );
+
   test("object", () =>
     expect(Decode.field("x", Decode.string, Sample.jsonString))
     |> toEqual(valErr(`ExpectedObject, Sample.jsonString))
+  );
+
+  test("dictJson (success)", () =>
+    expect(Decode.dictJson(Sample.jsonDictEmpty))
+    |> toEqual(Result.ok(Js.Dict.empty()))
+  );
+
+  test("dictJson (failure, array)", () =>
+    expect(Decode.dictJson(Sample.jsonArrayEmpty))
+    |> toEqual(valErr(`ExpectedObject, Sample.jsonArrayEmpty))
   );
 });
 

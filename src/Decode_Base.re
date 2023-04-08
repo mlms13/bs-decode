@@ -117,7 +117,11 @@ module Make =
     value(Js.Json.decodeArray, `ExpectedArray) |> flatMap(decodeEach);
   };
 
+  let arrayJson = array(okJson);
+
   let list = decode => array(decode) |> map(Array.toList);
+
+  let listJson = list(okJson);
 
   let arrayAt = (position, decode) =>
     array(okJson)
@@ -207,6 +211,8 @@ module Make =
     |> flatMap(decodeEntries)
     |> map(Js.Dict.fromList);
   };
+
+  let dictJson = dict(okJson);
 
   let stringMap = decode =>
     dict(decode) |> map(Js.Dict.entries) |> map(Belt.Map.String.fromArray);
