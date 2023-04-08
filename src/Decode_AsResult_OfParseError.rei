@@ -143,6 +143,7 @@ let arrayAt:
   (int, Js.Json.t => result('a, ParseError.failure), Js.Json.t) =>
   result('a, ParseError.failure);
 
+[@deprecated "Use arrayAt instead"]
 let tuple:
   (
     Js.Json.t => result('a, ParseError.failure),
@@ -151,6 +152,7 @@ let tuple:
   ) =>
   result(('a, 'b), ParseError.failure);
 
+[@deprecated "Use arrayAt instead"]
 let tuple2:
   (
     Js.Json.t => result('a, ParseError.failure),
@@ -159,6 +161,7 @@ let tuple2:
   ) =>
   result(('a, 'b), ParseError.failure);
 
+[@deprecated "Use arrayAt instead"]
 let tuple3:
   (
     Js.Json.t => result('a, ParseError.failure),
@@ -168,6 +171,7 @@ let tuple3:
   ) =>
   result(('a, 'b, 'c), ParseError.failure);
 
+[@deprecated "Use arrayAt instead"]
 let tuple4:
   (
     Js.Json.t => result('a, ParseError.failure),
@@ -178,6 +182,7 @@ let tuple4:
   ) =>
   result(('a, 'b, 'c, 'd), ParseError.failure);
 
+[@deprecated "Use arrayAt instead"]
 let tuple5:
   (
     Js.Json.t => result('a, ParseError.failure),
@@ -189,6 +194,7 @@ let tuple5:
   ) =>
   result(('a, 'b, 'c, 'd, 'e), ParseError.failure);
 
+[@deprecated "Use arrayAt instead"]
 let tupleAtLeast2:
   (
     Js.Json.t => result('a, ParseError.failure),
@@ -197,6 +203,7 @@ let tupleAtLeast2:
   ) =>
   result(('a, 'b), ParseError.failure);
 
+[@deprecated "Use arrayAt instead"]
 let tupleAtLeast3:
   (
     Js.Json.t => result('a, ParseError.failure),
@@ -206,6 +213,7 @@ let tupleAtLeast3:
   ) =>
   result(('a, 'b, 'c), ParseError.failure);
 
+[@deprecated "Use arrayAt instead"]
 let tupleAtLeast4:
   (
     Js.Json.t => result('a, ParseError.failure),
@@ -216,6 +224,7 @@ let tupleAtLeast4:
   ) =>
   result(('a, 'b, 'c, 'd), ParseError.failure);
 
+[@deprecated "Use arrayAt instead"]
 let tupleAtLeast5:
   (
     Js.Json.t => result('a, ParseError.failure),
@@ -227,6 +236,7 @@ let tupleAtLeast5:
   ) =>
   result(('a, 'b, 'c, 'd, 'e), ParseError.failure);
 
+[@deprecated "Use field instead and construct your own tuple"]
 let tupleFromFields:
   (
     (string, Js.Json.t => result('a, ParseError.failure)),

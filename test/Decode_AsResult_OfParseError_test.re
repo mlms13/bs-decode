@@ -175,16 +175,19 @@ describe("Inner decoders", () => {
   );
 
   test("tuple (fails on null)", () =>
+    [@ocaml.warning "-3"]
     expect(Decode.(tuple2(string, boolean, Sample.jsonNull)))
     |> toEqual(valErr(`ExpectedArray, Sample.jsonNull))
   );
 
   test("tuple (fails on wrong size)", () =>
+    [@ocaml.warning "-3"]
     expect(Decode.(tuple2(string, boolean, Sample.jsonArrayEmpty)))
     |> toEqual(valErr(`ExpectedTuple(2), Sample.jsonArrayEmpty))
   );
 
   test("tuple (fails on inner decode)", () =>
+    [@ocaml.warning "-3"]
     expect(Decode.(tuple2(boolean, string, Sample.jsonTuple)))
     |> toEqual(
          arrErr(
