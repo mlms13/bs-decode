@@ -22,6 +22,7 @@ and objError('a) =
 
 type failure = t(base);
 
+[@deprecated "Extending the result type is deprecated"]
 module type TransformError = {
   type t('a);
   let valErr: (base, Js.Json.t) => t('a);
@@ -42,11 +43,14 @@ let toDebugString:
 
 let failureToDebugString: t(base) => string;
 
+[@deprecated "Extending the result type is deprecated"]
 module type ValError = {
   type t;
   let handle: base => t;
 };
 
+[@deprecated "Extending the result type is deprecated"]
+[@ocaml.warning "-3"]
 module ResultOf:
   (Err: ValError) =>
    {

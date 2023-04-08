@@ -3,6 +3,7 @@ open BsBastet.Interface;
 
 module ParseError = Decode_ParseError;
 
+[@ocaml.warning "-3"]
 module Make =
        (T: ParseError.TransformError, M: MONAD with type t('a) = T.t('a)) => {
   type t('a) = Js.Json.t => M.t('a);

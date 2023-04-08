@@ -1,3 +1,6 @@
+[@deprecated
+  "NonEmptyList helpers shouldn't be needed, but you can find them in Relude"
+]
 module NonEmptyList: Decode_NonEmptyList.Nel;
 module ParseError = Decode_ParseError;
 
@@ -13,6 +16,7 @@ let apply:
   ) =>
   result('b, ParseError.failure);
 
+[@deprecated "Will be removed in 2.0 with the addition of and+"]
 let map2:
   (
     ('a, 'b) => 'c,
@@ -22,6 +26,7 @@ let map2:
   ) =>
   result('c, ParseError.failure);
 
+[@deprecated "Will be removed in 2.0 with the addition of and+"]
 let map3:
   (
     ('a, 'b, 'c) => 'd,
@@ -32,6 +37,7 @@ let map3:
   ) =>
   result('d, ParseError.failure);
 
+[@deprecated "Will be removed in 2.0 with the addition of and+"]
 let map4:
   (
     ('a, 'b, 'c, 'd) => 'e,
@@ -43,6 +49,7 @@ let map4:
   ) =>
   result('e, ParseError.failure);
 
+[@deprecated "Will be removed in 2.0 with the addition of and+"]
 let map5:
   (
     ('a, 'b, 'c, 'd, 'e) => 'f,

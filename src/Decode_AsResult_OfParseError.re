@@ -1,6 +1,7 @@
 module NonEmptyList = Relude.NonEmpty.List;
 module ParseError = Decode_ParseError;
 
+[@ocaml.warning "-3"]
 module Result =
   ParseError.ResultOf({
     type t = ParseError.base;

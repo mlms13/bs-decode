@@ -11,6 +11,7 @@ module Sample = Decode_TestSampleData;
 
 type customError = [ ParseError.base | `InvalidColor | `InvalidShape];
 
+[@ocaml.warning "-3"]
 module ResultCustom =
   Decode.ParseError.ResultOf({
     type t = customError;

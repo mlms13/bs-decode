@@ -286,6 +286,7 @@ describe("Inner decoders", () => {
 });
 
 describe("Large, nested decoder", () => {
+  [@ocaml.warning "-3"]
   let decodeJob =
     Decode.(
       map4(
@@ -362,11 +363,13 @@ describe("Parse error combinations", () => {
   let objError = Decode.ParseError.(objPure("x", MissingField));
 
   test("combine Val/Val", () =>
+    [@ocaml.warning "-3"]
     expect(Decode.(map2(combine, string, boolean, Sample.jsonNull)))
     |> toEqual(valErr(`ExpectedString, Sample.jsonNull))
   );
 
   test("combine Arr/Val", () =>
+    [@ocaml.warning "-3"]
     expect(
       Decode.(map2(combine, list(boolean), boolean, Sample.jsonArrayString)),
     )
@@ -374,6 +377,7 @@ describe("Parse error combinations", () => {
   );
 
   test("combine Obj/Val", () =>
+    [@ocaml.warning "-3"]
     expect(
       Decode.(
         map2(combine, field("x", boolean), boolean, Sample.jsonDictEmpty)
