@@ -28,6 +28,8 @@ module Make =
 
   let okJson = M.pure;
 
+  let null = value(Js.Json.decodeNull, `ExpectedNull) |> map(_ => ());
+
   let boolean = value(Js.Json.decodeBoolean, `ExpectedBoolean);
 
   let string = value(Js.Json.decodeString, `ExpectedString);

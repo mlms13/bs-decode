@@ -30,6 +30,15 @@ describe("Simple decoders", () => {
   let decodeIntColor =
     Decode.intUnion((0, `blue), [(1, `red), (2, `green)]);
 
+  test("null (success)", () =>
+    expect(Decode.null(Sample.jsonNull)) |> toEqual(Result.ok())
+  );
+
+  test("null (failure)", () =>
+    expect(Decode.null(Sample.jsonFalse))
+    |> toEqual(valErr(`ExpectedNull, Sample.jsonFalse))
+  );
+
   test("boolean", () =>
     expect(Decode.boolean(Sample.jsonNull))
     |> toEqual(valErr(`ExpectedBoolean, Sample.jsonNull))

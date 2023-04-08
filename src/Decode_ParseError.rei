@@ -1,4 +1,5 @@
 type base = [
+  | `ExpectedNull
   | `ExpectedBoolean
   | `ExpectedString
   | `ExpectedNumber
