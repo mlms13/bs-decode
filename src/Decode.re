@@ -10,7 +10,4 @@ module AsOption = Decode_AsOption;
 
 module AsResult = {
   module OfParseError = Decode_AsResult_OfParseError;
-
-  [@deprecated "Use Decode.AsResult.OfParseError instead"]
-  module OfStringNel = Decode_AsResult_OfStringNel;
 };
