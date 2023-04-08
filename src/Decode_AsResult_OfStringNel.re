@@ -22,6 +22,7 @@ module ResultUtil = {
   let pure = Result.pure;
   let flat_map = Result.bind;
 
+  [@ocaml.warning "-3"]
   module Transform:
     ParseError.TransformError with
       type t('a) = result('a, NonEmptyList.t(string)) = {

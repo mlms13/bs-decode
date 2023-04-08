@@ -1,3 +1,4 @@
+[@ocaml.warning "-3"]
 module OptionTransform:
   Decode_ParseError.TransformError with type t('a) = option('a) = {
   type t('a) = option('a);
