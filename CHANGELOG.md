@@ -1,5 +1,20 @@
 # Changelog
 
+## Upcoming
+
+More deprecations have been added to prepare for v2.0, as well as some new functions to ease the pain of those deprecations.
+
+### :warning: Deprecated features
+
+- `map2`...`map5` have been deprecated and will be replaced by the upcoming `and+`
+- `tuple2`...`tuple5` and `tupleAtLeast2`...`tupleAtLeast5` have been deprecated for the same reason, and they can be recreated using `arrayAt` (see below)
+- `ParseError.ResultOf` (and related modules) is deprecated for the same reason `Decode.Make` is deprecated
+
+### :sparkles: New features
+
+- `arrayAt` allows decoding only specific positions of arrays, which is useful for building your own tuples
+- `null` is a new decoder that only succeeds if it encounters a JSON `null` value
+
 ## 1.1.0 (Mar 25, 2023)
 
 This release adds helpers to ease the transition away from the deprecated features in the 1.0 release. Barring any bugs that require fixing, this is the last planned release in the 1.x series.
