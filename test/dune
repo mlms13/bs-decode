@@ -4,6 +4,6 @@
  (target output)
  (promote (until-clean))
  (alias main)
- (compile_flags :standard)
+ (compile_flags -open Relude.Globals)
  (libraries melange jest bsBastet relude bsDecode)
  (module_systems commonjs))

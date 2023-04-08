@@ -75,8 +75,8 @@ module Make =
   let literalFalse = literalBool(false);
 
   let union = (decode, first, rest) => {
-    let mkDecode = ((s, v)) => decode(s) |> map(_ => v);
-    first |> mkDecode |> oneOf(_, rest |> List.map(mkDecode));
+    let mkDecode = ((k, v)) => decode(k) |> map(_ => v);
+    oneOf(mkDecode(first), rest |> List.map(mkDecode));
   };
 
   let stringUnion = first => union(literalString, first);

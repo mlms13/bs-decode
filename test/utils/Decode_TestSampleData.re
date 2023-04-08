@@ -9,6 +9,7 @@ let jsonFloat: Js.Json.t = [%raw {| 3.14 |}];
 let jsonInt: Js.Json.t = [%raw {| 1 |}];
 let jsonLargeFloat: Js.Json.t = [%raw {|1542433304450|}];
 let jsonIntZero: Js.Json.t = [%raw {| 0 |}];
+let jsonIntOne: Js.Json.t = [%raw {| 1 |}];
 let jsonDateNumber: Js.Json.t = [%raw {| 1542433304450.0 |}];
 let jsonDateString: Js.Json.t = [%raw {| "2018-11-17T05:40:35.869Z" |}];
 
@@ -33,14 +34,6 @@ let jsonTuple5: Js.Json.t = [%raw {| ["A", "B", "C", "D", "E" ] |}];
 let jsonTuple6: Js.Json.t = [%raw {| ["A", "B", "C", "D", "E", "F"] |}];
 
 // Nested typed values
-let valArrayString = [|"A", "B", "C"|];
-let valArrayNested = [|[|"a", "b"|], [||], [|"c"|]|];
-let valListEmpty = [];
-let valListString = ["A", "B", "C"];
-let valTuple = ("A", true);
-let valTuple3 = ("A", true, 3);
-let valTuple4 = ("A", true, false, "B");
-let valTuple5 = ("A", "B", "C", "D", "E");
 
 // JSON variant values
 let jsonStringBlue: Js.Json.t = [%raw {| "blue" |}];
