@@ -116,6 +116,17 @@ module Make =
 
   let list = decode => array(decode) |> map(Array.toList);
 
+  let arrayAt = (position, decode) =>
+    array(okJson)
+    |> flatMap((arr, json) =>
+         arr
+         |> Array.at(position)
+         |> Option.foldLazy(
+              () => T.valErr(`ExpectedTuple(position + 1), json),
+              decode,
+            )
+       );
+
   let tupleN = (size, extract, decode) =>
     array(M.pure)
     |> map(extract)

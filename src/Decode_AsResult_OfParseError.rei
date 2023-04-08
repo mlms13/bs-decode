@@ -139,6 +139,10 @@ let list:
   (Js.Json.t => result('a, ParseError.failure), Js.Json.t) =>
   result(list('a), ParseError.failure);
 
+let arrayAt:
+  (int, Js.Json.t => result('a, ParseError.failure), Js.Json.t) =>
+  result('a, ParseError.failure);
+
 let tuple:
   (
     Js.Json.t => result('a, ParseError.failure),
