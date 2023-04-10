@@ -371,11 +371,35 @@ describe("Dictionaries, records", () => {
     |> toEqual(Ok(Js.Dict.empty()))
   );
 
+  test("dict (success, non-empty with floats)", () =>
+    Sample.jsonDictFloat
+    |> dict(floatFromNumber)
+    |> expect
+    |> toEqual(Ok(Sample.valDictFloat))
+  );
+
   test("dict (failure, null)", () =>
     Sample.jsonNull
     |> dict(okJson)
     |> expect
     |> toEqual(valErr(`ExpectedObject, Sample.jsonNull))
+  );
+
+  test("dict (failure, record)", () =>
+    Sample.jsonPersonBill
+    |> dict(string)
+    |> expect
+    |> toEqual(
+         objErr(
+           (
+             "age",
+             InvalidField(Val(`ExpectedString, Js.Json.number(27.0))),
+           ),
+           [
+             ("job", InvalidField(Val(`ExpectedString, Sample.jsonJobBill))),
+           ],
+         ),
+       )
   );
 
   test("field (failure, non-object)", () =>
@@ -402,7 +426,122 @@ describe("Dictionaries, records", () => {
   );
 });
 
-describe("Fallbacks, alternatives, unions", () => {
+describe("Alternatives, fallbacks, unions", () => {
+  describe("One-of, alt", () => {
+    test("alt (success, first when both are ok)", () =>
+      Sample.jsonDateString
+      |> alt(date |> map(a => `Date(a)), string |> map(a => `String(a)))
+      |> expect
+      |> toEqual(Ok(`Date(Sample.valDateString)))
+    );
+
+    test("alt (success, only first is ok)", () =>
+      Sample.jsonString
+      |> alt(string |> map(s => `S(s)), boolean |> map(b => `B(b)))
+      |> expect
+      |> toEqual(Ok(`S(Sample.valString)))
+    );
+
+    test("alt (success, only second is ok)", () =>
+      Sample.jsonString
+      |> alt(boolean |> map(b => `B(b)), string |> map(s => `S(s)))
+      |> expect
+      |> toEqual(Ok(`S(Sample.valString)))
+    );
+
+    test("alt (first success, second not evaluated)", () => {
+      let decodeExplode = _json => failwith("Should not be evaluated");
+      Sample.jsonTrue
+      |> alt(boolean, decodeExplode)
+      |> expect
+      |> toEqual(Ok(true));
+    });
+
+    test("fallback (used for missing field)", () =>
+      Sample.jsonDictEmpty
+      |> fallback(field("x", boolean), false)
+      |> expect
+      |> toEqual(Ok(false))
+    );
+
+    test("fallback (used for invalid inner data)", () =>
+      Sample.jsonJobCeo
+      |> fallback(field("title", intFromNumber), 1)
+      |> expect
+      |> toEqual(Ok(1))
+    );
+
+    test("fallback (not used for successful decode)", () =>
+      Sample.jsonJobCeo
+      |> fallback(field("title", string), "default")
+      |> expect
+      |> toEqual(Ok("CEO"))
+    );
+  });
+
+  describe("Optional values, fallbacks", () => {
+    test("optional (success, float is present)", () =>
+      Sample.jsonFloat
+      |> optional(floatFromNumber)
+      |> expect
+      |> toEqual(Ok(Some(Sample.valFloat)))
+    );
+
+    test("optional (success, null)", () =>
+      Sample.jsonNull
+      |> optional(floatFromNumber)
+      |> expect
+      |> toEqual(Ok(None))
+    );
+
+    test("optional (failure, string)", () =>
+      Sample.jsonString
+      |> optional(floatFromNumber)
+      |> expect
+      |> toEqual(valErr(`ExpectedNumber, Sample.jsonString))
+    );
+
+    test("optionalField (success)", () =>
+      Sample.jsonPersonBill
+      |> optionalField("name", string)
+      |> expect
+      |> toEqual(Ok(Some("Bill")))
+    );
+
+    test("optionalField (success, missing field)", () =>
+      Sample.jsonDictEmpty
+      |> optionalField("x", boolean)
+      |> expect
+      |> toEqual(Ok(None))
+    );
+
+    test("optionalField (success, null value)", () =>
+      Sample.jsonJobCeo
+      |> optionalField("manager", boolean)
+      |> expect
+      |> toEqual(Ok(None))
+    );
+
+    test("optionalField (failure, non-object)", () =>
+      Sample.jsonString
+      |> optionalField("field", string)
+      |> expect
+      |> toEqual(valErr(`ExpectedObject, Sample.jsonString))
+    );
+
+    test("optionalField (failure, inner decode fails)", () =>
+      Sample.jsonJobCeo
+      |> optionalField("title", boolean)
+      |> expect
+      |> toEqual(
+           invalidFieldErr(
+             "title",
+             Val(`ExpectedBoolean, Js.Json.string("CEO")),
+           ),
+         )
+    );
+  });
+
   describe("String union", () => {
     let decodePolyColor =
       stringUnion(("blue", `blue), [("red", `red), ("green", `green)]);
@@ -475,6 +614,21 @@ describe("Fallbacks, alternatives, unions", () => {
       |> decodeUnion
       |> expect
       |> toEqual(Ok(Sample.B(true)))
+    );
+
+    test("oneOf (failure)", () =>
+      Sample.jsonDictEmpty
+      |> decodeUnion
+      |> expect
+      |> toEqual(
+           triedMultipleErr(
+             Val(`ExpectedString, Sample.jsonDictEmpty),
+             [
+               Val(`ExpectedNumber, Sample.jsonDictEmpty),
+               Val(`ExpectedBoolean, Sample.jsonDictEmpty),
+             ],
+           ),
+         )
     );
   });
 });
@@ -563,45 +717,6 @@ describe("Letops, infix", () => {
   )
 });
 
-describe("BKMRK: Inner decoders", () => {
-  test("optionalField (failure, inner decode)", () =>
-    expect(optionalField("title", boolean, Sample.jsonJobCeo))
-    |> toEqual(
-         invalidFieldErr(
-           "title",
-           Val(`ExpectedBoolean, Js.Json.string("CEO")),
-         ),
-       )
-  );
-
-  test("optionalField (failure, outer structure)", () =>
-    expect(optionalField("field", string, Sample.jsonString))
-    |> toEqual(valErr(`ExpectedObject, Sample.jsonString))
-  );
-
-  let decodeUnion =
-    oneOf(
-      map(Sample.unionS, string),
-      [
-        map(Sample.unionN, optional(floatFromNumber)),
-        map(Sample.unionB, boolean),
-      ],
-    );
-
-  let failureString = {|Attempted multiple decoders, which all failed:
-    Expected string but found {}
-    Expected number but found {}
-    Expected boolean but found {}|};
-
-  test("oneOf (failure to string)", () =>
-    expect(
-      decodeUnion(Sample.jsonDictEmpty)
-      |> Result.mapError(ParseError.failureToDebugString),
-    )
-    |> toEqual(Error(failureString))
-  );
-});
-
 describe("ParseError", () => {
   describe("Combinations", () => {
     // ParseErrors only know how to combine Arr+Arr and Obj+Obj. In most situations
@@ -662,9 +777,6 @@ describe("ParseError", () => {
     Field "x" is required, but was not present
     Field "title" had an invalid value: Expected a valid date but found "CEO"|};
 
-    let arrErrString = {|Failed to decode array:
-    At position 0: Expected string but found null|};
-
     test("toDebugString (obj)", () =>
       error
       |> ParseError.failureToDebugString
@@ -676,8 +788,30 @@ describe("ParseError", () => {
       ParseError.arrPure(0, Val(`ExpectedString, Sample.jsonNull))
       |> ParseError.failureToDebugString
       |> expect
-      |> toEqual(arrErrString)
+      |> toEqual(
+           {|Failed to decode array:
+    At position 0: Expected string but found null|},
+         )
     );
+
+    test("oneOf (failure to string)", () => {
+      let failureString = {|Attempted multiple decoders, which all failed:
+    Expected string but found {}
+    Expected number but found {}
+    Expected boolean but found {}|};
+
+      Sample.jsonDictEmpty
+      |> oneOf(
+           map(Sample.unionS, string),
+           [
+             map(Sample.unionN, optional(floatFromNumber)),
+             map(Sample.unionB, boolean),
+           ],
+         )
+      |> Result.mapError(ParseError.failureToDebugString)
+      |> expect
+      |> toEqual(Error(failureString));
+    });
   });
 });
 

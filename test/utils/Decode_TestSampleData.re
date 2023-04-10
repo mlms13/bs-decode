@@ -99,12 +99,9 @@ let jsonJobCeo: Js.Json.t = [%raw
 |}
 ];
 
-let jsonPersonBill: Js.Json.t = [%raw
+let jsonJobBill: Js.Json.t = [%raw
   {|
-  {
-    "name": "Bill",
-    "age": 27,
-    "job": {
+{
       "title": "Designer",
       "companyName": "My Company",
       "startDate": "2018-11-17T05:40:35.869Z",
@@ -118,6 +115,15 @@ let jsonPersonBill: Js.Json.t = [%raw
         }
       }
     }
+|}
+];
+
+let jsonPersonBill: Js.Json.t = [%raw
+  {|
+  {
+    "name": "Bill",
+    "age": 27,
+    "job": jsonJobBill
   }
 |}
 ];
