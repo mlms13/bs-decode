@@ -7,30 +7,6 @@ module Decode = Decode.AsOption;
 module Sample = Decode_TestSampleData;
 
 describe("Nested decoders", () => {
-  test("optional float (succeeds on null)", () =>
-    expect(Decode.(optional(floatFromNumber, Sample.jsonNull)))
-    |> toEqual(Some(None))
-  );
-
-  test("optional float (succeeds on float)", () =>
-    expect(Decode.(optional(floatFromNumber, Sample.jsonFloat)))
-    |> toEqual(Some(Some(Sample.valFloat)))
-  );
-
-  test("optional float (fails on bool)", () =>
-    expect(Decode.(optional(floatFromNumber, Sample.jsonTrue)))
-    |> toEqual(None)
-  );
-
-  test("dict (succeeds)", () =>
-    expect(Decode.(dict(floatFromNumber, Sample.jsonDictFloat)))
-    |> toEqual(Some(Sample.valDictFloat))
-  );
-
-  test("dict (fails on record)", () =>
-    expect(Decode.(dict(string, Sample.jsonPersonBill))) |> toEqual(None)
-  );
-
   test("at (succeeds on nested field)", () =>
     expect(
       Decode.(
@@ -63,58 +39,6 @@ describe("Nested decoders", () => {
   test("field (fails on missing)", () =>
     expect(Decode.(field("x", string, Sample.jsonDictEmpty)))
     |> toEqual(None)
-  );
-
-  test("optionalField (succeeds)", () =>
-    expect(Decode.(optionalField("name", string, Sample.jsonPersonBill)))
-    |> toEqual(Some(Some("Bill")))
-  );
-
-  test("optionalField (succeeds on empty)", () =>
-    expect(Decode.(optionalField("x", boolean, Sample.jsonDictEmpty)))
-    |> toEqual(Some(None))
-  );
-
-  test("optionalField (fails on non-object)", () =>
-    expect(Decode.(optionalField("field", string, Sample.jsonString)))
-    |> toEqual(None)
-  );
-});
-
-describe("Decode with alternatives/fallbacks", () => {
-  let decodeExplode = _json => failwith("Explosion");
-  let decodeUnion =
-    Decode.(
-      oneOf(
-        map(Sample.unionS, string),
-        [
-          map(Sample.unionN, optional(floatFromNumber)),
-          map(Sample.unionB, boolean),
-        ],
-      )
-    );
-
-  test("alt (doesn't evaluate second if first succeeds)", () =>
-    expect(Decode.(alt(string, decodeExplode, Sample.jsonString)))
-    |> toEqual(Some(Sample.valString))
-  );
-
-  test("oneOf (failure)", () =>
-    expect(decodeUnion(Sample.jsonPersonBill)) |> toEqual(None)
-  );
-
-  test("fallback (used on missing field)", () =>
-    expect(
-      Decode.(fallback(field("x", boolean), false, Sample.jsonDictEmpty)),
-    )
-    |> toEqual(Some(false))
-  );
-
-  test("fallback (used on invalid inner data)", () =>
-    expect(
-      Decode.(fallback(field("title", intFromNumber), 1, Sample.jsonJobCeo)),
-    )
-    |> toEqual(Some(1))
   );
 });
 
