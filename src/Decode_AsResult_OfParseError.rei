@@ -1,7 +1,3 @@
-[@deprecated
-  "NonEmptyList helpers shouldn't be needed, but you can find them in Relude"
-]
-module NonEmptyList: Decode_NonEmptyList.Nel;
 module ParseError = Decode_ParseError;
 
 let map:
