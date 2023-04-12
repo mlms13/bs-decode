@@ -395,6 +395,45 @@ describe("Dictionaries, records", () => {
        )
   );
 
+  test("at (succeeds on nested field)", () =>
+    Sample.jsonPersonBill
+    |> at(["job", "manager", "job", "title"], string)
+    |> expect
+    |> toEqual(Ok("CEO"))
+  );
+
+  test("at (succeeds on inner decode with no fields)", () =>
+    Sample.jsonString
+    |> at([], string)
+    |> expect
+    |> toEqual(Ok(Sample.valString))
+  );
+
+  test("at (fails on missing field)", () =>
+    Sample.jsonJobCeo
+    |> at(["manager", "name"], string)
+    |> expect
+    |> toEqual(
+         invalidFieldErr("manager", Val(`ExpectedObject, Js.Json.null)),
+       )
+  );
+
+  test("at (fails on invalid inner data)", () =>
+    Sample.jsonPersonBill
+    |> at(["age"], string)
+    |> expect
+    |> toEqual(
+         invalidFieldErr("age", Val(`ExpectedString, Js.Json.number(27.0))),
+       )
+  );
+
+  test("field (succeeds)", () =>
+    Sample.jsonJobCeo
+    |> field("title", string)
+    |> expect
+    |> toEqual(Ok("CEO"))
+  );
+
   test("field (failure, non-object)", () =>
     Sample.jsonArrayEmpty
     |> field("x", string)
@@ -704,7 +743,19 @@ describe("Decode utils", () => {
 });
 
 describe("Letops, infix", () => {
-  test("field (failure, second field has wrong type)", () => {
+  test("letops map, apply (success)", () => {
+    let decodeJob = {
+      let+ title = field("title", string)
+      and+ companyName = field("companyName", string)
+      and+ startDate = field("startDate", date)
+      and+ manager = pure(None);
+      Sample.{title, companyName, startDate, manager};
+    };
+
+    Sample.jsonJobCeo |> decodeJob |> expect |> toEqual(Ok(Sample.jobCeo));
+  });
+
+  test("letops map, apply (failure, second field has wrong type)", () => {
     // companyName is intentionally wrong
     let decodeJob = {
       let+ title = field("title", string)
@@ -720,7 +771,22 @@ describe("Letops, infix", () => {
     |> toEqual(
          invalidFieldErr("manager", Val(`ExpectedString, Sample.jsonNull)),
        );
-  })
+  });
+
+  test("infix map, apply (success)", () => {
+    let ((<$>), (<*>)) = (map, apply);
+    let decodeJobInfix =
+      Sample.makeJob
+      <$> field("title", string)
+      <*> field("companyName", string)
+      <*> field("startDate", date)
+      <*> pure(None);
+
+    Sample.jsonJobCeo
+    |> decodeJobInfix
+    |> expect
+    |> toEqual(Ok(Sample.jobCeo));
+  });
 });
 
 describe("ParseError", () => {
@@ -954,4 +1020,14 @@ describe("Deprecated decoders", () => {
     |> expect
     |> toEqual(objErr(("x", MissingField), [("y", MissingField)]))
   );
+});
+
+// here we import a gigantic json file (as raw json, to avoid slowing down the
+// compiler)
+[@bs.module] external bigjson: Js.Json.t = "./utils/BigJson.json";
+
+describe("Big JSON", () => {
+  test("is stack-safe", () =>
+    bigjson |> array(okJson) |> Result.isOk |> expect |> toEqual(true)
+  )
 });
