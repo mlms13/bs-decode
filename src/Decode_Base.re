@@ -14,6 +14,12 @@ module Make =
   let flat_map = (decode, f, json) => M.flat_map(decode(json), f(_, json));
   let alt = (a, b, json) => T.lazyAlt(a(json), () => b(json));
 
+  let pair = (da, db) => da |> map((a, b) => (a, b)) |> apply(_, db);
+
+  let (let+) = (a, f) => map(f, a);
+  let (and+) = pair;
+  let ( let* ) = flat_map;
+
   include Relude.Extensions.Apply.ApplyExtensions({
     type nonrec t('a) = t('a);
     let map = map;
@@ -244,67 +250,4 @@ module Make =
     map2(Tuple.make, field(fieldA, decodeA), field(fieldB, decodeB));
 
   let hush = (decode, json) => decode(json) |> Result.toOption;
-
-  module Pipeline = {
-    let succeed = pure;
-
-    let pipe = (a, b) => apply(b, a);
-
-    let optionalField = (name, decode) => pipe(optionalField(name, decode));
-
-    let fallbackField = (name, decode, recovery) =>
-      pipe(fallback(field(name, decode), recovery));
-
-    let field = (name, decode) => pipe(field(name, decode));
-
-    let at = (fields, decode) => pipe(at(fields, decode));
-
-    let hardcoded = v => pipe(pure(v));
-
-    /**
-     * `run` takes a decoder and some json, and it passes that json to the
-     * decoder. The result is that your decoder is run with the provided json
-     */
-    let run = (|>);
-
-    /**
-     * Alias many functions from outside the Pipeline for easy local opens
-     */
-    let map = map;
-    let apply = apply;
-    let map2 = map2;
-    let map3 = map3;
-    let map4 = map4;
-    let map5 = map5;
-    let pure = pure;
-    let flatMap = flatMap;
-    let boolean = boolean;
-    let string = string;
-    let floatFromNumber = floatFromNumber;
-    let intFromNumber = intFromNumber;
-    let intFromNumber = intFromNumber;
-    let date = date;
-    let variantFromJson = variantFromJson;
-    let variantFromString = variantFromString;
-    let variantFromInt = variantFromInt;
-    let optional = optional;
-    let array = array;
-    let list = list;
-
-    let tuple = tuple;
-    let tuple2 = tuple2;
-    let tuple3 = tuple3;
-    let tuple4 = tuple4;
-    let tuple5 = tuple5;
-    let tupleAtLeast2 = tupleAtLeast2;
-    let tupleAtLeast3 = tupleAtLeast3;
-    let tupleAtLeast4 = tupleAtLeast4;
-    let tupleAtLeast5 = tupleAtLeast5;
-
-    let tupleFromFields = tupleFromFields;
-    let dict = dict;
-    let stringMap = stringMap;
-    let oneOf = oneOf;
-    let fallback = fallback;
-  };
 };

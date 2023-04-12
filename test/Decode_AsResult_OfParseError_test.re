@@ -655,6 +655,19 @@ describe("Decode utils", () => {
     |> toEqual(Ok(true))
   );
 
+  Skip.test("apply (collects multiple errors)", () =>
+    expect(true) |> toEqual(true)
+  );
+
+  test("pair (success, both ok)", () =>
+    Sample.jsonJobCeo
+    |> pair(field("title", string), field("startDate", date))
+    |> expect
+    |> toEqual(Ok(("CEO", Js.Date.fromString("2016-04-01T00:00:00.0Z"))))
+  );
+
+  // test("pair (failure, first fails)")
+
   test("pure", () => {
     Sample.jsonNull |> pure(3) |> expect |> toEqual(Ok(3))
   });
@@ -698,33 +711,29 @@ describe("Decode utils", () => {
 });
 
 describe("Letops, infix", () => {
-  // BKMRK: `and+` will be the easiest way to test applicative validation, but
-  // we're not quite there yet, so map4 for now...
-  test("field (failure, second field has wrong type)", () =>
+  test("field (failure, second field has wrong type)", () => {
+    // companyName is intentionally wrong
+    let decodeJob = {
+      let+ title = field("title", string)
+      and+ companyName = field("manager", string)
+      and+ startDate = field("startDate", date)
+      and+ manager = pure(None);
+      Sample.{title, companyName, startDate, manager};
+    };
+
     Sample.jsonJobCeo
-    |> [@ocaml.warning "-3"]
-       map4(
-         Sample.makeJob,
-         field("title", string),
-         field("manager", string),
-         field("startDate", date),
-         pure(None),
-       )
+    |> decodeJob
     |> expect
     |> toEqual(
          invalidFieldErr("manager", Val(`ExpectedString, Sample.jsonNull)),
-       )
-  )
+       );
+  })
 });
 
 describe("ParseError", () => {
   describe("Combinations", () => {
     // ParseErrors only know how to combine Arr+Arr and Obj+Obj. In most situations
     // this is all that matters. In all other cases, the first error is chosen.
-
-    // BKMRK: this really belongs in Decode_Base
-    let pair = (a, b) => [@ocaml.warning "-3"] map2(Tuple2.make, a, b);
-
     test("combine (Val/Val)", () =>
       Sample.jsonNull
       |> pair(string, boolean)

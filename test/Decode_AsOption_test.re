@@ -43,19 +43,6 @@ describe("Nested decoders", () => {
 });
 
 describe("Decode records", () => {
-  let noManager = (title, company, start) =>
-    Sample.makeJob(title, company, start, None);
-
-  let decodeJobMap3 =
-    Decode.(
-      map3(
-        noManager,
-        field("title", string),
-        field("companyName", string),
-        field("startDate", date),
-      )
-    );
-
   let ((<$>), (<*>)) = Decode.(map, apply);
   let decodeJobInfix =
     Sample.makeJob
@@ -64,58 +51,9 @@ describe("Decode records", () => {
     <*> Decode.(field("startDate", date))
     <*> Decode.pure(None);
 
-  [@ocaml.warning "-3"]
-  let rec decodeJobPipeline = json =>
-    Decode.Pipeline.(
-      succeed(Sample.makeJob)
-      |> field("title", string)
-      |> field("companyName", string)
-      |> field("startDate", date)
-      |> optionalField("manager", decodeEmployeePipeline)
-      |> run(json)
-    )
-  [@ocaml.warning "-3"]
-  and decodeEmployeePipeline = json =>
-    Decode.Pipeline.(
-      succeed(Sample.makeEmployee)
-      |> field("name", string)
-      |> field("age", intFromNumber)
-      |> field("job", decodeJobPipeline)
-      |> run(json)
-    );
-
-  [@ocaml.warning "-3"]
-  let decodeJobPipelineRecovery =
-    Decode.Pipeline.(
-      succeed(Sample.makeJob)
-      |> hardcoded("Title")
-      |> fallbackField("x", string, "Company")
-      |> at(["job", "manager", "job", "startDate"], date)
-      |> hardcoded(None)
-    );
-
-  test("map3", () =>
-    expect(decodeJobMap3(Sample.jsonJobCeo))
-    |> toEqual(Some(Sample.jobCeo))
-  );
-
   test("lazy infix", () =>
     expect(decodeJobInfix(Sample.jsonJobCeo))
     |> toEqual(Some(Sample.jobCeo))
-  );
-
-  test("pipeline", () =>
-    expect(decodeEmployeePipeline(Sample.jsonPersonBill))
-    |> toEqual(Some(Sample.employeeBill))
-  );
-
-  test("pipeline hardcoded/fallback", () =>
-    expect(decodeJobPipelineRecovery(Sample.jsonPersonBill))
-    |> toEqual(
-         Some(
-           Sample.makeJob("Title", "Company", Sample.jobCeo.startDate, None),
-         ),
-       )
   );
 });
 
