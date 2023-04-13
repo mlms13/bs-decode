@@ -88,23 +88,6 @@ let stringUnion:
 let intUnion:
   ((int, 'a), list((int, 'a)), Js.Json.t) => result('a, ParseError.failure);
 
-[@deprecated "Use literal instead"]
-let variantFromJson:
-  (
-    Js.Json.t => result('a, ParseError.failure),
-    'a => option('b),
-    Js.Json.t
-  ) =>
-  result('b, ParseError.failure);
-
-[@deprecated "Use stringUnion instead"]
-let variantFromString:
-  (string => option('a), Js.Json.t) => result('a, ParseError.failure);
-
-[@deprecated "Use literalInt and alt/oneOf instead"]
-let variantFromInt:
-  (int => option('a), Js.Json.t) => result('a, ParseError.failure);
-
 let optional:
   (Js.Json.t => result('a, ParseError.failure), Js.Json.t) =>
   result(option('a), ParseError.failure);

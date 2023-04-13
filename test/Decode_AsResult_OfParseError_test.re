@@ -892,31 +892,6 @@ describe("ParseError", () => {
 
 [@ocaml.warning "-3"]
 describe("Deprecated decoders", () => {
-  test("variant", () =>
-    expect(variantFromString(Sample.colorFromJs, Sample.jsonString))
-    |> toEqual(valErr(`ExpectedValidOption, Sample.jsonString))
-  );
-
-  test("variantFromString (success)", () =>
-    expect(variantFromString(Sample.colorFromJs, Sample.jsonStringBlue))
-    |> toEqual(Ok(`blue))
-  );
-
-  test("variantFromString (failure)", () =>
-    expect(variantFromString(Sample.colorFromJs, Sample.jsonString))
-    |> toEqual(valErr(`ExpectedValidOption, Sample.jsonString))
-  );
-
-  test("variantFromInt (success)", () =>
-    expect(variantFromInt(Sample.numbersFromJs, Sample.jsonIntZero))
-    |> toEqual(Ok(Sample.Zero))
-  );
-
-  test("variantFromInt (failure)", () =>
-    expect(variantFromInt(Sample.numbersFromJs, Sample.jsonIntFive))
-    |> toEqual(valErr(`ExpectedValidOption, Sample.jsonIntFive))
-  );
-
   let floatMapEq = (a, b) => Belt.Map.String.eq(a, b, Float.eq);
 
   test("stringMap (success)", () =>

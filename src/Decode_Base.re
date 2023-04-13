@@ -89,17 +89,6 @@ module Make =
 
   let intUnion = first => union(literalInt, first);
 
-  let variantFromJson = (jsonToJs, jsToVariant) =>
-    jsonToJs
-    |> map(jsToVariant)
-    |> flatMap(Option.foldLazy(() => T.valErr(`ExpectedValidOption), pure));
-
-  let variantFromString = (stringToVariant, json) =>
-    variantFromJson(string, stringToVariant, json);
-
-  let variantFromInt = (intToVariant, json) =>
-    variantFromJson(intFromNumber, intToVariant, json);
-
   let optional = (decode, json) =>
     switch (Js.Json.decodeNull(json)) {
     | Some(_) => pure(None, json)

@@ -133,7 +133,28 @@ let decode = {
 
 ## Variants and Unions
 
-Coming soon!
+### variantFromString, variantFromInt
+
+The `variantFrom...` functions have been removed, but instead you can use `stringUnion` and `intUnion` to accomplish something similar:
+
+```reasonml
+// before
+let decodeColor = Decode.variantFromString(
+  fun
+  | "blue" => Some(Blue)
+  | "green" => Some(Green)
+  | "red" => Some(Red)
+  | _ => None
+);
+
+// now
+let decodeColor = Decode.stringUnion(
+  ("blue", Blue),
+  [("green", Green), ("red", Red)]
+);
+```
+
+Instead of a single generic `"Expected a valid option"` error, this will allow us to provide a more in-depth error message that explains each value that we were looking for and what we found instead.
 
 ## Custom Validations
 
