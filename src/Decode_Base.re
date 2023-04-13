@@ -129,67 +129,6 @@ module Make =
             )
        );
 
-  let tupleN = (size, extract, decode) =>
-    array(M.pure)
-    |> map(extract)
-    |> flatMap(Option.fold(T.valErr(`ExpectedTuple(size)), decode));
-
-  let tuple = (da, db) =>
-    tupleN(2, Tuple.fromArray, ((a, b)) =>
-      map2(Tuple.make, _ => T.arrErr(0, da(a)), _ => T.arrErr(1, db(b)))
-    );
-
-  let tuple2 = tuple;
-
-  let tuple3 = (da, db, dc) =>
-    tupleN(3, Tuple.fromArray3, ((a, b, c)) =>
-      map3(Tuple.make3, _ => da(a), _ => db(b), _ => dc(c))
-    );
-
-  let tuple4 = (da, db, dc, dd) =>
-    tupleN(4, Tuple.fromArray4, ((a, b, c, d)) =>
-      map4(Tuple.make4, _ => da(a), _ => db(b), _ => dc(c), _ => dd(d))
-    );
-
-  let tuple5 = (da, db, dc, dd, de) =>
-    tupleN(5, Tuple.fromArray5, ((a, b, c, d, e)) =>
-      map5(
-        Tuple.make5,
-        _ => da(a),
-        _ => db(b),
-        _ => dc(c),
-        _ => dd(d),
-        _ => de(e),
-      )
-    );
-
-  let tupleAtLeast2 = (da, db) =>
-    tupleN(2, Tuple.fromArrayAtLeast2, ((a, b)) =>
-      map2(Tuple.make2, _ => da(a), _ => db(b))
-    );
-
-  let tupleAtLeast3 = (da, db, dc) =>
-    tupleN(3, Tuple.fromArrayAtLeast3, ((a, b, c)) =>
-      map3(Tuple.make3, _ => da(a), _ => db(b), _ => dc(c))
-    );
-
-  let tupleAtLeast4 = (da, db, dc, dd) =>
-    tupleN(4, Tuple.fromArrayAtLeast4, ((a, b, c, d)) =>
-      map4(Tuple.make4, _ => da(a), _ => db(b), _ => dc(c), _ => dd(d))
-    );
-
-  let tupleAtLeast5 = (da, db, dc, dd, de) =>
-    tupleN(5, Tuple.fromArrayAtLeast5, ((a, b, c, d, e)) =>
-      map5(
-        Tuple.make5,
-        _ => da(a),
-        _ => db(b),
-        _ => dc(c),
-        _ => dd(d),
-        _ => de(e),
-      )
-    );
-
   let dict = decode => {
     let rec decodeEntries =
       fun
@@ -234,9 +173,6 @@ module Make =
        );
 
   let fallback = (decode, recovery) => alt(decode, pure(recovery));
-
-  let tupleFromFields = ((fieldA, decodeA), (fieldB, decodeB)) =>
-    map2(Tuple.make, field(fieldA, decodeA), field(fieldB, decodeB));
 
   let hush = (decode, json) => decode(json) |> Result.toOption;
 };
