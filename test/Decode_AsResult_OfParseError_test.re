@@ -890,25 +890,6 @@ describe("ParseError", () => {
   });
 });
 
-[@ocaml.warning "-3"]
-describe("Deprecated decoders", () => {
-  let floatMapEq = (a, b) => Belt.Map.String.eq(a, b, Float.eq);
-
-  test("stringMap (success)", () =>
-    Sample.jsonDictFloat
-    |> (stringMap(floatFromNumber) |> map(floatMapEq(Sample.valMapFloat)))
-    |> expect
-    |> toEqual(Ok(true))
-  );
-
-  test("stringMap (failure, null)", () =>
-    Sample.jsonNull
-    |> (stringMap(floatFromNumber) |> map(floatMapEq(Sample.valMapFloat)))
-    |> expect
-    |> toEqual(valErr(`ExpectedObject, Js.Json.null))
-  );
-});
-
 // here we import a gigantic json file (as raw json, to avoid slowing down the
 // compiler)
 [@bs.module] external bigjson: Js.Json.t = "./utils/BigJson.json";

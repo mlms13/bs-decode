@@ -114,11 +114,6 @@ let dict:
 
 let dictJson: Js.Json.t => result(Js.Dict.t(Js.Json.t), ParseError.failure);
 
-[@deprecated "Use dict instead, and convert the Dict to a Map"]
-let stringMap:
-  (Js.Json.t => result('a, ParseError.failure), Js.Json.t) =>
-  result(Belt.Map.String.t('a), ParseError.failure);
-
 let at:
   (list(string), Js.Json.t => result('a, ParseError.failure), Js.Json.t) =>
   result('a, ParseError.failure);

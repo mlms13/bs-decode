@@ -148,9 +148,6 @@ module Make =
 
   let dictJson = dict(okJson);
 
-  let stringMap = decode =>
-    dict(decode) |> map(Js.Dict.entries) |> map(Belt.Map.String.fromArray);
-
   let rec at = (fields, decode) =>
     switch (fields) {
     | [] => decode

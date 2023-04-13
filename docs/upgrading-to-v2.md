@@ -159,3 +159,19 @@ Instead of a single generic `"Expected a valid option"` error, this will allow u
 ## Custom Validations
 
 Coming soon!
+
+## Smaller Changes
+
+### stringMap
+
+We no longer offer the ability to decode directly into a `Belt.Map.String`, but we do still provide a `dict` decoder, and JS dictionaries can be easily converted to a `Belt.Map.String`:
+
+```reasonml
+// not sure why Belt doesn't provide this...
+let beltMapFromDict = dict =>
+  dict |> Js.Dict.entries |> Belt.Map.String.fromArray;
+
+// the actual decoder
+let decodeStringMap = innerDecode =>
+  Decode.(dict(innerDecode) |> map(beltMapFromDict));
+```
