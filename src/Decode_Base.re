@@ -20,11 +20,14 @@ module Make =
   let (and+) = pair;
   let ( let* ) = flat_map;
 
-  include Relude.Extensions.Apply.ApplyExtensions({
+  module Applicative = {
     type nonrec t('a) = t('a);
     let map = map;
     let apply = apply;
-  });
+    let pure = pure;
+  };
+
+  module ListTraverse = Relude.List.Traversable(Applicative);
 
   let flatMap = (f, decode) => flat_map(decode, f);
 
@@ -129,24 +132,17 @@ module Make =
             )
        );
 
-  let dict = decode => {
-    let rec decodeEntries =
-      fun
-      | [] => pure([])
-      | [(key, value), ...xs] =>
-        map2(
-          (decodedValue, rest) => [(key, decodedValue), ...rest],
-          _ => T.objErr(key, decode(value)),
-          decodeEntries(xs),
-        );
+  let dictJson = value(Js.Json.decodeObject, `ExpectedObject);
 
-    value(Js.Json.decodeObject, `ExpectedObject)
+  let dict = decode => {
+    let decodeInner = ((key, json), _) =>
+      decode(json) |> T.objErr(key) |> M.map(x => (key, x));
+
+    dictJson
     |> map(Js.Dict.entries >> Array.toList)
-    |> flatMap(decodeEntries)
+    |> flatMap(ListTraverse.traverse(decodeInner))
     |> map(Js.Dict.fromList);
   };
-
-  let dictJson = dict(okJson);
 
   let rec at = (fields, decode) =>
     switch (fields) {

@@ -78,25 +78,21 @@ module Shape = {
     | Square(float)
     | Circle(float);
 
-  let makeRectangle = (width, height) => Rectangle(width, height);
   let makeSquare = side => Square(side);
   let makeCircle = radius => Circle(radius);
 
-  let fromKind = kind =>
-    switch (kind) {
-    | "Rectangle" =>
-      Decode.(
-        map2(
-          makeRectangle,
-          field("width", floatFromNumber),
-          field("height", floatFromNumber),
-        )
-      )
+  let fromKind =
+    fun
+    | "Rectangle" => {
+        open Decode;
+        let+ width = field("width", floatFromNumber)
+        and+ height = field("height", floatFromNumber);
+        Rectangle(width, height);
+      }
     | "Square" => Decode.(field("side", floatFromNumber) |> map(makeSquare))
     | "Circle" =>
       Decode.(field("radius", floatFromNumber) |> map(makeCircle))
-    | _ => (json => Result.error(ParseError.Val(`InvalidShape, json)))
-    };
+    | _ => (json => Result.error(ParseError.Val(`InvalidShape, json)));
 
   let decode = Decode.(field("kind", string) |> flatMap(fromKind));
 };
