@@ -64,6 +64,11 @@ describe("Simple decoders", () => {
     |> toEqual(valErr(`ExpectedNumber, Sample.jsonString4))
   );
 
+  test("intFromNumber (out-of-range int)", () =>
+    expect(Decode.intFromNumber(Sample.jsonLargeFloat))
+    |> toEqual(valErr(`ExpectedInt, Sample.jsonLargeFloat))
+  );
+
   test("intFromNumber (float)", () =>
     expect(Decode.intFromNumber(Sample.jsonFloat))
     |> toEqual(valErr(`ExpectedInt, Sample.jsonFloat))
