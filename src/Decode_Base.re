@@ -235,9 +235,8 @@ module Make =
     |> flatMap(
          fun
          | None => pure(None)
-         | Some(v) => (_ => optional(decode, v)),
-       )
-    >> T.objErr(name);
+         | Some(v) => (_ => optional(decode, v) |> T.objErr(name)),
+       );
 
   let fallback = (decode, recovery) => alt(decode, pure(recovery));
 
