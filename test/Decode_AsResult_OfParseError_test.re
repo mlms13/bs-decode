@@ -256,6 +256,11 @@ describe("Inner decoders", () => {
        )
   );
 
+  test("optionalField (failure on outer structure)", () =>
+    expect(Decode.optionalField("field", Decode.string, Sample.jsonString))
+    |> toEqual(valErr(`ExpectedObject, Sample.jsonString))
+  );
+
   test("optionalField (failure on inner decode)", () =>
     expect(Decode.(optionalField("title", boolean, Sample.jsonJobCeo)))
     |> toEqual(
