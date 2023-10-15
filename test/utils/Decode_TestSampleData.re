@@ -7,6 +7,7 @@ let jsonStringTrue: Js.Json.t = [%raw {| "true" |}];
 let jsonString4: Js.Json.t = [%raw {| "4" |}];
 let jsonFloat: Js.Json.t = [%raw {| 3.14 |}];
 let jsonInt: Js.Json.t = [%raw {| 1 |}];
+let jsonLargeFloat: Js.Json.t = [%raw {|1542433304450|}];
 let jsonIntZero: Js.Json.t = [%raw {| 0 |}];
 let jsonDateNumber: Js.Json.t = [%raw {| 1542433304450.0 |}];
 let jsonDateString: Js.Json.t = [%raw {| "2018-11-17T05:40:35.869Z" |}];

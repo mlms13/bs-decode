@@ -38,7 +38,7 @@ module Make =
   let floatFromNumber = value(Js.Json.decodeNumber, `ExpectedNumber);
 
   let intFromNumber = {
-    let isInt = v => v == 0.0 || mod_float(v, floor(v)) == 0.0;
+    let isInt = num => float(int_of_float(num)) == num;
     flatMap(
       v => isInt(v) ? pure(int_of_float(v)) : T.valErr(`ExpectedInt),
       floatFromNumber,
