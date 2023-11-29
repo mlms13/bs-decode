@@ -5,5 +5,7 @@
  (promote (until-clean))
  (alias main)
  (compile_flags -open Relude.Globals)
- (libraries melange jest bsBastet relude bsDecode)
- (module_systems commonjs))
+ (libraries melange melange-jest.jest bastet relude bsDecode)
+ (module_systems commonjs)
+ (preprocess
+  (pps melange.ppx)))

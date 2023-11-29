@@ -20,10 +20,11 @@ init: create-switch install ## Configure everything to develop this repository i
 
 .PHONY: install
 install: ## Install development dependencies
-	yarn install
-	opam install -y . --deps-only
-	opam pin -y add $(project_name).dev .
-	rm -rf node_modules/melange && ln -sfn $$(opam var melange:lib)/runtime node_modules/melange
+	yarn install ## install JavaScript packages that the project might depend on, like `react` or `react-dom`
+	opam update ## make sure that opam has the latest information about published libraries in the opam repository https://opam.ocaml.org/packages/
+	opam install -y . --deps-only --with-test ## install the Melange and OCaml dependencies
+	opam pin -y add $(project_name).dev . ## somehow needed to get relude to show up in dune?
+	opam exec opam-check-npm-deps ## check that the versions of the JavaScript packages installed match the requirements defined by Melange libraries
 
 .PHONY: build
 build: ## Build the project

@@ -1031,7 +1031,7 @@ describe("Deprecated decoders", () => {
 
 // here we import a gigantic json file (as raw json, to avoid slowing down the
 // compiler)
-[@bs.module] external bigjson: Js.Json.t = "./utils/BigJson.json";
+[@mel.module] external bigjson: Js.Json.t = "./utils/BigJson.json";
 
 describe("Big JSON", () => {
   test("is stack-safe", () =>

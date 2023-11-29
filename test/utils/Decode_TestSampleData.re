@@ -67,10 +67,10 @@ let jsonShapeInvalid: Js.Json.t = [%raw
 ];
 
 // typed variants and converters
-[@bs.deriving jsConverter]
+[@deriving jsConverter]
 type color = [ | `blue | `red | `green];
 
-[@bs.deriving jsConverter]
+[@deriving jsConverter]
 type numbers =
   | Zero
   | One
