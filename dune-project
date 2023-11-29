@@ -1,4 +1,4 @@
-(lang dune 3.7)
+(lang dune 3.8)
 
 (using directory-targets 0.1)
 
@@ -20,17 +20,4 @@
  (allow_empty)
  (name bs-decode)
  (synopsis "Type-safe JSON decoding for ReasonML and OCaml")
- (description "Type-safe JSON decoding for ReasonML and OCaml")
- (depends
-  (ocaml
-   (and
-    (>= "4.14.0")
-    (< "4.15.0")))
-  (reason
-   (and
-    (>= "3.8.2")
-    (< "4.0.0")))
-  mel
-  melange
-  (ocaml-lsp-server :dev)
-  (dot-merlin-reader :dev)))
+ (description "Type-safe JSON decoding for ReasonML and OCaml"))
