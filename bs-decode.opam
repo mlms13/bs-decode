@@ -1,0 +1,27 @@
+opam-version: "2.0"
+synopsis: "BS Decode"
+description: "Type-safe JSON decoding for ReasonML and OCaml"
+maintainer: ["Michael Martin"]
+authors: ["Michael Martin"]
+license: "MIT"
+homepage: "https://github.com/mlms13/bs-decode"
+bug-reports: "https://github.com/mlms13/bs-decode/issues"
+depends: [
+  "dot-merlin-reader" {dev}
+  "dune" {>= "3.8"}
+  "melange" {>= "2.0.0"}
+  "ocaml" {>= "5.1.0"}
+  "reason" {>= "3.10.0" & < "4.0.0"}
+  "ocaml-lsp-server" {dev}
+  "ocamlformat" {dev}
+  "odoc" {with-doc}
+  "relude" {dev}
+  "bastet" {dev}
+  "melange-jest" {>= "0.1.0"}
+  "opam-check-npm-deps" {with-test}
+]
+
+pin-depends: [
+  [ "relude.dev" "git+https://github.com/reazen/relude.git#v2" ]
+  [ "bastet.dev" "git+https://github.com/johnhaley81/bastet.git#6c8f53a9da55254691df49bddf96b279b38be204" ]
+]

@@ -3,6 +3,7 @@
     "Getting Started": [
       "what-and-why",
       "installation",
+      "upgrading-to-v2",
       "simple-example",
       "return-types",
       "working-with-errors"
@@ -13,6 +14,8 @@
       "decoding-objects",
       "decoding-variants"
     ],
-    "API": ["result-of-parseerror"]
+    "API": [
+      "result-of-parseerror"
+    ]
   }
 }

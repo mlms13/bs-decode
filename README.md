@@ -15,20 +15,22 @@ Decode JSON values into structured ReasonML and OCaml types. Inspired by Elm's [
 
 ## Installation
 
-**Install via npm:**
+**Install:**
 
-`npm install --save bs-decode relude bs-bastet`
+`yarn add bs-decode relude bs-bastet`
 
-**Update your bsconfig.json**
+**Add the library stanzas in your dune file**
+
+If you're using [dune](https://dune.build/) to build your project, add a [library stanza](https://dune.readthedocs.io/en/stable/dune-files.html#library) to tell dune about `bs-decode`. You'll need to add similar library stanzas for `bsBastet` and `relude` if you haven't already.
 
 ```
-"bs-dependencies": [
-  "bs-bastet",
-  "bs-decode",
-  "relude"
-],
+(subdir
+ node_modules/bs-decode/src
+ (library
+  (name bsDecode)
+  (modes melange)
+  (libraries bsBastet relude)))
 ```
-
 
 ## Usage
 
