@@ -19,6 +19,10 @@ depends: [
   "melange-jest" {>= "0.1.0"}
   "opam-check-npm-deps"
   "odoc" {with-doc}
+  "relude" {dev}
+  "bastet" {dev}
+  "melange-jest" {>= "0.1.0"}
+  "opam-check-npm-deps" {with-test}
 ]
 build: [
   ["dune" "subst"] {dev}
