@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build and test the project
+    strategy:
+      matrix:
+        system:
+          - ubuntu-latest
+        node-version:
+          - 18.x
+        ocaml-compiler:
+          - 5.1.x
+
+    runs-on: ${{ matrix.system }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{matrix.node-version}}
+
+      - name: Use OCaml ${{ matrix.ocaml-compiler }}
+        uses: ocaml/setup-ocaml@v2
+        with:
+          ocaml-compiler: ${{ matrix.ocaml-compiler }}
+
+      - name: Install all deps
+        run: make install
+
+      - name: Build the project
+        run: make build
+
+      - name: Run tests
+        run: make test-coverage
+
+      - name: Publish test report to Coveralls
+        uses: coverallsapp/github-action@v1

@@ -1,0 +1,7 @@
+(library
+ (name bsDecode)
+ (wrapped false)
+ (libraries bastet relude)
+ (modes melange)
+ (preprocess
+  (pps melange.ppx)))

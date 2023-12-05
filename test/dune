@@ -1,0 +1,11 @@
+(include_subdirs unqualified)
+
+(melange.emit
+ (target output)
+ (promote (until-clean))
+ (alias main)
+ (compile_flags -open Relude.Globals)
+ (libraries melange melange-jest.jest bastet relude bsDecode)
+ (module_systems commonjs)
+ (preprocess
+  (pps melange.ppx)))
