@@ -20,6 +20,7 @@ init: create-switch install ## Configure everything to develop this repository i
 
 .PHONY: install
 install: ## Install development dependencies
+	$(DUNE) build @install
 	yarn install ## install JavaScript packages that the project might depend on, like `react` or `react-dom`
 	opam update ## make sure that opam has the latest information about published libraries in the opam repository https://opam.ocaml.org/packages/
 	opam install -y . --deps-only --with-test ## install the Melange and OCaml dependencies
