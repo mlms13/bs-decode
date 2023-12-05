@@ -1,5 +1,6 @@
 (library
  (name bsDecode)
+ (public_name bs-decode)
  (wrapped false)
  (libraries bastet relude)
  (modes melange)
